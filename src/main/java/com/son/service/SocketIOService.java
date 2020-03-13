@@ -47,7 +47,7 @@ public class SocketIOService {
         User user = userRepository.findActiveUser(username, UserStatus.ACTIVE);
 
         if (user == null) {
-            throw new ApiException(200, "User not found of is inactive");
+            throw new ApiException(200, "User not found or is inactive");
         }
         System.out.println(Arrays.toString(client.getAllRooms().toArray()));
         client.joinRoom("user-" + user.getId());
