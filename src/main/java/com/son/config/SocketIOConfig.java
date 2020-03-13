@@ -16,10 +16,7 @@ public class SocketIOConfig {
     public SocketIOServer server(WsProps wsProps) {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname(wsProps.getHost());
-
-        if (wsProps.getPort() != null)
-            config.setPort(wsProps.getPort());
-
+        config.setPort(wsProps.getPort());
         SocketConfig sockConfig = new SocketConfig();
         sockConfig.setReuseAddress(true);
         config.setSocketConfig(sockConfig);
