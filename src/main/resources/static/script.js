@@ -104,7 +104,8 @@ function sendTokenToServer(currentToken) {
     // TODO(developer): Send the current token to your server.
     axios({
       method: 'put',
-      url: 'http://localhost:8080/users/me/token/subscribe',
+      // url: 'http://localhost:8080/users/me/token/subscribe',
+      url: 'https://son-api.herokuapp.com/users/me/token/subscribe',
       headers: {
         'Content-Type': 'application/json',
         'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTU4Mzk5OTI2MywiZXhwIjoxNTg0NjA0MDYzfQ.9BoWDvXGWPBLfUvuKtsWo7LAufRxvivfNcQ-2iJVUF9nDPtmgqfDVFWq-lEcJbGKbcDokweb5UNF3GcyRZBe0w',
