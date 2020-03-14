@@ -10,6 +10,8 @@ import com.son.security.UserDetailsImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +59,7 @@ public class UserService {
 
     public void subscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, UserDetailsImpl credentials) {
         String topic = "user-" + credentials.getId();
-        fcmService.subscribeToTopic(List.of(firebaseTokenRequest.getToken()), topic);
+        fcmService.subscribeToTopic(Collections.singletonList(firebaseTokenRequest.getToken()), topic);
     }
 
     public void unsubscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, UserDetailsImpl credentials) {
