@@ -41,7 +41,7 @@ mvn spring-boot:run
 ```
 
 ## Changing development environment
-switch development environment by removing the comment at application.properties file
+Switch development environment by removing the comment at application.properties file
 ```shell
 // dev or another invironment
 # spring.profiles.active=dev
@@ -92,6 +92,6 @@ And check your pom.xml file at properties:
 ## CircleCI
 CI pipeline testing with [CircleCI](https://github.com/marketplace/circleci)
 
-## Copyright
+## @Copyright
 
 tranhuuhongson@gmail.com
