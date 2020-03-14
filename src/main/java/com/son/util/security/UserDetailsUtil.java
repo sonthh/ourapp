@@ -12,13 +12,13 @@ import java.util.List;
 
 public class UserDetailsUtil {
 
-    public static UserDetailsImpl getCurrentUserDetails() throws Exception {
+    public static UserDetailsImpl getCurrentUserDetails() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         return (UserDetailsImpl) principal;
     }
 
-
-    public static UserDetailsImpl buildUserDetail(User user) {
+    public static UserDetailsImpl buildUserDetails(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         for (Role role: user.getRoles()) {
@@ -26,9 +26,10 @@ public class UserDetailsUtil {
             authorities.add(authority);
         }
 
-        UserDetailsImpl userDetails = new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(),
-                user.getStatus(), user.getRoles(), authorities);
-        return userDetails;
-    }
+        UserDetailsImpl credentials = new UserDetailsImpl(
+            user.getId(), user.getUsername(), user.getPassword(), user.getStatus(), user.getRoles(), authorities
+        );
 
+        return credentials;
+    }
 }

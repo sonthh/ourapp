@@ -1,5 +1,7 @@
 package com.son.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.son.util.jpa.StringListConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,18 +21,30 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column
+    @JsonIgnore
+    @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "userId") }, inverseJoinColumns = {
-            @JoinColumn(name = "roleId") })
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_role",
+        joinColumns = { @JoinColumn(name = "userId") },
+        inverseJoinColumns = { @JoinColumn(name = "roleId") },
+        uniqueConstraints = { @UniqueConstraint(columnNames = {"userId", "roleId"}) }
+    )
     private List<Role> roles;
+
+    @Column(nullable = false, columnDefinition = "bit(1) default 1")
+    private Boolean shouldSendNotification;
+
+    @Convert(converter = StringListConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private List<String> notificationTypes;
 }

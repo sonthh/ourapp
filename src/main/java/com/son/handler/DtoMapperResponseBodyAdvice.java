@@ -23,11 +23,15 @@ public class DtoMapperResponseBodyAdvice extends AbstractMappingJacksonResponseB
     }
 
     @Override
-    protected void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType,
-                                           MethodParameter returnType, ServerHttpRequest request,
-                                           ServerHttpResponse response) {
+    protected void beforeBodyWriteInternal(
+        MappingJacksonValue bodyContainer, MediaType contentType,
+        MethodParameter returnType, ServerHttpRequest request,
+        ServerHttpResponse response
+    ) {
         Dto ann = returnType.getMethodAnnotation(Dto.class);
-        Assert.state(ann != null, "No Dto annotation");
+
+        Assert.state(ann != null, "No Dto Annotation");
+
         Class<?> dtoType = ann.value();
         Object value = bodyContainer.getValue();
         Object returnValue;
@@ -37,6 +41,7 @@ public class DtoMapperResponseBodyAdvice extends AbstractMappingJacksonResponseB
         } else {
             returnValue = modelMapper.map(value, dtoType);
         }
+
         bodyContainer.setValue(returnValue);
     }
 }

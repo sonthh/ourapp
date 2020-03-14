@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, CharSequence> {
-    private ValueOfEnum annotation;
+public class IsEnumValidator implements ConstraintValidator<IsEnum, CharSequence> {
+    private IsEnum annotation;
  
     @Override
-    public void initialize(ValueOfEnum annotation) {
+    public void initialize(IsEnum annotation) {
         this.annotation = annotation;
     }
 

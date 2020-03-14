@@ -1,7 +1,7 @@
 package com.son.request;
 
 import com.son.entity.ProductStatus;
-import com.son.validator.ValueOfEnum;
+import com.son.validator.IsEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Data
 public class UpdateProductRequest {
     @ApiModelProperty(dataType = "com.son.entity.ProductStatus")
-    @ValueOfEnum(enumClass = ProductStatus.class)
+    @IsEnum(enumClass = ProductStatus.class)
     private String status;
 
     @ApiModelProperty()

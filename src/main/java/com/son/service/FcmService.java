@@ -11,8 +11,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -35,23 +33,25 @@ public class FcmService {
     public void initialize() {
         try {
             FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials
-                            .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())).build();
+                .setCredentials(GoogleCredentials
+                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())).build();
+
             if (FirebaseApp.getApps().isEmpty()) {
                 this.firebaseApp = FirebaseApp.initializeApp(options);
                 log.info("Firebase application has been initialized");
-            } else {
-                this.firebaseApp = FirebaseApp.getInstance();
+                return;
             }
+
+            this.firebaseApp = FirebaseApp.getInstance();
         } catch (IOException e) {
+            e.printStackTrace();
             log.error(e.getMessage());
         }
     }
 
     public void subscribeToTopic(List<String> tokens, String topic) {
         try {
-            FirebaseMessaging.getInstance(firebaseApp).subscribeToTopic(tokens,
-                    topic);
+            FirebaseMessaging.getInstance(firebaseApp).subscribeToTopic(tokens, topic);
         } catch (FirebaseMessagingException e) {
             log.error("Firebase subscribe to topic fail", e);
         }
@@ -59,8 +59,7 @@ public class FcmService {
 
     public void unsubscribeFromTopic(List<String> tokens, String topic) {
         try {
-            FirebaseMessaging.getInstance(firebaseApp).unsubscribeFromTopic(tokens,
-                    topic);
+            FirebaseMessaging.getInstance(firebaseApp).unsubscribeFromTopic(tokens, topic);
         } catch (FirebaseMessagingException e) {
             log.error("Firebase unsubscribe from topic fail", e);
         }
@@ -74,15 +73,16 @@ public class FcmService {
         String json = mapper.writeValueAsString(data);
 
         Message message = Message.builder()
-                .setTopic(target)
-                .setNotification(
-                        Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .setImage("https://i.pinimg.com/originals/62/de/73/62de73548da3585435dc7bf6050a77b3.jpg")
-                        .build())
-                .putData("body", json)
-                .build();
+            .setTopic(target)
+            .setNotification(
+                Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .setImage("https://i.pinimg.com/originals/62/de/73/62de73548da3585435dc7bf6050a77b3.jpg")
+                    .build()
+            )
+            .putData("body", json)
+            .build();
 
         String response = null;
         try {

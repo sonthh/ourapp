@@ -17,22 +17,22 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(getApiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.son.controller"))
-                .paths(PathSelectors.any())
-                .build();
+            .apiInfo(getApiInfo())
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.son.controller"))
+            .paths(PathSelectors.any())
+            .build();
     }
 
     private ApiInfo getApiInfo() {
         Contact contact = new Contact("son.com", "https://son.com", "son@son.com");
         return new ApiInfoBuilder()
-                .title("son")
-                .description("Sơn Đẹp Trai")
-                .version("1.0.0")
-                .license("Apache 2.0")
-                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
-                .contact(contact)
-                .build();
+            .title("son")
+            .description("Sơn Đẹp Trai")
+            .version("1.0.0")
+            .license("Apache 2.0")
+            .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
+            .contact(contact)
+            .build();
     }
 }

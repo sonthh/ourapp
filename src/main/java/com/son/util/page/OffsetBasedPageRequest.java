@@ -112,27 +112,27 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
         OffsetBasedPageRequest that = (OffsetBasedPageRequest) o;
 
         return new EqualsBuilder()
-                .append(limit, that.limit)
-                .append(offset, that.offset)
-                .append(sort, that.sort)
-                .isEquals();
+            .append(limit, that.limit)
+            .append(offset, that.offset)
+            .append(sort, that.sort)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .append(limit)
-                .append(offset)
-                .append(sort)
-                .toHashCode();
+            .append(limit)
+            .append(offset)
+            .append(sort)
+            .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("limit", limit)
-                .append("offset", offset)
-                .append("sort", sort)
-                .toString();
+            .append("limit", limit)
+            .append("offset", offset)
+            .append("sort", sort)
+            .toString();
     }
 }

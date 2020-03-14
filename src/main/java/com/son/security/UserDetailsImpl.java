@@ -1,6 +1,7 @@
 package com.son.security;
 
 import com.son.entity.Role;
+import com.son.entity.User;
 import com.son.entity.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,8 +21,10 @@ public class UserDetailsImpl implements UserDetails {
     private List<Role> roles;
     private List<GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id, String username, String password,
-                           UserStatus status, List<Role> roles, List<GrantedAuthority> authorities) {
+    public UserDetailsImpl(
+        Integer id, String username, String password, UserStatus status, List<Role> roles,
+        List<GrantedAuthority> authorities
+    ) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -65,4 +68,14 @@ public class UserDetailsImpl implements UserDetails {
         return this.status == UserStatus.ACTIVE;
     }
 
+    public User toUserEntity() {
+        User user = new User();
+
+        user.setId(this.getId());
+        user.setPassword(this.getPassword());
+        user.setStatus(this.getStatus());
+        user.setRoles(this.getRoles());
+
+        return user;
+    }
 }

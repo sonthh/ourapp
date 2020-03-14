@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
@@ -22,11 +24,11 @@ public class JwtTokenService {
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
-                .compact();
+            .setSubject(userDetails.getUsername())
+            .setIssuedAt(now)
+            .setExpiration(expiryDate)
+            .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+            .compact();
     }
 
     public String getUsernameFromJWT(String token) {
@@ -52,5 +54,14 @@ public class JwtTokenService {
             log.error("JWT claims string is empty.");
         }
         return false;
+    }
+
+    public String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

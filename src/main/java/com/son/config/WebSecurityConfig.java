@@ -27,47 +27,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //create user for demo
-//        auth.inMemoryAuthentication()
-//                .withUser("admin").password("{noop}password").roles("ADMIN")
-//                .and()
-//                .withUser("manager").password("{noop}password").roles("CLIENT", "MANAGER");//authenticate from db
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().antMatchers("/posts/edit/**").access("isAuthenticated()");
-        http
-                //HTTP Basic authentication
-                .httpBasic()
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-
-//                .antMatchers(HttpMethod.GET, "/products/**").access("isAuthenticated()")
-//                .antMatchers(HttpMethod.POST, "/products").hasAnyRole("ADMIN", "MANAGER")
-//                .antMatchers(HttpMethod.PUT, "/products/**").hasAnyRole("ADMIN", "MANAGER")
-//                .antMatchers(HttpMethod.DELETE, "/products/**").hasAnyRole("ADMIN", "MANAGER")
-                .and().cors()
-                .and().csrf().disable()
-                .formLogin().disable();
-
-//        http.authorizeRequests().anyRequest().authenticated();
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.httpBasic()
+            .and().authorizeRequests()
+            .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
+            .antMatchers("/swagger-ui.html").permitAll()
+            .and().cors()
+            .and().csrf().disable()
+            .formLogin().disable()
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        web.ignoring().antMatchers("/v2/api-docs",
-//                "/configuration/ui",
-//                "/swagger-resources/**",
-//                "/configuration/security",
-//                "/swagger-ui.html",
-//                "/webjars/**");
-//    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

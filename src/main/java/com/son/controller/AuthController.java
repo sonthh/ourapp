@@ -1,11 +1,10 @@
 package com.son.controller;
 
-import com.son.request.LoginRequest;
-import com.son.entity.User;
 import com.son.handler.ApiException;
-import com.son.repository.UserRepository;
+import com.son.request.LoginRequest;
 import com.son.security.UserDetailsImpl;
 import com.son.service.JwtTokenService;
+import com.son.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -32,33 +31,40 @@ import java.util.Map;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService,
-                          UserRepository userRepository) {
+    public AuthController(
+        AuthenticationManager authenticationManager, JwtTokenService jwtTokenService, UserService userService
+    ) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenService = jwtTokenService;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @ApiOperation("Login to get jwt token")
     @PostMapping("login")
     public ResponseEntity<Object> login(
-            @Valid @NotNull @RequestBody(required = false) LoginRequest loginRequest
+        @Valid @NotNull @RequestBody(required = false) LoginRequest loginRequest
     ) throws ApiException {
-        User user = userRepository.findOneByUsername(loginRequest.getUsername());
-
-        if (user == null) throw new ApiException(404, "UserNotFound");
+        try {
+            userService.findOneByUsername(loginRequest.getUsername());
+        } catch (ApiException e) {
+            throw new ApiException(401, "Unauthorized");
+        }
 
         try {
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-                    loginRequest.getPassword());
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                loginRequest.getUsername(),
+                loginRequest.getPassword()
+            );
 
             Authentication authentication = authenticationManager.authenticate(auth);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = jwtTokenService.generateToken((UserDetailsImpl) authentication.getPrincipal());
+            UserDetailsImpl credentials = (UserDetailsImpl) authentication.getPrincipal();
+
+            String jwt = jwtTokenService.generateToken(credentials);
 
             Map<String, Object> result = new HashMap<>();
             result.put("token", jwt);

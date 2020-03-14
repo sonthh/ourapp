@@ -1,10 +1,9 @@
 package com.son.security;
 
 import com.son.entity.User;
-import com.son.entity.UserStatus;
-import com.son.repository.UserRepository;
+import com.son.handler.ApiException;
+import com.son.service.UserService;
 import com.son.util.security.UserDetailsUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,27 +11,25 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findOneByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Username not found");
+        User user;
+        try {
+            user = userService.findOneByUsername(username);
+        } catch (ApiException e) {
+            throw new UsernameNotFoundException("UsernameNotFound");
         }
 
-        UserDetailsImpl userDetails = UserDetailsUtil.buildUserDetail(user);
-        BeanUtils.copyProperties(user, userDetails);
+        UserDetailsImpl credentials = UserDetailsUtil.buildUserDetails(user);
 
-        return userDetails;
+        return credentials;
     }
-
-
 
 
 }

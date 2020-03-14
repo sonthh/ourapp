@@ -40,14 +40,14 @@ public class CustomSpecification<T> implements Specification<T> {
                 return builder.like(root.get(criteria.getKey()), "%" + criteria.getValue() + "%");
             case IN:
                 if (criteria.getValue() instanceof List) {
-                    return root.get(criteria.getKey()).in((List) criteria.getValue());
+                    return root.get(criteria.getKey()).in((List<?>) criteria.getValue());
                 }
                 if (criteria.getValue() instanceof Integer[]) {
                     return root.get(criteria.getKey()).in((Integer[]) criteria.getValue());
                 }
             case NOT_IN:
                 if (criteria.getValue() instanceof List) {
-                    return root.get(criteria.getKey()).in((List) criteria.getValue()).not();
+                    return root.get(criteria.getKey()).in((List<?>) criteria.getValue()).not();
                 }
                 if (criteria.getValue() instanceof Integer[]) {
                     return root.get(criteria.getKey()).in((Integer[]) criteria.getValue()).not();
@@ -56,5 +56,4 @@ public class CustomSpecification<T> implements Specification<T> {
                 return null;
         }
     }
-
 }

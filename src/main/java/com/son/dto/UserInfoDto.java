@@ -9,10 +9,7 @@ import java.util.List;
 @Data
 public class UserInfoDto {
     private Integer id;
-
     private String username;
-
     private UserStatus status;
-
     private List<Role> roles;
 }

@@ -11,7 +11,9 @@ import java.util.Date;
 public class ApiExceptionResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Date timestamp;
+
     private Integer status;
+
     private Object errors;
 
     public ApiExceptionResponse(Integer status, Object errors) {

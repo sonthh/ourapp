@@ -1,10 +1,10 @@
 package com.son.controller;
 
-import com.son.dto.UserInfoDto;
+import com.son.constant.AuthzConstant;
 import com.son.entity.User;
 import com.son.handler.ApiException;
-import com.son.handler.Dto;
 import com.son.request.FirebaseTokenRequest;
+import com.son.request.NotificationTypesRequest;
 import com.son.security.UserDetailsImpl;
 import com.son.service.UserService;
 import io.swagger.annotations.Api;
@@ -20,13 +20,11 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-
 @Api(tags = "Users", value = "User Controller")
 @RestController
 @RequestMapping("users")
 @Validated
 public class UserController {
-
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -35,39 +33,51 @@ public class UserController {
 
     @ApiOperation("get my information")
     @GetMapping("me")
-    @PreAuthorize("hasAnyRole('BASIC')")
-    @Dto(value = UserInfoDto.class)
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    //    @Dto(value = UserInfoDto.class)
     public ResponseEntity<Object> userMe(
-            @ApiIgnore @AuthenticationPrincipal UserDetailsImpl user
+        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
     ) throws ApiException {
 
-        User userMe = userService.findOne(user.getId());
+        User userMe = userService.findOne(credentials.getId());
 
         return new ResponseEntity<>(userMe, HttpStatus.OK);
     }
 
     @ApiOperation("subscribe firebase token")
     @PutMapping("me/token/subscribe")
-    @PreAuthorize("hasAnyRole('BASIC')")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> subscribeFirebaseToken(
-            @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
-            @ApiIgnore @AuthenticationPrincipal UserDetailsImpl user
+        @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
+        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
     ) {
 
-        userService.subscribeFirebaseToken(firebaseTokenRequest, user);
+        userService.subscribeFirebaseToken(firebaseTokenRequest, credentials);
 
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @ApiOperation("unsubscribe firebase token")
     @PutMapping("me/token/unsubscribe")
-    @PreAuthorize("hasAnyRole('BASIC')")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> unsubscribeFirebaseToken(
-            @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
-            @ApiIgnore @AuthenticationPrincipal UserDetailsImpl user
+        @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
+        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
     ) {
-        userService.unsubscribeFirebaseToken(firebaseTokenRequest, user);
+        userService.unsubscribeFirebaseToken(firebaseTokenRequest, credentials);
 
         return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+    @ApiOperation("add notification types")
+    @PutMapping("me/notifications/type/add")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    public ResponseEntity<Object> addNotificationTypes(
+        @Valid @NotNull @RequestBody(required = false) NotificationTypesRequest notificationTypesRequest,
+        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
+    ) throws ApiException {
+        boolean isUpdated = userService.addNotificationTypes(notificationTypesRequest, credentials);
+
+        return new ResponseEntity<>(isUpdated, HttpStatus.OK);
     }
 }

@@ -2,10 +2,7 @@ package com.son.security;
 
 import com.son.entity.UserStatus;
 import com.son.service.JwtTokenService;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -22,21 +19,18 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private final UserDetailsServiceImpl userDetailsService;
-    private final AuthenticationManager authenticationManager;
 
-    public JwtAuthenticationFilter(JwtTokenService jwtTokenService, UserDetailsServiceImpl userDetailsService,
-                                   @Lazy AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(JwtTokenService jwtTokenService, UserDetailsServiceImpl userDetailsService) {
         this.jwtTokenService = jwtTokenService;
         this.userDetailsService = userDetailsService;
-        this.authenticationManager = authenticationManager;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request, HttpServletResponse response, FilterChain filterChain
+    ) throws ServletException, IOException {
         try {
-            String jwt = getJwtFromRequest(request);
+            String jwt = jwtTokenService.getJwtFromRequest(request);
 
             if (jwt == null || !StringUtils.hasText(jwt) && !jwtTokenService.validateToken(jwt)) {
                 SecurityContextHolder.clearContext();
@@ -45,34 +39,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String username = jwtTokenService.getUsernameFromJWT(jwt);
-            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
+            UserDetailsImpl credentials = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
 
-            if (userDetails == null || userDetails.getStatus() != UserStatus.ACTIVE) {
+            if (credentials == null || credentials.getStatus() != UserStatus.ACTIVE) {
                 SecurityContextHolder.clearContext();
                 filterChain.doFilter(request, response);
                 return;
             }
 
             UsernamePasswordAuthenticationToken
-                    auth = new UsernamePasswordAuthenticationToken(userDetails, null,
-                    userDetails.getAuthorities());
+                    auth = new UsernamePasswordAuthenticationToken(credentials, null,
+                    credentials.getAuthorities());
 
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+
             filterChain.doFilter(request, response);
         } catch (Exception ex) {
             ex.printStackTrace();
             SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
         }
-    }
-
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 }

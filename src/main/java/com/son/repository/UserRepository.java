@@ -8,13 +8,14 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface UserRepository
-        extends CrudRepository<User, Integer>,
-        PagingAndSortingRepository<User, Integer>,
-        JpaSpecificationExecutor<User> {
+import java.util.Optional;
 
-    User findOneByUsername(@Param("username") String username);
+public interface UserRepository extends CrudRepository<User, Integer>,
+    PagingAndSortingRepository<User, Integer>,
+    JpaSpecificationExecutor<User> {
+
+    Optional<User> findOneByUsername(@Param("username") String username);
 
     @Query("select u from User u where u.username = :username and u.status = :status")
-    User findActiveUser(String username, UserStatus status);
+    Optional<User> findActiveUser(String username, UserStatus status);
 }

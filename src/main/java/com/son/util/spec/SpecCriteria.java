@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SpecCriteria {
-
     private String key;
     private SearchOperation operation;
     private Object value;

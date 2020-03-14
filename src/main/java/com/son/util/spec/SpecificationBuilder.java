@@ -6,15 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecificationBuilder<T> {
-
     private final List<SpecCriteria> params;
 
     public SpecificationBuilder() {
         params = new ArrayList<>();
     }
 
-    public final SpecificationBuilder with(final String key, final SearchOperation operation, final Object value,
-                                           final String prefix, final String suffix) {
+    public final SpecificationBuilder with(
+        final String key, final SearchOperation operation, final Object value, final String prefix,
+        final String suffix
+    ) {
         return with(null, key, operation, value, prefix, suffix);
     }
 
@@ -22,8 +23,10 @@ public class SpecificationBuilder<T> {
         return with(null, key, operation, value, null, null);
     }
 
-    public final SpecificationBuilder with(final String orPredicate, final String key, SearchOperation op,
-                                           final Object value, final String prefix, final String suffix) {
+    public final SpecificationBuilder with(
+        final String orPredicate, final String key, SearchOperation op, final Object value, final String prefix,
+        final String suffix
+    ) {
         if (op == null) {
             return this;
         }
@@ -53,8 +56,8 @@ public class SpecificationBuilder<T> {
 
         for (int i = 1; i < params.size(); i++) {
             result = params.get(i).isOrPredicate()
-                    ? Specification.where(result).or(new CustomSpecification<>(params.get(i)))
-                    : Specification.where(result).and(new CustomSpecification<>(params.get(i)));
+                ? Specification.where(result).or(new CustomSpecification<>(params.get(i)))
+                : Specification.where(result).and(new CustomSpecification<>(params.get(i)));
         }
 
         return result;

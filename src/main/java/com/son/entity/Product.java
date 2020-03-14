@@ -1,6 +1,9 @@
 package com.son.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -10,18 +13,18 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private Integer price;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 }

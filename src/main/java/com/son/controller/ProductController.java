@@ -1,12 +1,11 @@
 package com.son.controller;
 
+import com.son.constant.AuthzConstant;
+import com.son.entity.Product;
+import com.son.handler.ApiException;
 import com.son.request.CreateProductRequest;
 import com.son.request.FindAllProductRequest;
 import com.son.request.UpdateProductRequest;
-import com.son.entity.Product;
-import com.son.handler.ApiException;
-import com.son.security.UserDetailsImpl;
-import com.son.service.EmailService;
 import com.son.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,29 +28,17 @@ import javax.validation.constraints.NotNull;
 @Validated
 public class ProductController {
     private final ProductService productService;
-    private final EmailService emailService;
 
-    public ProductController(ProductService productService, EmailService emailService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.emailService = emailService;
-    }
-
-    @ApiOperation("test send email")
-    @GetMapping("testSendEmail")
-    public ResponseEntity<Object> testSendEmail() {
-        Thread thread = new Thread(() -> {
-            emailService.sendWelcomeMail();
-        });
-        thread.start();
-
-        return new ResponseEntity<>("Email will be sent in few seconds.", HttpStatus.CREATED);
     }
 
     @ApiOperation("create one product")
     @PostMapping
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Product> createOne(
-            @Valid @NotNull @RequestBody(required = false) CreateProductRequest createProductRequest) {
-
+        @Valid @NotNull @RequestBody(required = false) CreateProductRequest createProductRequest
+    ) {
         Product newProduct = productService.createOne(createProductRequest);
 
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
@@ -60,10 +46,11 @@ public class ProductController {
 
     @ApiOperation("find many product")
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Page<Product>> findMany(
-            @Valid FindAllProductRequest findAllProductRequest,
-            @ApiIgnore BindingResult errors) {
+        @Valid FindAllProductRequest findAllProductRequest,
+        @ApiIgnore BindingResult errors
+    ) {
         Page<Product> page = productService.findMany(findAllProductRequest);
 
         return new ResponseEntity<>(page, HttpStatus.OK);
@@ -71,7 +58,10 @@ public class ProductController {
 
     @ApiOperation("find one product")
     @GetMapping("/{productId}")
-    public ResponseEntity<Object> findOne(@Min(1) @PathVariable Integer productId) throws ApiException {
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    public ResponseEntity<Object> findOne(
+        @Min(1) @PathVariable Integer productId
+    ) throws ApiException {
         Product product = productService.findOne(productId);
 
         return new ResponseEntity<>(product, HttpStatus.OK);
@@ -79,7 +69,10 @@ public class ProductController {
 
     @ApiOperation("delete one product")
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Object> deleteOne(@Min(1) @PathVariable Integer productId) throws ApiException {
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    public ResponseEntity<Object> deleteOne(
+        @Min(1) @PathVariable Integer productId
+    ) throws ApiException {
         Boolean isDeleted = productService.deleteOne(productId);
 
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
@@ -87,9 +80,10 @@ public class ProductController {
 
     @ApiOperation("update one product")
     @PutMapping("/{productId}")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> updateOne(
-            @Valid @RequestBody UpdateProductRequest updateProductRequest,
-            @Min(1) @PathVariable Integer productId
+        @Valid @RequestBody UpdateProductRequest updateProductRequest,
+        @Min(1) @PathVariable Integer productId
     ) throws ApiException {
         Product updatedProduct = productService.updateOne(updateProductRequest, productId);
 

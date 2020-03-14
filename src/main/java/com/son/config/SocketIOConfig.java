@@ -15,15 +15,18 @@ public class SocketIOConfig {
     @Bean
     public SocketIOServer server(WsProps wsProps) {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
+
         config.setHostname(wsProps.getHost());
         config.setPort(wsProps.getPort());
+
         SocketConfig sockConfig = new SocketConfig();
         sockConfig.setReuseAddress(true);
+
         config.setSocketConfig(sockConfig);
 
         config.setAuthorizationListener(data -> {
             String token = data.getSingleUrlParam("token");
-            return !token.trim().equals("");
+            return token != null && !token.trim().equals("");
         });
 
         return new SocketIOServer(config);

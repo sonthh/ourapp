@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,20 +42,25 @@ public class ProductService {
     public Page<Product> findMany(FindAllProductRequest findAllProductRequest) {
         SpecificationBuilder<Product> builder = new SpecificationBuilder<>();
 
-        if (findAllProductRequest.getPrice() != null) {
-            builder.with("price", SearchOperation.EQUALITY, findAllProductRequest.getPrice());
+        Integer price = findAllProductRequest.getPrice();
+        String name = findAllProductRequest.getName();
+        String status = findAllProductRequest.getStatus();
+        List<Integer> productIds = findAllProductRequest.getIds();
+
+        if (price != null) {
+            builder.with("price", SearchOperation.EQUALITY, price);
         }
 
-        if (findAllProductRequest.getName() != null) {
-            builder.with("name", SearchOperation.EQUALITY, findAllProductRequest.getName(), "*", "*");
+        if (name != null) {
+            builder.with("name", SearchOperation.EQUALITY, name, "*", "*");
         }
 
-        if (findAllProductRequest.getStatus() != null) {
-            builder.with("status", SearchOperation.EQUALITY, ProductStatus.valueOf(findAllProductRequest.getStatus()));
+        if (status != null) {
+            builder.with("status", SearchOperation.EQUALITY, ProductStatus.valueOf(status));
         }
 
-        if (findAllProductRequest.getIds() != null) {
-            builder.with("id", SearchOperation.IN, findAllProductRequest.getIds());
+        if (productIds != null) {
+            builder.with("id", SearchOperation.IN, productIds);
         }
 
         Specification<Product> spec = builder.build();
@@ -66,6 +72,7 @@ public class ProductService {
                 findAllProductRequest.getSortBy());
 
         Page<Product> page = productRepository.findAll(spec, pageable);
+
         return page;
     }
 
@@ -73,7 +80,7 @@ public class ProductService {
         Optional<Product> optional = productRepository.findById(productId);
 
         if (!optional.isPresent()) {
-            throw new ApiException(400, "ProductNotFound");
+            throw new ApiException(404, "ProductNotFound");
         }
 
         // validate access authorization
@@ -99,7 +106,7 @@ public class ProductService {
         Optional<Product> optional = productRepository.findById(productId);
 
         if (!optional.isPresent()) {
-            throw new ApiException(400, "ProductNotFound");
+            throw new ApiException(404, "ProductNotFound");
         }
 
         Product updatedProduct = optional.get();

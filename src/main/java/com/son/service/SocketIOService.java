@@ -5,25 +5,21 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.son.entity.User;
-import com.son.entity.UserStatus;
 import com.son.handler.ApiException;
-import com.son.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 
 @Service
 @Slf4j
 public class SocketIOService {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtTokenService jwtTokenService;
     private final SocketIOServer server;
 
-    public SocketIOService(SocketIOServer server, JwtTokenService jwtTokenService, UserRepository userRepository) {
+    public SocketIOService(SocketIOServer server, JwtTokenService jwtTokenService, UserService userService) {
         this.server = server;
         this.jwtTokenService = jwtTokenService;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @OnConnect
@@ -32,7 +28,7 @@ public class SocketIOService {
             log.error("Client NULL");
             return;
         }
-        System.out.println(client.getSessionId());
+
         String token = client.getHandshakeData().getSingleUrlParam("token");
 
         if (token == null) {
@@ -44,21 +40,16 @@ public class SocketIOService {
         }
 
         String username = jwtTokenService.getUsernameFromJWT(token);
-        User user = userRepository.findActiveUser(username, UserStatus.ACTIVE);
 
-        if (user == null) {
-            throw new ApiException(200, "User not found or is inactive");
-        }
-        System.out.println(Arrays.toString(client.getAllRooms().toArray()));
+        User user = userService.findOneActiveUser(username);
+
         client.joinRoom("user-" + user.getId());
-        System.out.println(Arrays.toString(client.getAllRooms().toArray()));
-
     }
 
     @OnDisconnect
     public void onDisconnect(SocketIOClient client) {
         if (client == null) {
-            log.error("客户端为空");
+            log.error("Client NULL");
             return;
         }
         client.disconnect();
