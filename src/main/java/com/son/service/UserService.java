@@ -64,7 +64,7 @@ public class UserService {
 
     public void unsubscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, UserDetailsImpl credentials) {
         String topic = "user-" + credentials.getId();
-        fcmService.unsubscribeFromTopic(List.of(firebaseTokenRequest.getToken()), topic);
+        fcmService.unsubscribeFromTopic(Collections.singletonList(firebaseTokenRequest.getToken()), topic);
     }
 
     public boolean addNotificationTypes(
