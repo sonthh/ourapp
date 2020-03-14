@@ -66,10 +66,10 @@ public class ProductService {
         Specification<Product> spec = builder.build();
 
         Pageable pageable = PageUtil.getPageable(
-                findAllProductRequest.getOffset(),
-                findAllProductRequest.getLimit(),
-                findAllProductRequest.getSortDirection(),
-                findAllProductRequest.getSortBy());
+            findAllProductRequest.getOffset(),
+            findAllProductRequest.getLimit(),
+            findAllProductRequest.getSortDirection(),
+            findAllProductRequest.getSortBy());
 
         Page<Product> page = productRepository.findAll(spec, pageable);
 

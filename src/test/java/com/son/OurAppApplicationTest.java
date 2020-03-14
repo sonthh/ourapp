@@ -40,4 +40,9 @@ class OurAppApplicationTest {
     void testCase7() {
         assertTrue(true);
     }
+
+    @Test
+    void testCase8() {
+        assertTrue(true);
+    }
 }
