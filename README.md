@@ -6,7 +6,7 @@
 
 Our [Spring Boot](http://projects.spring.io/spring-boot/) project for backend API
 
-## Technology used
+## Technologies used
 
 Spring framework and other libraries:
 
