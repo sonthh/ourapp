@@ -25,4 +25,9 @@ class SampleUnitTesting {
     void testCase4() {
         assertTrue(false);
     }
+
+    @Test
+    void testCase5() {
+        assertTrue(false);
+    }
 }
