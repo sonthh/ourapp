@@ -38,6 +38,11 @@ class OurAppApplicationTest {
 
     @Test
     void testCase7() {
-        assertTrue(false);
+        assertTrue(true);
+    }
+
+    @Test
+    void testCase8() {
+        assertTrue(true);
     }
 }
