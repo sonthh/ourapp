@@ -55,7 +55,7 @@ The easiest way to deploy the sample application to Heroku is to use the [Heroku
 $ heroku login
 $ ...please refer the heroku documentation
 ```
-Maybe use can use Profile or system.properties file
+Maybe you can use Profile or system.properties file
 
 ```shell
 java -Dserver.port=PORT $JAVA_OPTS -jar target/ourapp-0.0.1-SNAPSHOT.jar
