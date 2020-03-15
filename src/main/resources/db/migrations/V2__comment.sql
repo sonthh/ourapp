@@ -1,0 +1,1 @@
+ALTER TABLE migrations COMMENT = 'migration histories table';
