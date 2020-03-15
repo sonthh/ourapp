@@ -47,6 +47,15 @@ Switch development environment by removing the comment at application.properties
 # spring.profiles.active=dev
 ```
 
+## Run migrations
+Run migration with a particular environment
+```shell
+// local
+$ mvn flyway:migrate -P local
+// dev
+$ mvn flyway:migrate -P dev
+```
+
 ## Deploying the application to Heroku
 
 The easiest way to deploy the sample application to Heroku is to use the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli):
