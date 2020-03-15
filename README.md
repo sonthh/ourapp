@@ -22,6 +22,7 @@ Spring framework and other libraries:
 - Swagger 2
 - io.jsonwebtoken
 - MySQL
+- FlywayDB migration
 
 ## Requirements
 
