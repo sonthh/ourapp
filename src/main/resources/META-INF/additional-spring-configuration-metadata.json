@@ -1,9 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "ourapp.environment",
-      "type": "java.lang.String",
-      "description": "Switch environment."
-    }
-  ]
-}
