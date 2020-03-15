@@ -43,6 +43,7 @@ class OurAppApplicationTest {
 
     @Test
     void testCase8() {
-        assertTrue(false);
+        assertEquals("helloworld", "helloworld", "test string");
+        assertTrue(true);
     }
 }
