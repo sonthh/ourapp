@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("UsernameNotFound");
         }
 
-        UserDetailsImpl credentials = UserDetailsUtil.buildUserDetails(user);
+        Credentials credentials = UserDetailsUtil.buildUserDetails(user);
 
         return credentials;
     }

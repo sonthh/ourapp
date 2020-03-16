@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserDetailsImpl implements UserDetails {
+public class Credentials implements UserDetails {
     private Integer id;
     private String username;
     private String password;
@@ -21,7 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     private List<Role> roles;
     private List<GrantedAuthority> authorities;
 
-    public UserDetailsImpl(
+    public Credentials(
         Integer id, String username, String password, UserStatus status, List<Role> roles,
         List<GrantedAuthority> authorities
     ) {
@@ -77,5 +77,19 @@ public class UserDetailsImpl implements UserDetails {
         user.setRoles(this.getRoles());
 
         return user;
+    }
+
+    public Boolean hasRole(String roleName) {
+        if (roles == null || roles.isEmpty() || roleName == null || roleName.trim().equals("")) {
+            return false;
+        }
+
+        Boolean hasRole = roles.stream().anyMatch(role -> role.getName().equals(roleName));
+
+        return hasRole;
+    }
+
+    public Boolean isAdmin() {
+        return hasRole(Role.ROLE_ADMIN);
     }
 }

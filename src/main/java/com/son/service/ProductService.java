@@ -1,5 +1,6 @@
 package com.son.service;
 
+import com.son.entity.User;
 import com.son.request.CreateProductRequest;
 import com.son.request.FindAllProductRequest;
 import com.son.request.UpdateProductRequest;
@@ -7,6 +8,7 @@ import com.son.entity.Product;
 import com.son.entity.ProductStatus;
 import com.son.handler.ApiException;
 import com.son.repository.ProductRepository;
+import com.son.security.Credentials;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SearchOperation;
 import com.son.util.spec.SpecificationBuilder;
@@ -29,6 +31,25 @@ public class ProductService {
         this.modelMapper = modelMapper;
     }
 
+    private void validatePermission(Credentials credentials, Product product) throws ApiException {
+        if (product == null) {
+            return;
+        }
+
+        // is admin account
+        if (credentials.isAdmin()) {
+            return;
+        }
+
+        User createdBy = product.getCreatedBy();
+        // is owner
+        if (createdBy != null && createdBy.sameCredentials(credentials)) {
+            return;
+        }
+
+        throw new ApiException(403, "NoPermission");
+    }
+
     public Product createOne(CreateProductRequest createProductRequest) {
         Product savedProduct = modelMapper.map(createProductRequest, Product.class);
 
@@ -40,43 +61,32 @@ public class ProductService {
     }
 
     public Page<Product> findMany(FindAllProductRequest findAllProductRequest) {
-        SpecificationBuilder<Product> builder = new SpecificationBuilder<>();
-
         Integer price = findAllProductRequest.getPrice();
         String name = findAllProductRequest.getName();
         String status = findAllProductRequest.getStatus();
         List<Integer> productIds = findAllProductRequest.getIds();
+        Integer offset = findAllProductRequest.getOffset();
+        Integer limit = findAllProductRequest.getLimit();
+        String sortDirection = findAllProductRequest.getSortDirection();
+        String sortBy = findAllProductRequest.getSortBy();
 
-        if (price != null) {
-            builder.with("price", SearchOperation.EQUALITY, price);
-        }
-
-        if (name != null) {
-            builder.with("name", SearchOperation.EQUALITY, name, "*", "*");
-        }
-
-        if (status != null) {
-            builder.with("status", SearchOperation.EQUALITY, ProductStatus.valueOf(status));
-        }
-
-        if (productIds != null) {
-            builder.with("id", SearchOperation.IN, productIds);
-        }
+        SpecificationBuilder<Product> builder = new SpecificationBuilder<>();
+        builder
+            .query("price", SearchOperation.EQUALITY, price)
+            .query("name", SearchOperation.EQUALITY, name, "*", "*")
+            .query("status", SearchOperation.EQUALITY, ProductStatus.valueOf(status))
+            .query("id", SearchOperation.IN, productIds);
 
         Specification<Product> spec = builder.build();
 
-        Pageable pageable = PageUtil.getPageable(
-            findAllProductRequest.getOffset(),
-            findAllProductRequest.getLimit(),
-            findAllProductRequest.getSortDirection(),
-            findAllProductRequest.getSortBy());
+        Pageable pageable = PageUtil.getPageable(offset, limit, sortDirection, sortBy);
 
         Page<Product> page = productRepository.findAll(spec, pageable);
 
         return page;
     }
 
-    public Product findOne(Integer productId) throws ApiException {
+    public Product findOne(Credentials credentials, Integer productId) throws ApiException {
         Optional<Product> optional = productRepository.findById(productId);
 
         if (!optional.isPresent()) {
@@ -88,16 +98,18 @@ public class ProductService {
         return optional.get();
     }
 
-    public Boolean deleteOne(Integer productId) throws ApiException {
+    public Boolean deleteOne(Credentials credentials, Integer productId) throws ApiException {
         Optional<Product> optional = productRepository.findById(productId);
 
         if (!optional.isPresent()) {
             throw new ApiException(400, "ProductNotFound");
         }
 
-        // validate access authorization
+        Product product = optional.get();
 
-        productRepository.deleteById(optional.get().getId());
+        validatePermission(credentials, product);
+
+        productRepository.deleteById(product.getId());
 
         return true;
     }

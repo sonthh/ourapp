@@ -12,22 +12,22 @@ public class SpecificationBuilder<T> {
         params = new ArrayList<>();
     }
 
-    public final SpecificationBuilder with(
+    public final SpecificationBuilder query(
         final String key, final SearchOperation operation, final Object value, final String prefix,
         final String suffix
     ) {
-        return with(null, key, operation, value, prefix, suffix);
+        return query(null, key, operation, value, prefix, suffix);
     }
 
-    public final SpecificationBuilder with(final String key, final SearchOperation operation, final Object value) {
-        return with(null, key, operation, value, null, null);
+    public final SpecificationBuilder query(final String key, final SearchOperation operation, final Object value) {
+        return query(null, key, operation, value, null, null);
     }
 
-    public final SpecificationBuilder with(
+    public final SpecificationBuilder query(
         final String orPredicate, final String key, SearchOperation op, final Object value, final String prefix,
         final String suffix
     ) {
-        if (op == null) {
+        if (op == null || value == null) {
             return this;
         }
 
@@ -45,12 +45,14 @@ public class SpecificationBuilder<T> {
         }
 
         params.add(new SpecCriteria(orPredicate, key, op, value));
+
         return this;
     }
 
     public Specification<T> build() {
-        if (params.size() == 0)
+        if (params.size() == 0) {
             return null;
+        }
 
         Specification<T> result = new CustomSpecification<T>(params.get(0));
 
@@ -63,12 +65,12 @@ public class SpecificationBuilder<T> {
         return result;
     }
 
-    public final SpecificationBuilder with(CustomSpecification spec) {
+    public final SpecificationBuilder query(CustomSpecification spec) {
         params.add(spec.getCriteria());
         return this;
     }
 
-    public final SpecificationBuilder with(SpecCriteria criteria) {
+    public final SpecificationBuilder query(SpecCriteria criteria) {
         params.add(criteria);
         return this;
     }

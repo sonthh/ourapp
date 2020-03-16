@@ -6,11 +6,10 @@ import com.son.handler.ApiException;
 import com.son.repository.UserRepository;
 import com.son.request.FirebaseTokenRequest;
 import com.son.request.NotificationTypesRequest;
-import com.son.security.UserDetailsImpl;
+import com.son.security.Credentials;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -57,18 +56,18 @@ public class UserService {
         return optional.get();
     }
 
-    public void subscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, UserDetailsImpl credentials) {
+    public void subscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, Credentials credentials) {
         String topic = "user-" + credentials.getId();
         fcmService.subscribeToTopic(Collections.singletonList(firebaseTokenRequest.getToken()), topic);
     }
 
-    public void unsubscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, UserDetailsImpl credentials) {
+    public void unsubscribeFirebaseToken(FirebaseTokenRequest firebaseTokenRequest, Credentials credentials) {
         String topic = "user-" + credentials.getId();
         fcmService.unsubscribeFromTopic(Collections.singletonList(firebaseTokenRequest.getToken()), topic);
     }
 
     public boolean addNotificationTypes(
-        NotificationTypesRequest notificationTypesRequest, UserDetailsImpl credentials
+        NotificationTypesRequest notificationTypesRequest, Credentials credentials
     ) throws ApiException {
         Optional<User> optional = userRepository.findById(credentials.getId());
 

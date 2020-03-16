@@ -1,6 +1,6 @@
 package com.son.service;
 
-import com.son.security.UserDetailsImpl;
+import com.son.security.Credentials;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
@@ -19,7 +19,7 @@ public class JwtTokenService {
     @Value("${JWT_EXPIRATION}")
     private Long JWT_EXPIRATION;
 
-    public String generateToken(UserDetailsImpl userDetails) {
+    public String generateToken(Credentials userDetails) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
 

@@ -2,7 +2,7 @@ package com.son.controller;
 
 import com.son.handler.ApiException;
 import com.son.request.LoginRequest;
-import com.son.security.UserDetailsImpl;
+import com.son.security.Credentials;
 import com.son.service.JwtTokenService;
 import com.son.service.UserService;
 import io.swagger.annotations.Api;
@@ -62,7 +62,7 @@ public class AuthController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            UserDetailsImpl credentials = (UserDetailsImpl) authentication.getPrincipal();
+            Credentials credentials = (Credentials) authentication.getPrincipal();
 
             String jwt = jwtTokenService.generateToken(credentials);
 
