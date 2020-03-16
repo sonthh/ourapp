@@ -1,6 +1,7 @@
 package com.son.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.son.security.Credentials;
 import com.son.util.jpa.StringListConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,4 +51,27 @@ public class User {
     @Convert(converter = StringListConverter.class)
     @Column(columnDefinition = "TEXT")
     private List<String> notificationTypes;
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+
+        if (obj instanceof User) {
+            User user = (User) obj;
+            return user.getId().equals(id);
+        }
+
+        return false;
+    }
+
+    public boolean sameCredentials(Credentials credentials) {
+        return credentials.getId().equals(id);
+    }
 }

@@ -14,6 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_BASIC = "BASIC";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

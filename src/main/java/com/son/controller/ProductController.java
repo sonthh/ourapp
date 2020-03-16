@@ -6,6 +6,7 @@ import com.son.handler.ApiException;
 import com.son.request.CreateProductRequest;
 import com.son.request.FindAllProductRequest;
 import com.son.request.UpdateProductRequest;
+import com.son.security.Credentials;
 import com.son.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -60,9 +62,10 @@ public class ProductController {
     @GetMapping("/{productId}")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> findOne(
-        @Min(1) @PathVariable Integer productId
+        @Min(1) @PathVariable Integer productId,
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        Product product = productService.findOne(productId);
+        Product product = productService.findOne(credentials, productId);
 
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -71,9 +74,10 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> deleteOne(
-        @Min(1) @PathVariable Integer productId
+        @Min(1) @PathVariable Integer productId,
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        Boolean isDeleted = productService.deleteOne(productId);
+        Boolean isDeleted = productService.deleteOne(credentials, productId);
 
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
     }

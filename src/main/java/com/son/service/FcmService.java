@@ -3,50 +3,28 @@ package com.son.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.son.props.FcmProps;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
+@EnableConfigurationProperties({FcmProps.class})
 public class FcmService {
-    @Value("${firebase-config}")
-    private String firebaseConfigPath;
+    private final FirebaseApp firebaseApp;
 
-    private FirebaseApp firebaseApp;
-
-    @PostConstruct
-    public void initialize() {
-        try {
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())).build();
-
-            if (FirebaseApp.getApps().isEmpty()) {
-                this.firebaseApp = FirebaseApp.initializeApp(options);
-                log.info("Firebase application has been initialized");
-                return;
-            }
-
-            this.firebaseApp = FirebaseApp.getInstance();
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-        }
+    public FcmService(FirebaseApp firebaseApp) {
+        this.firebaseApp = firebaseApp;
     }
 
     public void subscribeToTopic(List<String> tokens, String topic) {

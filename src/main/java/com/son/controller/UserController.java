@@ -5,7 +5,7 @@ import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.request.FirebaseTokenRequest;
 import com.son.request.NotificationTypesRequest;
-import com.son.security.UserDetailsImpl;
+import com.son.security.Credentials;
 import com.son.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +36,7 @@ public class UserController {
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     //    @Dto(value = UserInfoDto.class)
     public ResponseEntity<Object> userMe(
-        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         User userMe = userService.findOne(credentials.getId());
@@ -49,7 +49,7 @@ public class UserController {
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> subscribeFirebaseToken(
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
-        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) {
 
         userService.subscribeFirebaseToken(firebaseTokenRequest, credentials);
@@ -62,7 +62,7 @@ public class UserController {
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> unsubscribeFirebaseToken(
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
-        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) {
         userService.unsubscribeFirebaseToken(firebaseTokenRequest, credentials);
 
@@ -74,7 +74,7 @@ public class UserController {
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Object> addNotificationTypes(
         @Valid @NotNull @RequestBody(required = false) NotificationTypesRequest notificationTypesRequest,
-        @ApiIgnore @AuthenticationPrincipal UserDetailsImpl credentials
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
         boolean isUpdated = userService.addNotificationTypes(notificationTypesRequest, credentials);
 
