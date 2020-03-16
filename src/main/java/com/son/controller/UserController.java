@@ -35,7 +35,7 @@ public class UserController {
     @GetMapping("me")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     //    @Dto(value = UserInfoDto.class)
-    public ResponseEntity<Object> userMe(
+    public ResponseEntity<User> userMe(
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
@@ -47,7 +47,7 @@ public class UserController {
     @ApiOperation("subscribe firebase token")
     @PutMapping("me/token/subscribe")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
-    public ResponseEntity<Object> subscribeFirebaseToken(
+    public ResponseEntity<Boolean> subscribeFirebaseToken(
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) {
@@ -60,7 +60,7 @@ public class UserController {
     @ApiOperation("unsubscribe firebase token")
     @PutMapping("me/token/unsubscribe")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
-    public ResponseEntity<Object> unsubscribeFirebaseToken(
+    public ResponseEntity<Boolean> unsubscribeFirebaseToken(
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) {
@@ -72,7 +72,7 @@ public class UserController {
     @ApiOperation("add notification types")
     @PutMapping("me/notifications/type/add")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
-    public ResponseEntity<Object> addNotificationTypes(
+    public ResponseEntity<Boolean> addNotificationTypes(
         @Valid @NotNull @RequestBody(required = false) NotificationTypesRequest notificationTypesRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {

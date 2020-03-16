@@ -39,7 +39,7 @@ public class ProductController {
     @PostMapping
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Product> createOne(
-        @Valid @NotNull @RequestBody(required = false) CreateProductRequest createProductRequest
+        @Valid @RequestBody CreateProductRequest createProductRequest
     ) {
         Product newProduct = productService.createOne(createProductRequest);
 
@@ -61,7 +61,7 @@ public class ProductController {
     @ApiOperation("find one product")
     @GetMapping("/{productId}")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
-    public ResponseEntity<Object> findOne(
+    public ResponseEntity<Product> findOne(
         @Min(1) @PathVariable Integer productId,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
@@ -73,7 +73,7 @@ public class ProductController {
     @ApiOperation("delete one product")
     @DeleteMapping("/{productId}")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
-    public ResponseEntity<Object> deleteOne(
+    public ResponseEntity<Boolean> deleteOne(
         @Min(1) @PathVariable Integer productId,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
@@ -85,7 +85,7 @@ public class ProductController {
     @ApiOperation("update one product")
     @PutMapping("/{productId}")
     @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
-    public ResponseEntity<Object> updateOne(
+    public ResponseEntity<Product> updateOne(
         @Valid @RequestBody UpdateProductRequest updateProductRequest,
         @Min(1) @PathVariable Integer productId
     ) throws ApiException {
