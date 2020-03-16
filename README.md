@@ -68,7 +68,7 @@ $ ...please refer the heroku documentation
 Maybe you can use Profile or system.properties file
 
 ```shell
-java -Dserver.port=PORT $JAVA_OPTS -jar target/ourapp-0.0.1-SNAPSHOT.jar
+java -Dserver.port=$PORT $JAVA_OPTS -jar target/ourapp-0.0.1-SNAPSHOT.jar
 ```
 
 ```shell
