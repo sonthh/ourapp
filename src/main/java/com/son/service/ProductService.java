@@ -64,6 +64,7 @@ public class ProductService {
         Integer price = findAllProductRequest.getPrice();
         String name = findAllProductRequest.getName();
         String status = findAllProductRequest.getStatus();
+        ProductStatus productStatus = status == null ? null : ProductStatus.valueOf(status);
         List<Integer> productIds = findAllProductRequest.getIds();
         Integer offset = findAllProductRequest.getOffset();
         Integer limit = findAllProductRequest.getLimit();
@@ -74,7 +75,7 @@ public class ProductService {
         builder
             .query("price", SearchOperation.EQUALITY, price)
             .query("name", SearchOperation.EQUALITY, name, "*", "*")
-            .query("status", SearchOperation.EQUALITY, ProductStatus.valueOf(status))
+            .query("status", SearchOperation.EQUALITY, productStatus)
             .query("id", SearchOperation.IN, productIds);
 
         Specification<Product> spec = builder.build();

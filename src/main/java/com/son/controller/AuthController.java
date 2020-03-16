@@ -1,5 +1,6 @@
 package com.son.controller;
 
+import com.son.dto.LoginResponseDto;
 import com.son.handler.ApiException;
 import com.son.request.LoginRequest;
 import com.son.security.Credentials;
@@ -43,8 +44,8 @@ public class AuthController {
 
     @ApiOperation("Login to get jwt token")
     @PostMapping("login")
-    public ResponseEntity<Object> login(
-        @Valid @NotNull @RequestBody(required = false) LoginRequest loginRequest
+    public ResponseEntity<LoginResponseDto> login(
+        @Valid @RequestBody LoginRequest loginRequest
     ) throws ApiException {
         try {
             userService.findOneByUsername(loginRequest.getUsername());
@@ -64,10 +65,9 @@ public class AuthController {
 
             Credentials credentials = (Credentials) authentication.getPrincipal();
 
-            String jwt = jwtTokenService.generateToken(credentials);
+            String jwtToken = jwtTokenService.generateToken(credentials);
 
-            Map<String, Object> result = new HashMap<>();
-            result.put("token", jwt);
+            LoginResponseDto result = new LoginResponseDto(jwtToken);
 
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception ex) {
