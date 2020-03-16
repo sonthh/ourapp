@@ -74,6 +74,12 @@ java -Dserver.port=$PORT $JAVA_OPTS -jar target/ourapp-0.0.1-SNAPSHOT.jar
 ```shell
 java.runtime.version=1.8
 ```
+
+Create heroku Config Vars
+```shell
+spring.profiles.active=dev
+```
+
 And check your pom.xml file at properties: 
 ```xml
 <properties>
