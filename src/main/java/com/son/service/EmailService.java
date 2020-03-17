@@ -1,8 +1,8 @@
 package com.son.service;
 
+import com.son.props.AppProps;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -16,21 +16,21 @@ import java.util.Map;
 
 @Service
 public class EmailService {
+
     private final Configuration freemarker;
     private final JavaMailSender javaMailSender;
+    private final AppProps appProps;
 
-    public EmailService(Configuration freemarker, JavaMailSender javaMailSender) {
+    public EmailService(Configuration freemarker, JavaMailSender javaMailSender, AppProps appProps) {
         this.freemarker = freemarker;
         this.javaMailSender = javaMailSender;
+        this.appProps = appProps;
     }
-
-    @Value("${son.url}")
-    private String appUrl;
 
     public void sendWelcomeMail() {
         Map<String, Object> model = new HashMap<>();
         model.put("username", "sonthh.jpeg");
-        model.put("link", appUrl + "/explore");
+        model.put("link", appProps.getUrl() + "/explore");
         try {
             Template template = freemarker.getTemplate("emails/welcome.ftl");
             String text = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);

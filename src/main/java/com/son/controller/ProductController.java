@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("products")
 @Validated
 public class ProductController {
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {

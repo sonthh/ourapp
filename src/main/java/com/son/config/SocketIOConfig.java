@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({WsProps.class})
 public class SocketIOConfig {
 
+    public static final String PARAMETER_TOKEN = "token";
+
     @Bean
     public SocketIOServer server(WsProps wsProps) {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
@@ -25,7 +27,7 @@ public class SocketIOConfig {
         config.setSocketConfig(sockConfig);
 
         config.setAuthorizationListener(data -> {
-            String token = data.getSingleUrlParam("token");
+            String token = data.getSingleUrlParam(PARAMETER_TOKEN);
             return token != null && !token.trim().equals("");
         });
 

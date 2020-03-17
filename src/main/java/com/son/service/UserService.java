@@ -1,7 +1,6 @@
 package com.son.service;
 
 import com.son.entity.User;
-import com.son.entity.UserStatus;
 import com.son.handler.ApiException;
 import com.son.repository.UserRepository;
 import com.son.request.FirebaseTokenRequest;
@@ -16,6 +15,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final FcmService fcmService;
@@ -37,7 +37,7 @@ public class UserService {
     }
 
     public User findOneActiveUser(String username) throws ApiException {
-        Optional<User> optional = userRepository.findActiveUser(username, UserStatus.ACTIVE);
+        Optional<User> optional = userRepository.findActiveUser(username, User.Status.ACTIVE);
 
         if (!optional.isPresent()) {
             throw new ApiException(404, "UserNotFoundOrIsInactive");

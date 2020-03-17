@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecificationBuilder<T> {
+
     private final List<SpecCriteria> params;
 
     public SpecificationBuilder() {

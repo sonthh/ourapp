@@ -1,6 +1,6 @@
 package com.son.security;
 
-import com.son.entity.UserStatus;
+import com.son.entity.User;
 import com.son.service.JwtTokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         HttpServletRequest request, HttpServletResponse response, FilterChain filterChain
     ) throws ServletException, IOException {
         try {
-            String jwt = jwtTokenService.getJwtFromRequest(request);
+            String jwt = jwtTokenService.getJwtTokenFromRequest(request);
 
             if (jwt == null || !StringUtils.hasText(jwt) && !jwtTokenService.validateToken(jwt)) {
                 SecurityContextHolder.clearContext();
@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtTokenService.getUsernameFromJWT(jwt);
             Credentials credentials = (Credentials) userDetailsService.loadUserByUsername(username);
 
-            if (credentials == null || credentials.getStatus() != UserStatus.ACTIVE) {
+            if (credentials == null || credentials.getStatus() != User.Status.ACTIVE) {
                 SecurityContextHolder.clearContext();
                 filterChain.doFilter(request, response);
                 return;

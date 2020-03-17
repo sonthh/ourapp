@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class SocketIOService {
+
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
     private final SocketIOServer server;
