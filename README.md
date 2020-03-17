@@ -47,6 +47,10 @@ Switch development environment by removing the comment at application.properties
 // dev or another invironment
 # spring.profiles.active=dev
 ```
+## API documention
+```shell
+https://son-api.herokuapp.com/swagger-ui.html
+```
 
 ## Run migrations
 Run migration with a particular environment
