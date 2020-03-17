@@ -21,6 +21,7 @@ import javax.validation.Valid;
 @RequestMapping("auth")
 @Validated
 public class AuthController {
+
     private final AuthService authService;
 
     public AuthController(AuthService authService) {

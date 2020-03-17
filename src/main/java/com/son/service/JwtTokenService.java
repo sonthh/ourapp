@@ -1,10 +1,10 @@
 package com.son.service;
 
+import com.son.props.JwtProps;
 import com.son.security.Credentials;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,36 +13,36 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtTokenService {
-    @Value("${JWT_SECRET}")
-    private String JWT_SECRET;
+    private final JwtProps jwtProps;
 
-    @Value("${JWT_EXPIRATION}")
-    private Long JWT_EXPIRATION;
+    public JwtTokenService(JwtProps jwtProps) {
+        this.jwtProps = jwtProps;
+    }
 
     public String generateToken(Credentials userDetails) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
+        Date expiryDate = new Date(now.getTime() + jwtProps.getExpiration());
 
         return Jwts.builder()
             .setSubject(userDetails.getUsername())
             .setIssuedAt(now)
             .setExpiration(expiryDate)
-            .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+            .signWith(SignatureAlgorithm.HS512, jwtProps.getSecret())
             .compact();
     }
 
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(JWT_SECRET)
-                .parseClaimsJws(token)
-                .getBody();
+            .setSigningKey(jwtProps.getSecret())
+            .parseClaimsJws(token)
+            .getBody();
 
         return claims.getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(jwtProps.getSecret()).parseClaimsJws(token);
             return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
@@ -56,7 +56,7 @@ public class JwtTokenService {
         return false;
     }
 
-    public String getJwtFromRequest(HttpServletRequest request) {
+    public String getJwtTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

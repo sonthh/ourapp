@@ -50,15 +50,15 @@ public class FcmService {
         ObjectMapper mapper = new JsonMapper();
         String json = mapper.writeValueAsString(data);
 
+        Notification notification = Notification.builder()
+            .setTitle(title)
+            .setBody(body)
+            .setImage("https://i.pinimg.com/originals/62/de/73/62de73548da3585435dc7bf6050a77b3.jpg")
+            .build();
+
         Message message = Message.builder()
             .setTopic(target)
-            .setNotification(
-                Notification.builder()
-                    .setTitle(title)
-                    .setBody(body)
-                    .setImage("https://i.pinimg.com/originals/62/de/73/62de73548da3585435dc7bf6050a77b3.jpg")
-                    .build()
-            )
+            .setNotification(notification)
             .putData("body", json)
             .build();
 

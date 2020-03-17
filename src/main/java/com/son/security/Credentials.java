@@ -2,7 +2,6 @@ package com.son.security;
 
 import com.son.entity.Role;
 import com.son.entity.User;
-import com.son.entity.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,12 +16,12 @@ public class Credentials implements UserDetails {
     private Integer id;
     private String username;
     private String password;
-    private UserStatus status;
+    private User.Status status;
     private List<Role> roles;
     private List<GrantedAuthority> authorities;
 
     public Credentials(
-        Integer id, String username, String password, UserStatus status, List<Role> roles,
+        Integer id, String username, String password, User.Status status, List<Role> roles,
         List<GrantedAuthority> authorities
     ) {
         this.id = id;
@@ -65,7 +64,7 @@ public class Credentials implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.status == UserStatus.ACTIVE;
+        return this.status == User.Status.ACTIVE;
     }
 
     public User toUserEntity() {
@@ -90,6 +89,6 @@ public class Credentials implements UserDetails {
     }
 
     public Boolean isAdmin() {
-        return hasRole(Role.ROLE_ADMIN);
+        return hasRole(com.son.model.Role.ADMIN);
     }
 }

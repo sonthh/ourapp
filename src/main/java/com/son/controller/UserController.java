@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("users")
 @Validated
 public class UserController {
+
     private final UserService userService;
 
     public UserController(UserService userService) {

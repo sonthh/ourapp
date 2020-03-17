@@ -34,7 +34,11 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private Status status;
+
+    public enum Status {
+        ACTIVE, INACTIVE,
+    }
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

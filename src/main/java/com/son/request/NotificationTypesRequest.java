@@ -1,6 +1,6 @@
 package com.son.request;
 
-import com.son.entity.NotificationType;
+import com.son.model.NotificationType;
 import com.son.validator.IsEnumArray;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

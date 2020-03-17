@@ -5,7 +5,6 @@ import com.son.request.CreateProductRequest;
 import com.son.request.FindAllProductRequest;
 import com.son.request.UpdateProductRequest;
 import com.son.entity.Product;
-import com.son.entity.ProductStatus;
 import com.son.handler.ApiException;
 import com.son.repository.ProductRepository;
 import com.son.security.Credentials;
@@ -23,6 +22,7 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
+
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
@@ -64,7 +64,7 @@ public class ProductService {
         Integer price = findAllProductRequest.getPrice();
         String name = findAllProductRequest.getName();
         String status = findAllProductRequest.getStatus();
-        ProductStatus productStatus = status == null ? null : ProductStatus.valueOf(status);
+        Product.Status productStatus = status == null ? null : Product.Status.valueOf(status);
         List<Integer> productIds = findAllProductRequest.getIds();
         Integer offset = findAllProductRequest.getOffset();
         Integer limit = findAllProductRequest.getLimit();

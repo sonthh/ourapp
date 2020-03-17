@@ -1,6 +1,6 @@
 package com.son.request;
 
-import com.son.entity.ProductStatus;
+import com.son.entity.Product;
 import com.son.validator.IsEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -21,8 +21,8 @@ public class CreateProductRequest {
     @Min(10)
     private Integer price;
 
-    @ApiModelProperty(required = true, dataType = "com.son.entity.ProductStatus")
-    @IsEnum(enumClass = ProductStatus.class)
+    @ApiModelProperty(required = true, dataType = "com.son.entity.Product.Status")
+    @IsEnum(enumClass = Product.Status.class)
     @NotNull
     private String status;
 }

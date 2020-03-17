@@ -15,6 +15,7 @@ import java.util.Collection;
 
 @ControllerAdvice
 public class DtoMapperResponseBodyAdvice extends AbstractMappingJacksonResponseBodyAdvice {
+
     private ModelMapper modelMapper = new ModelMapper();
 
     @Override

@@ -1,7 +1,7 @@
 package com.son.request;
 
-import com.son.entity.ProductStatus;
-import com.son.entity.SortDirection;
+import com.son.entity.Product;
+import com.son.model.SortDirection;
 import com.son.validator.IsEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,8 +32,8 @@ public class FindAllProductRequest {
     @IsEnum(enumClass = SortBy.class)
     private String sortBy = "id";
 
-    @ApiModelProperty(dataType = "com.son.entity.ProductStatus")
-    @IsEnum(enumClass = ProductStatus.class)
+    @ApiModelProperty(dataType = "com.son.entity.Product.Status")
+    @IsEnum(enumClass = Product.Status.class)
     private String status;
 
     @ApiModelProperty()

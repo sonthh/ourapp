@@ -13,6 +13,7 @@ import java.util.Locale;
 
 @Configuration
 public class CommonBeansConfig {
+
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();

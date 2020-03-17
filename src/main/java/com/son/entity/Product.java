@@ -26,5 +26,9 @@ public class Product extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ProductStatus status;
+    private Status status;
+
+    public enum Status {
+        AVAILABLE, OUT_OF_STOCK,
+    }
 }

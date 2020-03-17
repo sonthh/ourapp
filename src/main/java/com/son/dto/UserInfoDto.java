@@ -1,7 +1,7 @@
 package com.son.dto;
 
 import com.son.entity.Role;
-import com.son.entity.UserStatus;
+import com.son.entity.User;
 import lombok.Data;
 
 import java.util.List;
@@ -10,6 +10,6 @@ import java.util.List;
 public class UserInfoDto {
     private Integer id;
     private String username;
-    private UserStatus status;
+    private User.Status status;
     private List<Role> roles;
 }
