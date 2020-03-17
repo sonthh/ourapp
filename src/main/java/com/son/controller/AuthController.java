@@ -3,17 +3,11 @@ package com.son.controller;
 import com.son.dto.LoginResponseDto;
 import com.son.handler.ApiException;
 import com.son.request.LoginRequest;
-import com.son.security.Credentials;
-import com.son.service.JwtTokenService;
-import com.son.service.UserService;
+import com.son.service.AuthService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,25 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
 
 @Api(tags = "Authentication", value = "Authentication")
 @RestController
 @RequestMapping("auth")
 @Validated
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenService jwtTokenService;
-    private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(
-        AuthenticationManager authenticationManager, JwtTokenService jwtTokenService, UserService userService
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenService = jwtTokenService;
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @ApiOperation("Login to get jwt token")
@@ -47,32 +32,8 @@ public class AuthController {
     public ResponseEntity<LoginResponseDto> login(
         @Valid @RequestBody LoginRequest loginRequest
     ) throws ApiException {
-        try {
-            userService.findOneByUsername(loginRequest.getUsername());
-        } catch (ApiException e) {
-            throw new ApiException(401, "Unauthorized");
-        }
+        LoginResponseDto result = authService.usernamePasswordLogin(loginRequest);
 
-        try {
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                loginRequest.getUsername(),
-                loginRequest.getPassword()
-            );
-
-            Authentication authentication = authenticationManager.authenticate(auth);
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            Credentials credentials = (Credentials) authentication.getPrincipal();
-
-            String jwtToken = jwtTokenService.generateToken(credentials);
-
-            LoginResponseDto result = new LoginResponseDto(jwtToken);
-
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ApiException(401, "Unauthorized");
-        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
