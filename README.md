@@ -49,7 +49,7 @@ Switch development environment by removing the comment at application.properties
 ```
 ## API documentation
 ```shell
-https://son-api.herokuapp.com/swagger-ui.html
+https://api-dut.herokuapp.com/swagger-ui.html
 ```
 
 ## Run migrations
