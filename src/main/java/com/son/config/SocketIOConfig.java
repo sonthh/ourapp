@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.SocketConfig;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.SpringAnnotationScanner;
 import com.son.props.WsProps;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ public class SocketIOConfig {
 
         config.setAuthorizationListener(data -> {
             String token = data.getSingleUrlParam(PARAMETER_TOKEN);
-            return token != null && !token.trim().equals("");
+            return !StringUtils.isBlank(token);
         });
 
         return new SocketIOServer(config);
