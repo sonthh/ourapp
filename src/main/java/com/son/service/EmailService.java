@@ -3,6 +3,7 @@ package com.son.service;
 import com.son.props.AppProps;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     private final Configuration freemarker;
     private final JavaMailSender javaMailSender;
     private final AppProps appProps;
-
-    public EmailService(Configuration freemarker, JavaMailSender javaMailSender, AppProps appProps) {
-        this.freemarker = freemarker;
-        this.javaMailSender = javaMailSender;
-        this.appProps = appProps;
-    }
 
     public void sendWelcomeMail() {
         Map<String, Object> model = new HashMap<>();

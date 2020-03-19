@@ -3,6 +3,7 @@ package com.son.service;
 import com.son.props.JwtProps;
 import com.son.security.Credentials;
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -12,12 +13,10 @@ import java.util.Date;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenService {
-    private final JwtProps jwtProps;
 
-    public JwtTokenService(JwtProps jwtProps) {
-        this.jwtProps = jwtProps;
-    }
+    private final JwtProps jwtProps;
 
     public String generateToken(Credentials userDetails) {
         Date now = new Date();

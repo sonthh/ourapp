@@ -10,6 +10,7 @@ import com.son.security.Credentials;
 import com.son.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +29,10 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("products")
 @Validated
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @ApiOperation("create one product")
     @PostMapping

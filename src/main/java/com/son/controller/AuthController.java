@@ -6,6 +6,7 @@ import com.son.request.LoginRequest;
 import com.son.service.AuthService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,13 +21,10 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("auth")
 @Validated
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     @ApiOperation("Login to get jwt token")
     @PostMapping("login")

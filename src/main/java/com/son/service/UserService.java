@@ -6,7 +6,7 @@ import com.son.repository.UserRepository;
 import com.son.request.FirebaseTokenRequest;
 import com.son.request.NotificationTypesRequest;
 import com.son.security.Credentials;
-import org.modelmapper.ModelMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -14,17 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private final FcmService fcmService;
-
-    public UserService(ModelMapper modelMapper, UserRepository userRepository, FcmService fcmService) {
-        this.modelMapper = modelMapper;
-        this.userRepository = userRepository;
-        this.fcmService = fcmService;
-    }
 
     public User findOneByUsername(String username) throws ApiException {
         Optional<User> optional = userRepository.findOneByUsername(username);

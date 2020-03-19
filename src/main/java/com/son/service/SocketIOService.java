@@ -6,22 +6,18 @@ import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.son.entity.User;
 import com.son.handler.ApiException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SocketIOService {
 
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
     private final SocketIOServer server;
-
-    public SocketIOService(SocketIOServer server, JwtTokenService jwtTokenService, UserService userService) {
-        this.server = server;
-        this.jwtTokenService = jwtTokenService;
-        this.userService = userService;
-    }
 
     @OnConnect
     public void onConnect(SocketIOClient client) throws ApiException {

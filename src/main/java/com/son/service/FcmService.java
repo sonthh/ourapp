@@ -9,6 +9,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.son.props.FcmProps;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,10 @@ import java.util.Map;
 @Service
 @Slf4j
 @EnableConfigurationProperties({FcmProps.class})
+@RequiredArgsConstructor
 public class FcmService {
-    private final FirebaseApp firebaseApp;
 
-    public FcmService(FirebaseApp firebaseApp) {
-        this.firebaseApp = firebaseApp;
-    }
+    private final FirebaseApp firebaseApp;
 
     public void subscribeToTopic(List<String> tokens, String topic) {
         try {

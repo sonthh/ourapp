@@ -2,6 +2,7 @@ package com.son.config;
 
 import com.son.security.JwtAuthenticationFilter;
 import com.son.security.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,17 +17,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity(debug = true)
+@RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public WebSecurityConfig(
-        UserDetailsServiceImpl userDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter
-    ) {
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

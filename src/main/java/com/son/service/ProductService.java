@@ -11,6 +11,7 @@ import com.son.security.Credentials;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SearchOperation;
 import com.son.util.spec.SpecificationBuilder;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,15 +22,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
-
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper) {
-        this.productRepository = productRepository;
-        this.modelMapper = modelMapper;
-    }
 
     private void validatePermission(Credentials credentials, Product product) throws ApiException {
         if (product == null) {
