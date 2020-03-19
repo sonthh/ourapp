@@ -47,4 +47,3 @@ public class FindAllProductRequest {
     @ApiModelProperty()
     private List<Integer> ids;
 }
-

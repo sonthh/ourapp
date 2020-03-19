@@ -32,3 +32,4 @@ public class Product extends BaseEntity {
         AVAILABLE, OUT_OF_STOCK,
     }
 }
+
