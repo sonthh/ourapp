@@ -50,7 +50,6 @@ public class UserController {
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) {
-
         userService.subscribeFirebaseToken(firebaseTokenRequest, credentials);
 
         return new ResponseEntity<>(true, HttpStatus.OK);

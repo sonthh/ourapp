@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @EnableScheduling
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class OurAppApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(OurAppApplication.class, args);
     }
