@@ -70,6 +70,7 @@ public class Credentials implements UserDetails {
     public User toUserEntity() {
         User user = new User();
 
+        user.setUsername(this.getUsername());
         user.setId(this.getId());
         user.setPassword(this.getPassword());
         user.setStatus(this.getStatus());

@@ -124,7 +124,7 @@ public class ProductService {
 
         // validate access authorization
 
-        productRepository.save(updatedProduct);
+        updatedProduct = productRepository.save(updatedProduct);
 
         return updatedProduct;
     }
