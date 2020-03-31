@@ -19,6 +19,8 @@ public class SocketIOService {
     private final JwtTokenService jwtTokenService;
     private final SocketIOServer server;
 
+    private static final String ROOM_ID_TEMPLATE = "user-%s";
+
     @OnConnect
     public void onConnect(SocketIOClient client) throws ApiException {
         if (client == null) {
@@ -40,7 +42,7 @@ public class SocketIOService {
 
         User user = userService.findOneActiveUser(username);
 
-        client.joinRoom("user-" + user.getId());
+        client.joinRoom(getRoomId(user.getId()));
     }
 
     @OnDisconnect
@@ -54,5 +56,9 @@ public class SocketIOService {
 
     public void sendToRoom(String roomId, String eventType, Object data) {
         server.getRoomOperations(roomId).sendEvent(eventType, data);
+    }
+
+    private String getRoomId(Integer userId) {
+        return String.format(ROOM_ID_TEMPLATE, userId);
     }
 }

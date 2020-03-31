@@ -9,7 +9,6 @@ import com.son.handler.ApiException;
 import com.son.repository.ProductRepository;
 import com.son.security.Credentials;
 import com.son.util.page.PageUtil;
-import com.son.util.spec.SearchOperation;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.son.util.spec.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,9 +53,7 @@ public class ProductService {
 
         // validate access authorization
 
-        Product newProduct = productRepository.save(savedProduct);
-
-        return newProduct;
+        return productRepository.save(savedProduct);
     }
 
     public Page<Product> findMany(FindAllProductRequest findAllProductRequest) {
@@ -70,18 +69,16 @@ public class ProductService {
 
         SpecificationBuilder<Product> builder = new SpecificationBuilder<>();
         builder
-            .query("price", SearchOperation.EQUALITY, price)
-            .query("name", SearchOperation.EQUALITY, name, "*", "*")
-            .query("status", SearchOperation.EQUALITY, productStatus)
-            .query("id", SearchOperation.IN, productIds);
+            .query("price", EQUALITY, price)
+            .query("name", EQUALITY, name, "*", "*")
+            .query("status", EQUALITY, productStatus)
+            .query("id", IN, productIds);
 
         Specification<Product> spec = builder.build();
 
         Pageable pageable = PageUtil.getPageable(offset, limit, sortDirection, sortBy);
 
-        Page<Product> page = productRepository.findAll(spec, pageable);
-
-        return page;
+        return productRepository.findAll(spec, pageable);
     }
 
     public Product findOne(Credentials credentials, Integer productId) throws ApiException {

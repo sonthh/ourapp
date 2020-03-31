@@ -26,7 +26,7 @@ public class BarcodeController {
     private final BarcodeService barcodeService;
 
     @PostMapping(value = "/code128", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<BufferedImage> Code128Barcode(@RequestBody String barcode) throws Exception {
+    public Object Code128Barcode(@RequestBody String barcode) throws Exception {
         return okResponse(barcodeService.generateCode128BarcodeImage(barcode));
     }
 
