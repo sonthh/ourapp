@@ -5,6 +5,8 @@ import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.request.FirebaseTokenRequest;
 import com.son.request.NotificationTypesRequest;
+import com.son.request.UpdateAvatarRequest;
+import com.son.request.UpdateUserRequest;
 import com.son.security.Credentials;
 import com.son.service.UserService;
 import io.swagger.annotations.Api;
@@ -41,6 +43,31 @@ public class UserController {
         User userMe = userService.findOne(credentials.getId());
 
         return new ResponseEntity<>(userMe, HttpStatus.OK);
+    }
+
+    @ApiOperation("update my information")
+    @PutMapping("me")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    public ResponseEntity<User> updateMe(
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials,
+        @Valid @RequestBody UpdateUserRequest updateUserRequest
+    ) throws ApiException {
+
+        User userMe = userService.updateOne(updateUserRequest, credentials);
+
+        return new ResponseEntity<>(userMe, HttpStatus.OK);
+    }
+
+    @ApiOperation("update my avatar")
+    @PostMapping("me/avatar")
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    public ResponseEntity<String> updateAvatar(
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials,
+        @Valid UpdateAvatarRequest updateAvatarRequest
+    ) throws ApiException {
+        String avatar = userService.updateAvatar(updateAvatarRequest, credentials);
+
+        return new ResponseEntity<>(avatar, HttpStatus.OK);
     }
 
     @ApiOperation("subscribe firebase token")

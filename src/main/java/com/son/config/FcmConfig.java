@@ -18,7 +18,7 @@ import java.io.IOException;
 public class FcmConfig {
 
     @Bean
-    public FirebaseApp initialize(FcmProps fcmProps) {
+    public FirebaseApp firebaseApp(FcmProps fcmProps) {
         FirebaseApp firebaseApp = null;
         try {
             FirebaseOptions options = new FirebaseOptions.Builder()

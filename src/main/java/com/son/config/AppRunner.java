@@ -17,7 +17,7 @@ public class AppRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        server.start();
+        // server.start();
         log.info("My app has been started at " + appProps.getEnvironment());
     }
 }
