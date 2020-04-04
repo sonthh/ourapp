@@ -66,11 +66,13 @@ public class ProductService {
         Integer limit = findAllProductRequest.getLimit();
         String sortDirection = findAllProductRequest.getSortDirection();
         String sortBy = findAllProductRequest.getSortBy();
+        String createdBy = findAllProductRequest.getCreatedBy();
 
         SpecificationBuilder<Product> builder = new SpecificationBuilder<>();
         builder
             .query("price", EQUALITY, price)
-            .query("name", EQUALITY, name, "*", "*")
+            .query("name", CONTAINS, name)
+            .query("createdBy", CONTAINS, createdBy , "username")
             .query("status", EQUALITY, productStatus)
             .query("id", IN, productIds);
 

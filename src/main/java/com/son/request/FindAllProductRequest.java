@@ -45,5 +45,9 @@ public class FindAllProductRequest {
     private Integer price;
 
     @ApiModelProperty()
+    @Size(min = 1)
+    private String createdBy;
+
+    @ApiModelProperty()
     private List<Integer> ids;
 }

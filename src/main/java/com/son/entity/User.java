@@ -32,6 +32,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(unique = true)
+    private String avatar;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -14,38 +14,25 @@ public class SpecificationBuilder<T> {
     }
 
     public final SpecificationBuilder query(
-        final String key, final SearchOperation operation, final Object value, final String prefix,
-        final String suffix
+        final String key, final SearchOperation operation, final Object value
     ) {
-        return query(null, key, operation, value, prefix, suffix);
-    }
-
-    public final SpecificationBuilder query(final String key, final SearchOperation operation, final Object value) {
-        return query(null, key, operation, value, null, null);
+        return query(null, key, operation, value, null);
     }
 
     public final SpecificationBuilder query(
-        final String orPredicate, final String key, SearchOperation op, final Object value, final String prefix,
-        final String suffix
+            final String key, final SearchOperation operation, final Object value, final String joinField
+    ) {
+        return query(null, key, operation, value, joinField);
+    }
+
+    public final SpecificationBuilder query(
+        final String orPredicate, final String key, SearchOperation op, final Object value, final String joinField
     ) {
         if (op == null || value == null) {
             return this;
         }
 
-        if (op == SearchOperation.EQUALITY) {
-            final boolean startWithAsterisk = prefix != null && prefix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
-            final boolean endWithAsterisk = suffix != null && suffix.contains(SearchOperation.ZERO_OR_MORE_REGEX);
-
-            if (startWithAsterisk && endWithAsterisk) {
-                op = SearchOperation.CONTAINS;
-            } else if (startWithAsterisk) {
-                op = SearchOperation.ENDS_WITH;
-            } else if (endWithAsterisk) {
-                op = SearchOperation.STARTS_WITH;
-            }
-        }
-
-        params.add(new SpecCriteria(orPredicate, key, op, value));
+        params.add(new SpecCriteria(orPredicate, key, op, value, joinField));
 
         return this;
     }
