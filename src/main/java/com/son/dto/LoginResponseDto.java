@@ -7,4 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class LoginResponseDto {
     private String token;
+    private String username;
+    private String avatar;
 }

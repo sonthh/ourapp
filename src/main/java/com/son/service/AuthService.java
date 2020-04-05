@@ -39,7 +39,7 @@ public class AuthService {
 
             String jwtToken = jwtTokenService.generateToken(credentials);
 
-            return new LoginResponseDto(jwtToken);
+            return new LoginResponseDto(jwtToken, credentials.getUsername(), credentials.getAvatar());
         } catch (Exception ex) {
             throw new ApiException(401, "Unauthorized");
         }

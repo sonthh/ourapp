@@ -16,12 +16,15 @@ public class Credentials implements UserDetails {
     private Integer id;
     private String username;
     private String password;
+    private String email;
+    private String avatar;
     private User.Status status;
     private List<Role> roles;
     private List<GrantedAuthority> authorities;
 
     public Credentials(
         Integer id, String username, String password, User.Status status, List<Role> roles,
+        String email, String avatar,
         List<GrantedAuthority> authorities
     ) {
         this.id = id;
@@ -29,6 +32,8 @@ public class Credentials implements UserDetails {
         this.password = password;
         this.status = status;
         this.roles = roles;
+        this.email = email;
+        this.avatar = avatar;
         this.authorities = authorities;
     }
 
@@ -75,6 +80,8 @@ public class Credentials implements UserDetails {
         user.setPassword(this.getPassword());
         user.setStatus(this.getStatus());
         user.setRoles(this.getRoles());
+        user.setAvatar(this.getAvatar());
+        user.setEmail(this.getEmail());
 
         return user;
     }

@@ -29,7 +29,8 @@ public class UserDetailsUtil {
         }
 
         Credentials credentials = new Credentials(
-            user.getId(), user.getUsername(), user.getPassword(), user.getStatus(), user.getRoles(), authorities
+            user.getId(), user.getUsername(), user.getPassword(), user.getStatus(), user.getRoles(),
+            user.getEmail(), user.getAvatar(), authorities
         );
 
         return credentials;
