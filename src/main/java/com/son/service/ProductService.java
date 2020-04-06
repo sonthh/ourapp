@@ -62,7 +62,7 @@ public class ProductService {
         String status = findAllProductRequest.getStatus();
         Product.Status productStatus = status == null ? null : Product.Status.valueOf(status);
         List<Integer> productIds = findAllProductRequest.getIds();
-        Integer offset = findAllProductRequest.getOffset();
+        Integer currentPage = findAllProductRequest.getCurrentPage();
         Integer limit = findAllProductRequest.getLimit();
         String sortDirection = findAllProductRequest.getSortDirection();
         String sortBy = findAllProductRequest.getSortBy();
@@ -78,7 +78,7 @@ public class ProductService {
 
         Specification<Product> spec = builder.build();
 
-        Pageable pageable = PageUtil.getPageable(offset, limit, sortDirection, sortBy);
+        Pageable pageable = PageUtil.getPageable(currentPage, limit, sortDirection, sortBy);
 
         return productRepository.findAll(spec, pageable);
     }

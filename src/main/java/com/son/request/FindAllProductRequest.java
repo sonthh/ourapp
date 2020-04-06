@@ -13,12 +13,12 @@ import java.util.List;
 @Data
 public class FindAllProductRequest {
     enum SortBy {
-        id, name, price
+        id, price
     }
 
     @ApiModelProperty
     @Min(0)
-    private Integer offset = 0;
+    private Integer currentPage = 1;
 
     @ApiModelProperty
     @Min(1)
