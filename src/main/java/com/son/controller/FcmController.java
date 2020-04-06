@@ -28,7 +28,7 @@ public class FcmController {
         return "client/index";
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("fcm/{userId}")
     @ResponseBody
     public String fcmTest(@PathVariable Integer userId) throws JsonProcessingException {
         fcmService.sendToTopic("user-" + userId, "Sơn Đẹp Trai", "Tôi là Sơn Đẹp Trai");
