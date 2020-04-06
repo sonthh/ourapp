@@ -43,11 +43,9 @@ public class FcmService {
     }
 
     public String sendToTopic(String target, String title, String body) throws JsonProcessingException {
-        Map<String, Object> data = new HashMap<>();
-        data.put("body", body);
-        data.put("title", title);
-        ObjectMapper mapper = new JsonMapper();
-        String json = mapper.writeValueAsString(data);
+        Map<String, String> data = new HashMap<>();
+        data.put("name", "tran huu hong son");
+        data.put("university", "dut");
 
         Notification notification = Notification.builder()
             .setTitle(title)
@@ -58,7 +56,7 @@ public class FcmService {
         Message message = Message.builder()
             .setTopic(target)
             .setNotification(notification)
-            .putData("body", json)
+            .putAllData(data)
             .build();
 
         String response = null;
