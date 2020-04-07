@@ -4,6 +4,7 @@ import com.son.constant.AuthzConstant;
 import com.son.entity.Product;
 import com.son.handler.ApiException;
 import com.son.request.CreateProductRequest;
+import com.son.request.DeleteManyProductRequest;
 import com.son.request.FindAllProductRequest;
 import com.son.request.UpdateProductRequest;
 import com.son.security.Credentials;
@@ -77,6 +78,18 @@ public class ProductController {
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
         Boolean isDeleted = productService.deleteOne(credentials, productId);
+
+        return new ResponseEntity<>(isDeleted, HttpStatus.OK);
+    }
+
+    @ApiOperation("delete many product")
+    @DeleteMapping
+    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    public ResponseEntity<Boolean> deleteMany(
+        @Valid @RequestBody DeleteManyProductRequest deleteManyProductRequest,
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        Boolean isDeleted = productService.deleteMany(credentials, deleteManyProductRequest);
 
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
     }

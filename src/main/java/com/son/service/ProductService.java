@@ -2,6 +2,7 @@ package com.son.service;
 
 import com.son.entity.User;
 import com.son.request.CreateProductRequest;
+import com.son.request.DeleteManyProductRequest;
 import com.son.request.FindAllProductRequest;
 import com.son.request.UpdateProductRequest;
 import com.son.entity.Product;
@@ -126,5 +127,18 @@ public class ProductService {
         updatedProduct = productRepository.save(updatedProduct);
 
         return updatedProduct;
+    }
+
+    public Boolean deleteMany(Credentials credentials, DeleteManyProductRequest deleteManyProductRequest)
+        throws ApiException {
+        List<Integer> ids = deleteManyProductRequest.getIds();
+        List<Product> products = (List<Product>) productRepository.findAllById(ids);
+
+        if (products.size() != ids.size()) {
+            throw new ApiException(404, "ProductNotFound");
+        }
+
+        productRepository.deleteAll(products);
+        return true;
     }
 }

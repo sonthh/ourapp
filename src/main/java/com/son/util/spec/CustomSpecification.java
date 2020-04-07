@@ -59,15 +59,9 @@ public class CustomSpecification<T> implements Specification<T> {
                 if (value instanceof List) {
                     return root.get(key).in((List<?>) value);
                 }
-                if (value instanceof Integer[]) {
-                    return root.get(key).in((Integer[]) value);
-                }
             case NOT_IN:
                 if (value instanceof List) {
                     return root.get(key).in((List<?>) value).not();
-                }
-                if (value instanceof Integer[]) {
-                    return root.get(key).in((Integer[]) value).not();
                 }
             default:
                 return null;
