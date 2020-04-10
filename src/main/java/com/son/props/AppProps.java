@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 public class AppProps {
     private String environment;
     private String url;
+    private Boolean updateRoles;
 }

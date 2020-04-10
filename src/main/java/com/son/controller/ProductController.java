@@ -1,6 +1,5 @@
 package com.son.controller;
 
-import com.son.constant.AuthzConstant;
 import com.son.entity.Product;
 import com.son.handler.ApiException;
 import com.son.request.CreateProductRequest;
@@ -24,7 +23,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @Api(tags = "Products", value = "Product Controller")
 @RestController
@@ -37,7 +35,6 @@ public class ProductController {
 
     @ApiOperation("create one product")
     @PostMapping
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Product> createOne(
         @Valid @RequestBody CreateProductRequest createProductRequest
     ) {
@@ -48,10 +45,11 @@ public class ProductController {
 
     @ApiOperation("find many product")
     @GetMapping
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
+    @PreAuthorize("hasAnyAuthority(@scopes.PER_PRODUCT_READ, @scopes.DEPARTMENT_PRODUCT_DELETE)")
     public ResponseEntity<Page<Product>> findMany(
         @Valid FindAllProductRequest findAllProductRequest,
-        @ApiIgnore BindingResult errors
+        @ApiIgnore BindingResult errors,
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) {
         Page<Product> page = productService.findMany(findAllProductRequest);
 
@@ -60,7 +58,6 @@ public class ProductController {
 
     @ApiOperation("find one product")
     @GetMapping("/{productId}")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Product> findOne(
         @Min(1) @PathVariable Integer productId,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -72,7 +69,6 @@ public class ProductController {
 
     @ApiOperation("delete one product")
     @DeleteMapping("/{productId}")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Boolean> deleteOne(
         @Min(1) @PathVariable Integer productId,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -84,7 +80,6 @@ public class ProductController {
 
     @ApiOperation("delete many product")
     @DeleteMapping
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Boolean> deleteMany(
         @Valid @RequestBody DeleteManyProductRequest deleteManyProductRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -96,7 +91,6 @@ public class ProductController {
 
     @ApiOperation("update one product")
     @PutMapping("/{productId}")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Product> updateOne(
         @Valid @RequestBody UpdateProductRequest updateProductRequest,
         @Min(1) @PathVariable Integer productId

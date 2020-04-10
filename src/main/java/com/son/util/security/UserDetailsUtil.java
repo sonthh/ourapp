@@ -22,10 +22,15 @@ public class UserDetailsUtil {
 
     public static Credentials buildUserDetails(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
+        List<Role> roles = user.getRoles();
 
-        for (Role role: user.getRoles()) {
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(ROLE_PREFIX + role.getName());
-            authorities.add(authority);
+        for (Role role: roles) {
+            authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + role.getName()));
+
+            List<String> scopes = role.getScopes();
+            for (String scope: scopes) {
+                authorities.add(new SimpleGrantedAuthority(scope));
+            }
         }
 
         Credentials credentials = new Credentials(

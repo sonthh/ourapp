@@ -1,6 +1,5 @@
 package com.son.controller;
 
-import com.son.constant.AuthzConstant;
 import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.request.FirebaseTokenRequest;
@@ -14,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +32,6 @@ public class UserController {
 
     @ApiOperation("get my information")
     @GetMapping("me")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     //    @Dto(value = UserInfoDto.class)
     public ResponseEntity<User> userMe(
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -47,7 +44,6 @@ public class UserController {
 
     @ApiOperation("update my information")
     @PutMapping("me")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<User> updateMe(
         @ApiIgnore @AuthenticationPrincipal Credentials credentials,
         @Valid @RequestBody UpdateUserRequest updateUserRequest
@@ -60,7 +56,6 @@ public class UserController {
 
     @ApiOperation("update my avatar")
     @PostMapping("me/avatar")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<String> updateAvatar(
         @ApiIgnore @AuthenticationPrincipal Credentials credentials,
         @Valid UpdateAvatarRequest updateAvatarRequest
@@ -72,7 +67,6 @@ public class UserController {
 
     @ApiOperation("subscribe firebase token")
     @PutMapping("me/token/subscribe")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Boolean> subscribeFirebaseToken(
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -84,7 +78,6 @@ public class UserController {
 
     @ApiOperation("unsubscribe firebase token")
     @PutMapping("me/token/unsubscribe")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Boolean> unsubscribeFirebaseToken(
         @Valid @NotNull @RequestBody(required = false) FirebaseTokenRequest firebaseTokenRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -96,7 +89,6 @@ public class UserController {
 
     @ApiOperation("add notification types")
     @PutMapping("me/notifications/type/add")
-    @PreAuthorize(AuthzConstant.HAS_ROLE_BASIC)
     public ResponseEntity<Boolean> addNotificationTypes(
         @Valid @NotNull @RequestBody(required = false) NotificationTypesRequest notificationTypesRequest,
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
