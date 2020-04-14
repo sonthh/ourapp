@@ -1,7 +1,9 @@
 package com.son.config;
 
 import com.github.javafaker.Faker;
+import org.modelmapper.AbstractConverter;
 import org.modelmapper.Conditions;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.awt.image.BufferedImage;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 @Configuration
@@ -21,6 +26,21 @@ public class BeanDefinitionConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+
+        Converter<String, Date> toStringDate = new AbstractConverter<String, Date>() {
+            @Override
+            protected Date convert(String source) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    return sdf.parse(source);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+
+        modelMapper.addConverter(toStringDate);
         return modelMapper;
     }
 

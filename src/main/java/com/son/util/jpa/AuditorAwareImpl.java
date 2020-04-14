@@ -13,7 +13,7 @@ public class AuditorAwareImpl implements AuditorAware<User> {
     public Optional<User> getCurrentAuditor() {
         Credentials credentials = UserDetailsUtil.getCurrentUserDetails();
 
-        User user = credentials.toUserEntity();
+        User user = credentials.getUserEntity();
 
         return Optional.of(user);
     }

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class DeleteManyProductRequest {
+public class DeleteManyByIdRequest {
     @ApiModelProperty(required = true)
     @NotEmpty
     @NotNull

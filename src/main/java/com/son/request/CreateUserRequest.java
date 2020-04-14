@@ -8,18 +8,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.UniqueElements;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @Data
-public class UpdateUserRequest {
-    @ApiModelProperty
+public class CreateUserRequest {
+    @ApiModelProperty(required = true)
     @Size(min = 6, max = 20)
+    @NotNull
     private String username;
 
-    @ApiModelProperty
+    @ApiModelProperty(required = true)
     @Size(min = 6, max = 20)
+    @NotNull
     private String password;
 
     @ApiModelProperty
@@ -47,11 +48,14 @@ public class UpdateUserRequest {
     @ApiModelProperty
     private String address;
 
-    @ApiModelProperty
+    @ApiModelProperty(required = true)
     @IsEnum(enumClass = User.Status.class)
+    @NotNull
     private String status;
 
-    @ApiModelProperty
+    @ApiModelProperty(required = true)
+    @NotEmpty
+    @NotNull
     @UniqueElements
     private List<Integer> roleIds;
 }

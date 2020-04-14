@@ -8,7 +8,6 @@ import com.son.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -22,7 +21,7 @@ import java.util.Optional;
 public class AppRunner implements CommandLineRunner {
 
     private final AppProps appProps;
-    private final SocketIOServer server;
+    private final SocketIOServer socketIOServer;
     private final RoleRepository roleRepository;
 
     @Override
@@ -30,10 +29,11 @@ public class AppRunner implements CommandLineRunner {
         if (appProps.getUpdateRoles()) {
             updateRoles();
         }
-        server.start();
+        // socketIOServer.start();
         log.info("My app has been started at " + appProps.getEnvironment());
     }
 
+    // update scopes of each roles into the roles table
     public void updateRoles() {
         Map<String, String[]> roles = new HashMap<>();
         roles.put(Role.MANAGER, Roles.MANAGER);
