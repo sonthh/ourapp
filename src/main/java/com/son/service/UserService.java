@@ -3,6 +3,7 @@ package com.son.service;
 import com.son.entity.Role;
 import com.son.entity.User;
 import com.son.handler.ApiException;
+import com.son.model.Gender;
 import com.son.repository.RoleRepository;
 import com.son.repository.UserRepository;
 import com.son.request.*;
@@ -241,10 +242,17 @@ public class UserService {
             throws ApiException {
         String statusString = findAllUserRequest.getStatus();
         User.Status status = statusString == null ? null : User.Status.valueOf(statusString);
+
+        String genderString = findAllUserRequest.getGender();
+        Gender gender = genderString == null ? null : Gender.valueOf(genderString);
+
         String createdBy = findAllUserRequest.getCreatedBy();
+        String lastModifiedBy = findAllUserRequest.getLastModifiedBy();
+        String username = findAllUserRequest.getUsername();
         String address = findAllUserRequest.getAddress();
         String email = findAllUserRequest.getEmail();
         List<Integer> userIds = findAllUserRequest.getIds();
+
         Integer currentPage = findAllUserRequest.getCurrentPage();
         Integer limit = findAllUserRequest.getLimit();
         String sortDirection = findAllUserRequest.getSortDirection();
@@ -254,9 +262,12 @@ public class UserService {
         SpecificationBuilder<User> builder = new SpecificationBuilder<>();
         builder
                 .query("address", CONTAINS, address)
+                .query("username", CONTAINS, username)
                 .query("email", CONTAINS, email)
                 .query("createdBy", CONTAINS, createdBy, "username")
+                .query("lastModifiedBy", CONTAINS, lastModifiedBy, "username")
                 .query("status", EQUALITY, status)
+                .query("gender", EQUALITY, gender)
                 .query("id", IN, userIds);
 
         Specification<User> spec = builder.build();

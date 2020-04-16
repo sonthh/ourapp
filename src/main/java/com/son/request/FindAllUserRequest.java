@@ -1,6 +1,7 @@
 package com.son.request;
 
 import com.son.entity.User;
+import com.son.model.Gender;
 import com.son.model.SortDirection;
 import com.son.validator.IsEnum;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 public class FindAllUserRequest {
     enum SortBy {
-        id, username, birthDay, lastModifiedDate, createdDate
+        id, birthDay, lastModifiedDate, createdDate
     }
 
     @ApiModelProperty
@@ -36,6 +37,14 @@ public class FindAllUserRequest {
     @IsEnum(enumClass = User.Status.class)
     private String status;
 
+    @ApiModelProperty
+    @IsEnum(enumClass = Gender.class)
+    private String gender;
+
+    @ApiModelProperty()
+    @Size(min = 1)
+    private String username;
+
     @ApiModelProperty()
     @Size(min = 1)
     private String address;
@@ -43,6 +52,10 @@ public class FindAllUserRequest {
     @ApiModelProperty()
     @Size(min = 1)
     private String createdBy;
+
+    @ApiModelProperty()
+    @Size(min = 1)
+    private String lastModifiedBy;
 
     @ApiModelProperty()
     private String email;
