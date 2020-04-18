@@ -30,7 +30,7 @@ public class AppRunner implements CommandLineRunner {
         if (appProps.getUpdateRoles()) {
             updateRoles();
         }
-        server.start();
+        //server.start();
         log.info("My app has been started at " + appProps.getEnvironment());
     }
 
