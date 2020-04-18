@@ -1,6 +1,7 @@
 package com.son.request;
 
-import com.son.entity.Product;
+import com.son.entity.User;
+import com.son.model.Gender;
 import com.son.model.SortDirection;
 import com.son.validator.IsEnum;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,13 +12,13 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
-public class FindAllProductRequest {
+public class FindAllUserRequest {
     enum SortBy {
-        id, price
+        id, birthDay, lastModifiedDate, createdDate
     }
 
     @ApiModelProperty
-    @Min(0)
+    @Min(1)
     private Integer currentPage = 1;
 
     @ApiModelProperty
@@ -32,21 +33,32 @@ public class FindAllProductRequest {
     @IsEnum(enumClass = SortBy.class)
     private String sortBy = "id";
 
-    @ApiModelProperty(dataType = "com.son.entity.Product.Status")
-    @IsEnum(enumClass = Product.Status.class)
+    @ApiModelProperty
+    @IsEnum(enumClass = User.Status.class)
     private String status;
+
+    @ApiModelProperty
+    @IsEnum(enumClass = Gender.class)
+    private String gender;
 
     @ApiModelProperty()
     @Size(min = 1)
-    private String name;
+    private String username;
 
     @ApiModelProperty()
-    @Min(10)
-    private Integer price;
+    @Size(min = 1)
+    private String address;
 
     @ApiModelProperty()
     @Size(min = 1)
     private String createdBy;
+
+    @ApiModelProperty()
+    @Size(min = 1)
+    private String lastModifiedBy;
+
+    @ApiModelProperty()
+    private String email;
 
     @ApiModelProperty()
     private List<Integer> ids;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
-public class LoggingAOPConfig {
+public class AOPLoggingConfig {
 
     @Pointcut("execution(* com.son.service.*.*(..))")
     public void serviceMethods() { }

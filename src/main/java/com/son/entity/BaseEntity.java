@@ -1,5 +1,7 @@
 package com.son.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.son.handler.UserJsonSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -19,6 +21,7 @@ public abstract class BaseEntity {
     @CreatedBy
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "createdBy")
+    @JsonSerialize(using = UserJsonSerializer.class)
     protected User createdBy;
 
     @CreatedDate
@@ -29,6 +32,7 @@ public abstract class BaseEntity {
     @LastModifiedBy
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lastModifiedBy")
+    @JsonSerialize(using = UserJsonSerializer.class)
     protected User lastModifiedBy;
 
     @LastModifiedDate

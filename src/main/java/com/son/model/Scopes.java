@@ -4,13 +4,12 @@ import org.springframework.stereotype.Component;
 
 @Component("scopes")
 public final class Scopes {
-    public static final String PER_PRODUCT_READ                 = "PER:PRODUCT:READ";
-    public static final String PER_PRODUCT_UPDATE               = "PER:PRODUCT:UPDATE";
-    public static final String PER_PRODUCT_CREATE               = "PER:PRODUCT:CREATE";
-    public static final String PER_PRODUCT_DELETE               = "PER:PRODUCT:DELETE";
+    // USER
+    public static final String ALL_USER_READ                    = "ALL:USER:READ";
+    public static final String ALL_USER_UPDATE                  = "ALL:USER:UPDATE";
+    public static final String ALL_USER_CREATE                  = "ALL:USER:CREATE";
+    public static final String ALL_USER_DELETE                  = "ALL:USER:DELETE";
 
-    public static final String DEPARTMENT_PRODUCT_READ          = "DEPARTMENT:PRODUCT:READ";
-    public static final String DEPARTMENT_PRODUCT_UPDATE        = "DEPARTMENT:PRODUCT:UPDATE";
-    public static final String DEPARTMENT_PRODUCT_CREATE        = "DEPARTMENT:PRODUCT:CREATE";
-    public static final String DEPARTMENT_PRODUCT_DELETE        = "DEPARTMENT:PRODUCT:DELETE";
+    public static final String PER_USER_READ                    = "PER:USER:READ";
+    public static final String PER_USER_UPDATE                  = "PER:USER:UPDATE";
 }

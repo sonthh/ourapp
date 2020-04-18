@@ -24,20 +24,20 @@ public class UserDetailsUtil {
         List<GrantedAuthority> authorities = new ArrayList<>();
         List<Role> roles = user.getRoles();
 
-        for (Role role: roles) {
+        for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + role.getName()));
 
             List<String> scopes = role.getScopes();
-            for (String scope: scopes) {
+            for (String scope : scopes) {
                 authorities.add(new SimpleGrantedAuthority(scope));
             }
         }
 
-        Credentials credentials = new Credentials(
-            user.getId(), user.getUsername(), user.getPassword(), user.getStatus(), user.getRoles(),
-            user.getEmail(), user.getAvatar(), authorities
+        return new Credentials(
+                user.getId(), user.getUsername(), user.getPassword(), user.getFullName(), user.getEmail(),
+                user.getPhoneNumber(), user.getBirthDay(), user.getGender(), user.getIdentification(),
+                user.getAddress(), user.getAvatar(), user.getStatus(), user.getShouldSendNotification(),
+                user.getNotificationTypes(), user.getRoles(), authorities, user
         );
-
-        return credentials;
     }
 }

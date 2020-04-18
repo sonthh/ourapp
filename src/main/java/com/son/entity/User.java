@@ -1,7 +1,9 @@
 package com.son.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.son.security.Credentials;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.son.handler.UserJsonSerializer;
+import com.son.model.Gender;
 import com.son.util.jpa.StringListConverter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,15 +11,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
+//@JsonSerialize(using = UserJsonSerializer.class)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity {
+
+    public enum Status {
+        ACTIVE, INACTIVE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -29,35 +38,50 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column
+    private String fullName;
+
+    @Column(unique = true)
     private String email;
 
     @Column(unique = true)
+    private String phoneNumber;
+
+    @Column
+    private Date birthDay;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Column(unique = true)
+    private String identification;
+
+    @Column
+    private String address;
+
+    @Column
     private String avatar;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public enum Status {
-        ACTIVE, INACTIVE,
-    }
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_role",
-        joinColumns = { @JoinColumn(name = "userId") },
-        inverseJoinColumns = { @JoinColumn(name = "roleId") },
-        uniqueConstraints = { @UniqueConstraint(columnNames = {"userId", "roleId"}) }
-    )
-    private List<Role> roles;
-
     @Column(nullable = false, columnDefinition = "bit(1) default 1")
-    private Boolean shouldSendNotification;
+    private Boolean shouldSendNotification = true;
 
     @Convert(converter = StringListConverter.class)
     @Column(columnDefinition = "TEXT")
     private List<String> notificationTypes;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = {@JoinColumn(name = "userId")},
+            inverseJoinColumns = {@JoinColumn(name = "roleId")},
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"userId", "roleId"})}
+    )
+    private List<Role> roles;
 
     @Override
     public int hashCode() {
@@ -66,7 +90,7 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
 
@@ -76,9 +100,5 @@ public class User {
         }
 
         return false;
-    }
-
-    public boolean sameCredentials(Credentials credentials) {
-        return credentials.getId().equals(id);
     }
 }
