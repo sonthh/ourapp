@@ -21,4 +21,19 @@ public class Personnel extends BaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false, unique = true)
     private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "departmentId")
+    private Department department;
+
+    @Column(nullable = false)
+    private String position;
+
+    @Column(nullable = false)
+    private String degree;
+
+    @Column
+    private String description;
+
+
 }

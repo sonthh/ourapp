@@ -1,8 +1,6 @@
 package com.son.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.son.handler.UserJsonSerializer;
 import com.son.model.Gender;
 import com.son.util.jpa.StringListConverter;
 import lombok.AllArgsConstructor;
