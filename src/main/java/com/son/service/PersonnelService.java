@@ -16,9 +16,6 @@ public class PersonnelService {
     private PersonnelRepository personnelRepository;
 
     @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     public Boolean isDeletedOne(int personnelId) {
