@@ -18,4 +18,10 @@ public final class Scopes {
 
     public static final String PER_USER_READ                    = "PER:USER:READ";
     public static final String PER_USER_UPDATE                  = "PER:USER:UPDATE";
+
+    //PERSONNEL
+    public static final String ALL_PERSONNEL_READ               = "ALL:PERSONNEL:READ";
+    public static final String ALL_PERSONNEL_UPDATE             = "ALL:PERSONNEL:UPDATE";
+    public static final String ALL_PERSONNEL_CREATE             = "ALL:PERSONNEL:CREATE";
+    public static final String ALL_PERSONNEL_DELETE             = "ALL:PERSONNEL:DELETE";
 }

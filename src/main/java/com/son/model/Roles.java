@@ -13,6 +13,11 @@ public interface Roles {
             ALL_ROLE_DELETE,
             ALL_ROLE_READ,
             ALL_ROLE_UPDATE,
+
+            ALL_PERSONNEL_READ,
+            ALL_PERSONNEL_UPDATE,
+            ALL_PERSONNEL_CREATE,
+            ALL_PERSONNEL_DELETE,
     };
 
     String[] BASIC = {
@@ -30,5 +35,10 @@ public interface Roles {
             ALL_ROLE_DELETE,
             ALL_ROLE_READ,
             ALL_ROLE_UPDATE,
-    };
+
+            ALL_PERSONNEL_READ,
+            ALL_PERSONNEL_UPDATE,
+            ALL_PERSONNEL_CREATE,
+            ALL_PERSONNEL_DELETE,
+};
 }
