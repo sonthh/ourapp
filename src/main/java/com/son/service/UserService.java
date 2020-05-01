@@ -1,5 +1,6 @@
 package com.son.service;
 
+import com.son.constant.Exceptions;
 import com.son.entity.Role;
 import com.son.entity.User;
 import com.son.handler.ApiException;
@@ -69,14 +70,14 @@ public class UserService {
             return;
         }
 
-        throw new ApiException(403, "NoPermission");
+        throw new ApiException(403, Exceptions.NO_PERMISSION);
     }
 
     public User findOneByUsername(String username) throws ApiException {
         Optional<User> optional = userRepository.findOneByUsername(username);
 
         if (!optional.isPresent()) {
-            throw new ApiException(404, "UserNotFound");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
         }
 
         return optional.get();
@@ -86,7 +87,7 @@ public class UserService {
         Optional<User> optional = userRepository.findActiveUser(username, User.Status.ACTIVE);
 
         if (!optional.isPresent()) {
-            throw new ApiException(404, "UserNotFoundOrIsInactive");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND_OR_IS_INACTIVE);
         }
 
         return optional.get();
@@ -96,7 +97,7 @@ public class UserService {
         Optional<User> optional = userRepository.findById(userID);
 
         if (!optional.isPresent()) {
-            throw new ApiException(404, "UserNotFound");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
         }
 
         return optional.get();
@@ -115,12 +116,7 @@ public class UserService {
     public boolean addNotificationTypes(
             NotificationTypesRequest notificationTypesRequest, Credentials credentials
     ) throws ApiException {
-        Optional<User> optional = userRepository.findById(credentials.getId());
-
-        if (!optional.isPresent()) {
-            throw new ApiException(404, "UserNotFound");
-        }
-        User user = optional.get();
+        User user = findOne(credentials.getId());
 
         List<String> notificationTypes = notificationTypesRequest.getNotificationTypes();
         user.getNotificationTypes().addAll(notificationTypes);
@@ -151,11 +147,11 @@ public class UserService {
         try {
             avatar = cloudinaryService.upload(updateAvatarRequest.getAvatar());
         } catch (IOException e) {
-            throw new ApiException(400, "Upload file failed");
+            throw new ApiException(400, Exceptions.UPLOAD_FAILURE);
         }
 
         if (avatar == null) {
-            throw new ApiException(400, "Upload file failed");
+            throw new ApiException(400, Exceptions.UPLOAD_FAILURE);
         }
 
         updatedUser.setAvatar(avatar);
@@ -167,14 +163,14 @@ public class UserService {
     public User createOne(Credentials credentials, CreateUserRequest createUserRequest) throws ApiException {
         Optional<User> optional = userRepository.findOneByUsername(createUserRequest.getUsername());
         if (optional.isPresent()) {
-            throw new ApiException(400, "UserIsExisted");
+            throw new ApiException(400, Exceptions.USERNAME_EXIST);
         }
 
         List<Integer> roleIds = createUserRequest.getRoleIds();
         List<Role> roles = (List<Role>) roleRepository.findAllById(roleIds);
 
         if (roles.size() != roleIds.size()) {
-            throw new ApiException(404, "RoleNotFound");
+            throw new ApiException(404, Exceptions.ROLE_NOT_FOUND);
         }
 
         User savedUser = modelMapper.map(createUserRequest, User.class);
@@ -201,7 +197,7 @@ public class UserService {
             List<Role> roles = (List<Role>) roleRepository.findAllById(roleIds);
 
             if (roles.size() != roleIds.size()) {
-                throw new ApiException(404, "RoleNotFound");
+                throw new ApiException(404, Exceptions.ROLE_NOT_FOUND);
             }
             updatedUser.setRoles(roles);
         }
@@ -230,7 +226,7 @@ public class UserService {
         List<User> users = (List<User>) userRepository.findAllById(ids);
 
         if (users.size() != ids.size()) {
-            throw new ApiException(404, "UserNotFound");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
         }
 
         userRepository.deleteAll(users);

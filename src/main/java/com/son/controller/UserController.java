@@ -81,6 +81,7 @@ public class UserController {
 
     @ApiOperation("find many users")
     @GetMapping
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_READ)")
     public ResponseEntity<Page<User>> findMany(
             @Valid FindAllUserRequest findAllUserRequest,
             @ApiIgnore BindingResult errors,
