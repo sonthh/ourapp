@@ -11,4 +11,12 @@ public class EnumUtil {
     public static String getJoinedNames(Class<? extends Enum<?>> e) {
         return String.join(", ", getNames(e));
     }
+
+    public static <E extends Enum<E>> E getEnum(Class<E> enumClass, String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return Enum.valueOf(enumClass, value);
+    }
 }

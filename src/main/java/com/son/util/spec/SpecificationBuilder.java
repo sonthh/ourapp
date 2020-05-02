@@ -14,25 +14,19 @@ public class SpecificationBuilder<T> {
     }
 
     public final SpecificationBuilder query(
-        final String key, final SearchOperation operation, final Object value
+            final String key, final SearchOperation operation, final Object value
     ) {
-        return query(null, key, operation, value, null);
+        return query(null, key, operation, value);
     }
 
     public final SpecificationBuilder query(
-            final String key, final SearchOperation operation, final Object value, final String joinField
-    ) {
-        return query(null, key, operation, value, joinField);
-    }
-
-    public final SpecificationBuilder query(
-        final String orPredicate, final String key, SearchOperation op, final Object value, final String joinField
+        final String orPredicate, final String key, SearchOperation op, final Object value
     ) {
         if (op == null || value == null) {
             return this;
         }
 
-        params.add(new SpecCriteria(orPredicate, key, op, value, joinField));
+        params.add(new SpecCriteria(orPredicate, key, op, value));
 
         return this;
     }
