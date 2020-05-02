@@ -17,14 +17,21 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PersonnelService {
-    @Autowired
-    private PersonnelRepository personnelRepository;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
+    private final PersonnelRepository personnelRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
+
+    private final UserRepository userRepository;
+
+    public Personnel findOne(Integer personnelId) throws  ApiException{
+        Optional<Personnel> optional = personnelRepository.findById(personnelId);
+        if(!optional.isPresent()){
+            throw new ApiException(404, "PersonnelNotFound");
+        }
+
+        return optional.get();
+    }
 
     public Boolean isDeletedOne(int personnelId) {
         Optional<Personnel> personnel = personnelRepository.findById(personnelId);

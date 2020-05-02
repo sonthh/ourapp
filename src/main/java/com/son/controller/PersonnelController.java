@@ -1,6 +1,7 @@
 package com.son.controller;
 
 import com.son.entity.Personnel;
+import com.son.entity.Role;
 import com.son.handler.ApiException;
 import com.son.request.UpdatePersonnelRequest;
 import com.son.request.UpdateUserMeRequest;
@@ -24,8 +25,8 @@ import javax.validation.constraints.Min;
 @Validated
 @RequiredArgsConstructor
 public class PersonnelController {
-    @Autowired
-    private PersonnelService personnelService;
+
+    private final PersonnelService personnelService;
 
     @ApiOperation("Update one personnel")
     @PutMapping("/{personnelId}")
@@ -41,9 +42,20 @@ public class PersonnelController {
     @DeleteMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
     public ResponseEntity<Boolean> deleteOne(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
+          @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
 
         Boolean isDeleted = personnelService.isDeletedOne(id);
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
+    }
+
+    @ApiOperation("get one personnel")
+    @GetMapping("/{personnelId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    public ResponseEntity<Personnel> findOneUser(
+            @Min(1) @PathVariable Integer personnelId
+    ) throws ApiException {
+        Personnel personnel = personnelService.findOne(personnelId);
+
+        return new ResponseEntity<>(personnel, HttpStatus.OK);
     }
 }
