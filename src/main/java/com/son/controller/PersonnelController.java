@@ -2,19 +2,27 @@ package com.son.controller;
 
 import com.son.entity.Personnel;
 import com.son.entity.Role;
+import com.son.entity.User;
 import com.son.handler.ApiException;
+import com.son.request.FindAllPersonnelRequest;
+import com.son.request.FindAllUserRequest;
 import com.son.request.UpdatePersonnelRequest;
 import com.son.request.UpdateUserMeRequest;
+import com.son.security.Credentials;
 import com.son.service.PersonnelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -57,5 +65,18 @@ public class PersonnelController {
         Personnel personnel = personnelService.findOne(personnelId);
 
         return new ResponseEntity<>(personnel, HttpStatus.OK);
+    }
+
+    @ApiOperation("find many personnel")
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    public ResponseEntity<Page<Personnel>> findMany(
+            @Valid FindAllPersonnelRequest findAllPersonnelRequest,
+            @ApiIgnore BindingResult errors,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        Page<Personnel> page = personnelService.findMany(credentials, findAllPersonnelRequest);
+
+        return new ResponseEntity<>(page, HttpStatus.OK);
     }
 }

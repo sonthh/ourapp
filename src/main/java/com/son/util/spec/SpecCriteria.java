@@ -10,7 +10,6 @@ public class SpecCriteria {
     private SearchOperation operation;
     private Object value;
     private boolean orPredicate;
-    private String joinField;
 
     public SpecCriteria() {
     }
@@ -25,13 +24,5 @@ public class SpecCriteria {
     public SpecCriteria(final String orPredicate, final String key, final SearchOperation operation, final Object value) {
         this(key, operation, value);
         this.orPredicate = orPredicate != null && orPredicate.equals(SearchOperation.OR_PREDICATE_FLAG);
-    }
-
-    public SpecCriteria(
-        final String orPredicate, final String key, final SearchOperation operation, final Object value,
-        final String joinField
-    ) {
-        this(orPredicate, key, operation, value);
-        this.joinField = joinField;
     }
 }

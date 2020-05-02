@@ -3,7 +3,10 @@ package com.son.util.spec;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Getter
@@ -18,10 +21,15 @@ public class CustomSpecification<T> implements Specification<T> {
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-
         Object value = criteria.getValue();
         String key = criteria.getKey();
-        String joinField = criteria.getJoinField();
+
+        String[] tmp = key.split("\\.");
+        String joinField = null;
+        if (tmp.length == 2) {
+            joinField = tmp[1];
+            key = tmp[0];
+        }
 
         switch (criteria.getOperation()) {
             case EQUALITY:
@@ -42,17 +50,17 @@ public class CustomSpecification<T> implements Specification<T> {
                 return builder.like(root.get(key), value.toString());
             case STARTS_WITH:
                 if (joinField != null) {
-                    return builder.like(root.join(key).get(joinField),"%" + value);
+                    return builder.like(root.join(key).get(joinField), "%" + value);
                 }
                 return builder.like(root.get(key), value + "%");
             case ENDS_WITH:
                 if (joinField != null) {
-                    return builder.like(root.join(key).get(joinField),value + "%");
+                    return builder.like(root.join(key).get(joinField), value + "%");
                 }
                 return builder.like(root.get(key), "%" + value);
             case CONTAINS:
                 if (joinField != null) {
-                    return builder.like(root.join(key).get(joinField),"%" + value + "%");
+                    return builder.like(root.join(key).get(joinField), "%" + value + "%");
                 }
                 return builder.like(root.get(key), "%" + value + "%");
             case IN:

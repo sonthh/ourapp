@@ -9,6 +9,7 @@ import com.son.repository.RoleRepository;
 import com.son.repository.UserRepository;
 import com.son.request.*;
 import com.son.security.Credentials;
+import com.son.util.common.EnumUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import org.modelmapper.ModelMapper;
@@ -236,11 +237,8 @@ public class UserService {
 
     public Page<User> findMany(Credentials credentials, FindAllUserRequest findAllUserRequest)
             throws ApiException {
-        String statusString = findAllUserRequest.getStatus();
-        User.Status status = statusString == null ? null : User.Status.valueOf(statusString);
-
-        String genderString = findAllUserRequest.getGender();
-        Gender gender = genderString == null ? null : Gender.valueOf(genderString);
+        User.Status status = EnumUtil.getEnum(User.Status.class, findAllUserRequest.getStatus());
+        Gender gender = EnumUtil.getEnum(Gender.class, findAllUserRequest.getGender());
 
         String createdBy = findAllUserRequest.getCreatedBy();
         String lastModifiedBy = findAllUserRequest.getLastModifiedBy();
@@ -266,11 +264,11 @@ public class UserService {
                 .query("fullName", CONTAINS, fullName)
                 .query("phoneNumber", CONTAINS, phoneNumber)
                 .query("identification", CONTAINS, identification)
-                .query("createdBy", CONTAINS, createdBy, "username")
-                .query("lastModifiedBy", CONTAINS, lastModifiedBy, "username")
                 .query("status", EQUALITY, status)
                 .query("gender", EQUALITY, gender)
-                .query("id", IN, userIds);
+                .query("id", IN, userIds)
+                .query("createdBy.username", CONTAINS, createdBy)
+                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
         Specification<User> spec = builder.build();
 
