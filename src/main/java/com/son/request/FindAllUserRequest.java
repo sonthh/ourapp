@@ -51,6 +51,18 @@ public class FindAllUserRequest {
 
     @ApiModelProperty()
     @Size(min = 1)
+    private String fullName;
+
+    @ApiModelProperty()
+    @Size(min = 1)
+    private String identification;
+
+    @ApiModelProperty()
+    @Size(min = 1)
+    private String phoneNumber;
+
+    @ApiModelProperty()
+    @Size(min = 1)
     private String createdBy;
 
     @ApiModelProperty()

@@ -246,6 +246,9 @@ public class UserService {
         String lastModifiedBy = findAllUserRequest.getLastModifiedBy();
         String username = findAllUserRequest.getUsername();
         String address = findAllUserRequest.getAddress();
+        String fullName = findAllUserRequest.getFullName();
+        String identification = findAllUserRequest.getIdentification();
+        String phoneNumber = findAllUserRequest.getPhoneNumber();
         String email = findAllUserRequest.getEmail();
         List<Integer> userIds = findAllUserRequest.getIds();
 
@@ -260,6 +263,9 @@ public class UserService {
                 .query("address", CONTAINS, address)
                 .query("username", CONTAINS, username)
                 .query("email", CONTAINS, email)
+                .query("fullName", CONTAINS, fullName)
+                .query("phoneNumber", CONTAINS, phoneNumber)
+                .query("identification", CONTAINS, identification)
                 .query("createdBy", CONTAINS, createdBy, "username")
                 .query("lastModifiedBy", CONTAINS, lastModifiedBy, "username")
                 .query("status", EQUALITY, status)
