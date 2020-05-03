@@ -20,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +56,7 @@ public class PersonnelService {
         return true;
     }
 
-    public Personnel updateOne(UpdatePersonnelRequest updatePersonnelRequest, int id) throws ApiException {
+    public Personnel updateOne(UpdatePersonnelRequest updatePersonnelRequest, int id) throws ApiException, ParseException {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(id);
         Optional<Department> department = departmentRepository.findById(updatePersonnelRequest.getDepartmentId());
         Optional<User> user = userRepository.findById(updatePersonnelRequest.getUserId());
@@ -70,18 +73,28 @@ public class PersonnelService {
             throw new ApiException(404, "UserIdNotFound");
         }
 
+        User updatedUser = user.get();
+        updatedUser.setAddress(updatePersonnelRequest.getAddress());
+        updatedUser.setEmail(updatePersonnelRequest.getEmail());
+        updatedUser.setFullName(updatePersonnelRequest.getFullName());
+        updatedUser.setPhoneNumber(updatePersonnelRequest.getPhoneNumber());
+        updatedUser.setGender(Gender.valueOf(updatePersonnelRequest.getGender()));
+        updatedUser.setBirthDay(new SimpleDateFormat("yyyy-MM-dd").parse(updatePersonnelRequest.getBirthDay()));
+
+        updatedUser = userRepository.save(updatedUser);
+
         Personnel updatePersonnel = oldPersonnel.get();
         updatePersonnel.setDegree(updatePersonnelRequest.getDegree());
         updatePersonnel.setDescription(updatePersonnelRequest.getDescription());
         updatePersonnel.setPosition(updatePersonnelRequest.getPosition());
         updatePersonnel.setDepartment(department.get());
-        updatePersonnel.setUser(user.get());
+        updatePersonnel.setUser(updatedUser);
 
         return personnelRepository.save(updatePersonnel);
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
-            throws ApiException {
+        throws ApiException {
         User.Status status = EnumUtil.getEnum(User.Status.class, findAllPersonnelRequest.getStatus());
         Gender gender = EnumUtil.getEnum(Gender.class, findAllPersonnelRequest.getGender());
 
@@ -107,21 +120,21 @@ public class PersonnelService {
 
         SpecificationBuilder<Personnel> builder = new SpecificationBuilder<>();
         builder
-                .query("position", CONTAINS, position)
-                .query("degree", CONTAINS, degree)
-                .query("description", CONTAINS, description)
-                .query("user.address", CONTAINS, address)
-                .query("user.username", CONTAINS, username)
-                .query("user.email", CONTAINS, email)
-                .query("user.fullName", CONTAINS, fullName)
-                .query("user.phoneNumber", CONTAINS, phoneNumber)
-                .query("user.identification", CONTAINS, identification)
-                .query("user.status", EQUALITY, status)
-                .query("user.gender", EQUALITY, gender)
-                .query("user.id", IN, userIds)
-                .query("department.name", CONTAINS, department)
-                .query("createdBy.username", CONTAINS, createdBy)
-                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+            .query("position", CONTAINS, position)
+            .query("degree", CONTAINS, degree)
+            .query("description", CONTAINS, description)
+            .query("user.address", CONTAINS, address)
+            .query("user.username", CONTAINS, username)
+            .query("user.email", CONTAINS, email)
+            .query("user.fullName", CONTAINS, fullName)
+            .query("user.phoneNumber", CONTAINS, phoneNumber)
+            .query("user.identification", CONTAINS, identification)
+            .query("user.status", EQUALITY, status)
+            .query("user.gender", EQUALITY, gender)
+            .query("user.id", IN, userIds)
+            .query("department.name", CONTAINS, department)
+            .query("createdBy.username", CONTAINS, createdBy)
+            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
         Specification<Personnel> spec = builder.build();
 

@@ -26,6 +26,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.text.ParseException;
 
 @Api(tags = "Personnel", value = "Personnel Controller")
 @RestController
@@ -41,7 +42,7 @@ public class PersonnelController {
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_UPDATE)")
     public ResponseEntity<Personnel> updateOne(
         @Valid @RequestBody UpdatePersonnelRequest updatePersonnelRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
+        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException, ParseException {
 
         return new ResponseEntity<>(personnelService.updateOne(updatePersonnelRequest, id), HttpStatus.OK);
     }
