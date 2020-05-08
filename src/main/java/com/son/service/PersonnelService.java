@@ -15,6 +15,10 @@ import com.son.util.common.EnumUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,11 +35,41 @@ import static com.son.util.spec.SearchOperation.*;
 @RequiredArgsConstructor
 public class PersonnelService {
 
-    private final PersonnelRepository personnelRepository;
+    @Autowired
+    private PersonnelRepository personnelRepository;
 
-    private final DepartmentRepository departmentRepository;
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public PersonnelService(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+        this.modelMapper.addMappings(new PropertyMap<UpdatePersonnelRequest, Personnel>() {
+            @SneakyThrows
+            @Override
+            protected void configure() {
+                skip(destination.getId());
+
+                map().setDegree(source.getDegree());
+                map().setPosition(source.getPosition());
+                map().setDescription(source.getDescription());
+
+                map().getDepartment().setId(source.getDepartmentId());
+
+                map().getUser().setId(source.getUserId());
+                map().getUser().setFullName(source.getFullName());
+                map().getUser().setAddress(source.getAddress());
+                map().getUser().setPhoneNumber(source.getPhoneNumber());
+                map().getUser().setEmail(source.getEmail());
+            }
+        });
+    }
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -73,22 +106,18 @@ public class PersonnelService {
             throw new ApiException(404, "UserIdNotFound");
         }
 
-        User updatedUser = user.get();
-        updatedUser.setAddress(updatePersonnelRequest.getAddress());
-        updatedUser.setEmail(updatePersonnelRequest.getEmail());
-        updatedUser.setFullName(updatePersonnelRequest.getFullName());
-        updatedUser.setPhoneNumber(updatePersonnelRequest.getPhoneNumber());
-        updatedUser.setGender(Gender.valueOf(updatePersonnelRequest.getGender()));
-        updatedUser.setBirthDay(new SimpleDateFormat("yyyy-MM-dd").parse(updatePersonnelRequest.getBirthDay()));
-
-        updatedUser = userRepository.save(updatedUser);
-
         Personnel updatePersonnel = oldPersonnel.get();
-        updatePersonnel.setDegree(updatePersonnelRequest.getDegree());
-        updatePersonnel.setDescription(updatePersonnelRequest.getDescription());
-        updatePersonnel.setPosition(updatePersonnelRequest.getPosition());
-        updatePersonnel.setDepartment(department.get());
-        updatePersonnel.setUser(updatedUser);
+
+        modelMapper.map(updatePersonnelRequest, updatePersonnel);
+
+        if (updatePersonnelRequest.getBirthDay() != null) {
+            updatePersonnel.getUser().setBirthDay(new SimpleDateFormat("yyyy-MM-dd")
+                .parse(updatePersonnelRequest.getBirthDay()));
+        }
+
+        if (updatePersonnelRequest.getGender() != null) {
+            updatePersonnel.getUser().setGender(Gender.valueOf(updatePersonnelRequest.getGender()));
+        }
 
         return personnelRepository.save(updatePersonnel);
     }
