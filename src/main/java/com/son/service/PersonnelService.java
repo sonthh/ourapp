@@ -80,10 +80,10 @@ public class PersonnelService {
         return optional.get();
     }
 
-    public Boolean isDeletedOne(int personnelId) {
+    public Boolean isDeletedOne(int personnelId) throws ApiException {
         Optional<Personnel> personnel = personnelRepository.findById(personnelId);
         if (!personnel.isPresent()) {
-            return false;
+            throw new ApiException(404, "PersonnelIdNotFound");
         }
         personnelRepository.deleteById(personnelId);
         return true;
