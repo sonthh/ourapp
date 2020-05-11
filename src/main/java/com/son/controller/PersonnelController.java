@@ -4,10 +4,7 @@ import com.son.entity.Personnel;
 import com.son.entity.Role;
 import com.son.entity.User;
 import com.son.handler.ApiException;
-import com.son.request.FindAllPersonnelRequest;
-import com.son.request.FindAllUserRequest;
-import com.son.request.UpdatePersonnelRequest;
-import com.son.request.UpdateUserMeRequest;
+import com.son.request.*;
 import com.son.security.Credentials;
 import com.son.service.PersonnelService;
 import io.swagger.annotations.Api;
@@ -37,6 +34,15 @@ public class PersonnelController {
 
     private final PersonnelService personnelService;
 
+    @ApiOperation("Create one personnel")
+    @PostMapping
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_CREATE)")
+    public ResponseEntity<Personnel> createOne(@Valid @RequestBody CreatePersonnelRequest createPersonnelRequest)
+        throws ApiException, ParseException {
+
+        return new ResponseEntity<>(personnelService.createOne(createPersonnelRequest), HttpStatus.OK);
+    }
+
     @ApiOperation("Update one personnel")
     @PutMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_UPDATE)")
@@ -51,9 +57,19 @@ public class PersonnelController {
     @DeleteMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
     public ResponseEntity<Boolean> deleteOne(
-          @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
+        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
 
         Boolean isDeleted = personnelService.isDeletedOne(id);
+        return new ResponseEntity<>(isDeleted, HttpStatus.OK);
+    }
+
+    @ApiOperation("Delete many personnels")
+    @DeleteMapping
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
+    public ResponseEntity<Boolean> deleteMany(@Valid @RequestBody DeleteManyByIdRequest deleteManyByIdRequest)
+        throws ApiException {
+
+        Boolean isDeleted = personnelService.deteleMany(deleteManyByIdRequest);
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
     }
 
@@ -61,7 +77,7 @@ public class PersonnelController {
     @GetMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
     public ResponseEntity<Personnel> findOneUser(
-            @Min(1) @PathVariable Integer personnelId
+        @Min(1) @PathVariable Integer personnelId
     ) throws ApiException {
         Personnel personnel = personnelService.findOne(personnelId);
 
@@ -72,9 +88,9 @@ public class PersonnelController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
     public ResponseEntity<Page<Personnel>> findMany(
-            @Valid FindAllPersonnelRequest findAllPersonnelRequest,
-            @ApiIgnore BindingResult errors,
-            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+        @Valid FindAllPersonnelRequest findAllPersonnelRequest,
+        @ApiIgnore BindingResult errors,
+        @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
         Page<Personnel> page = personnelService.findMany(credentials, findAllPersonnelRequest);
 

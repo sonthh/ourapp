@@ -1,5 +1,6 @@
 package com.son.service;
 
+import com.son.constant.Exceptions;
 import com.son.entity.Department;
 import com.son.entity.Personnel;
 import com.son.entity.User;
@@ -8,6 +9,8 @@ import com.son.model.Gender;
 import com.son.repository.DepartmentRepository;
 import com.son.repository.PersonnelRepository;
 import com.son.repository.UserRepository;
+import com.son.request.CreatePersonnelRequest;
+import com.son.request.DeleteManyByIdRequest;
 import com.son.request.FindAllPersonnelRequest;
 import com.son.request.UpdatePersonnelRequest;
 import com.son.security.Credentials;
@@ -50,6 +53,7 @@ public class PersonnelService {
     @Autowired
     public PersonnelService(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+
         this.modelMapper.addMappings(new PropertyMap<UpdatePersonnelRequest, Personnel>() {
             @SneakyThrows
             @Override
@@ -69,12 +73,30 @@ public class PersonnelService {
                 map().getUser().setEmail(source.getEmail());
             }
         });
+
+        this.modelMapper.addMappings(new PropertyMap<CreatePersonnelRequest, Personnel>() {
+            @Override
+            protected void configure() {
+                skip(destination.getId());
+                skip(destination.getDepartment().getId());
+                skip(destination.getUser().getId());
+
+                map().setDegree(source.getDegree());
+                map().setPosition(source.getPosition());
+                map().setDescription(source.getDescription());
+
+                map().getUser().setFullName(source.getFullName());
+                map().getUser().setAddress(source.getAddress());
+                map().getUser().setPhoneNumber(source.getPhoneNumber());
+                map().getUser().setEmail(source.getEmail());
+            }
+        });
     }
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
         if (!optional.isPresent()) {
-            throw new ApiException(404, "PersonnelNotFound");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
 
         return optional.get();
@@ -83,27 +105,80 @@ public class PersonnelService {
     public Boolean isDeletedOne(int personnelId) throws ApiException {
         Optional<Personnel> personnel = personnelRepository.findById(personnelId);
         if (!personnel.isPresent()) {
-            throw new ApiException(404, "PersonnelIdNotFound");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
         personnelRepository.deleteById(personnelId);
         return true;
+    }
+
+    public Boolean deteleMany(DeleteManyByIdRequest deleteManyByIdRequest) throws ApiException {
+        List<Integer> ids = deleteManyByIdRequest.getIds();
+        List<Personnel> personnels = (List<Personnel>) personnelRepository.findAllById(ids);
+
+        if (personnels.size() != ids.size()) {
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
+        }
+
+        personnelRepository.deleteAll(personnels);
+
+        return true;
+    }
+
+    public Personnel createOne(CreatePersonnelRequest createPersonnelRequest) throws ApiException, ParseException {
+        Optional<User> user = userRepository.findById(createPersonnelRequest.getUserId());
+        Optional<Department> department = departmentRepository.findById(createPersonnelRequest.getDepartmentId());
+        Optional<Personnel> personnel = personnelRepository.findOneByUserId(createPersonnelRequest.getUserId());
+
+        if (!user.isPresent()) {
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
+        }
+
+        if (!department.isPresent()) {
+            throw new ApiException(404, Exceptions.DEPARTMENT_NOT_FOUND);
+        }
+
+        if (personnel.isPresent()) {
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
+        }
+
+        Personnel newPersonnel = new Personnel();
+        newPersonnel.setUser(user.get());
+        newPersonnel.setDepartment(department.get());
+        modelMapper.map(createPersonnelRequest, newPersonnel);
+
+        if (createPersonnelRequest.getBirthDay() != null) {
+            newPersonnel.getUser().setBirthDay(new SimpleDateFormat("yyyy-MM-dd")
+                .parse(createPersonnelRequest.getBirthDay()));
+        }
+
+        if (createPersonnelRequest.getGender() != null) {
+            newPersonnel.getUser().setGender(Gender.valueOf(createPersonnelRequest.getGender()));
+        }
+
+        return personnelRepository.save(newPersonnel);
     }
 
     public Personnel updateOne(UpdatePersonnelRequest updatePersonnelRequest, int id) throws ApiException, ParseException {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(id);
         Optional<Department> department = departmentRepository.findById(updatePersonnelRequest.getDepartmentId());
         Optional<User> user = userRepository.findById(updatePersonnelRequest.getUserId());
+        Optional<Personnel> checkPersonnelByUserID = personnelRepository.findOneByUserId(updatePersonnelRequest.getUserId());
 
         if (!oldPersonnel.isPresent()) {
-            throw new ApiException(404, "PersonnelIdNotFound");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
 
         if (!department.isPresent()) {
-            throw new ApiException(404, "DepartmentIdNotFound");
+            throw new ApiException(404, Exceptions.DEPARTMENT_NOT_FOUND);
         }
 
         if (!user.isPresent()) {
-            throw new ApiException(404, "UserIdNotFound");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
+        }
+
+        if (checkPersonnelByUserID.isPresent()
+            && !checkPersonnelByUserID.get().getId().equals(oldPersonnel.get().getId())) {
+            throw new ApiException(404, Exceptions.USER_EXIST);
         }
 
         Personnel updatePersonnel = oldPersonnel.get();
