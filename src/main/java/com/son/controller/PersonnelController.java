@@ -63,6 +63,16 @@ public class PersonnelController {
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
     }
 
+    @ApiOperation("Delete many personnels")
+    @DeleteMapping
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
+    public ResponseEntity<Boolean> deleteMany(@Valid @RequestBody DeleteManyByIdRequest deleteManyByIdRequest)
+        throws ApiException {
+
+        Boolean isDeleted = personnelService.deteleMany(deleteManyByIdRequest);
+        return new ResponseEntity<>(isDeleted, HttpStatus.OK);
+    }
+
     @ApiOperation("get one personnel")
     @GetMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
