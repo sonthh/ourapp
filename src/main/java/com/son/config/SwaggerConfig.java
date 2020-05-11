@@ -26,10 +26,10 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInfo() {
-        Contact contact = new Contact("son.com", "https://son.com", "son@son.com");
+        Contact contact = new Contact("personnel manager", "https://ourapp.com", "personnel.team1@gmail.com");
         return new ApiInfoBuilder()
-            .title("son")
-            .description("Sơn Đẹp Trai")
+            .title("personnel manager")
+            .description("personnel manager app")
             .version("1.0.0")
             .license("Apache 2.0")
             .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")

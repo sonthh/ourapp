@@ -18,6 +18,16 @@ public interface Roles {
             ALL_PERSONNEL_UPDATE,
             ALL_PERSONNEL_CREATE,
             ALL_PERSONNEL_DELETE,
+
+            ALL_BRANCH_READ,
+            ALL_BRANCH_UPDATE,
+            ALL_BRANCH_CREATE,
+            ALL_BRANCH_DELETE,
+
+            ALL_DEPARTMENT_READ,
+            ALL_DEPARTMENT_UPDATE,
+            ALL_DEPARTMENT_CREATE,
+            ALL_DEPARTMENT_DELETE,
     };
 
     String[] BASIC = {
@@ -40,5 +50,15 @@ public interface Roles {
             ALL_PERSONNEL_UPDATE,
             ALL_PERSONNEL_CREATE,
             ALL_PERSONNEL_DELETE,
-};
+
+            ALL_BRANCH_READ,
+            ALL_BRANCH_UPDATE,
+            ALL_BRANCH_CREATE,
+            ALL_BRANCH_DELETE,
+
+            ALL_DEPARTMENT_READ,
+            ALL_DEPARTMENT_UPDATE,
+            ALL_DEPARTMENT_CREATE,
+            ALL_DEPARTMENT_DELETE,
+    };
 }

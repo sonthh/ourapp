@@ -5,6 +5,7 @@ import org.modelmapper.AbstractConverter;
 import org.modelmapper.Conditions;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,8 @@ public class BeanDefinitionConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         Converter<String, Date> toStringDate = new AbstractConverter<String, Date>() {
             @Override

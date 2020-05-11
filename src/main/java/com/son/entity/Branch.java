@@ -1,6 +1,6 @@
 package com.son.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,12 @@ public class Branch extends BaseEntity {
     private String description;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy = "branch")
-    @JsonIgnore
+    @OneToMany(mappedBy = "branch", cascade = {CascadeType.REMOVE})
+    @JsonIgnoreProperties({"branch"})
     private List<Department> departments;
+
+    @PreRemove
+    private void preRemove() {
+        departments.forEach(department -> department.setBranch(null));
+    }
 }

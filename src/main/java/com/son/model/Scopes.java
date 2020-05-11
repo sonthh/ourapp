@@ -24,4 +24,16 @@ public final class Scopes {
     public static final String ALL_PERSONNEL_UPDATE             = "ALL:PERSONNEL:UPDATE";
     public static final String ALL_PERSONNEL_CREATE             = "ALL:PERSONNEL:CREATE";
     public static final String ALL_PERSONNEL_DELETE             = "ALL:PERSONNEL:DELETE";
+
+    // BRANCH
+    public static final String ALL_BRANCH_READ                  = "ALL:BRANCH:READ";
+    public static final String ALL_BRANCH_UPDATE                = "ALL:BRANCH:UPDATE";
+    public static final String ALL_BRANCH_CREATE                = "ALL:BRANCH:CREATE";
+    public static final String ALL_BRANCH_DELETE                = "ALL:BRANCH:DELETE";
+
+    // BRANCH
+    public static final String ALL_DEPARTMENT_READ                  = "ALL:DEPARTMENT:READ";
+    public static final String ALL_DEPARTMENT_UPDATE                = "ALL:DEPARTMENT:UPDATE";
+    public static final String ALL_DEPARTMENT_CREATE                = "ALL:DEPARTMENT:CREATE";
+    public static final String ALL_DEPARTMENT_DELETE                = "ALL:DEPARTMENT:DELETE";
 }

@@ -1,5 +1,6 @@
 package com.son.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Department extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "branchId")
+    @JsonIgnoreProperties({"departments"})
     private Branch branch;
 
     @Column(nullable = false, unique = true)

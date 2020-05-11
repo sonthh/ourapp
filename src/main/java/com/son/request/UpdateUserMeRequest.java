@@ -11,7 +11,11 @@ import javax.validation.constraints.Size;
 
 @Data
 public class UpdateUserMeRequest {
-    @ApiModelProperty(required = true)
+    @ApiModelProperty
+    @Size(min = 6, max = 20)
+    private String currentPassword;
+
+    @ApiModelProperty
     @Size(min = 6, max = 20)
     private String password;
 

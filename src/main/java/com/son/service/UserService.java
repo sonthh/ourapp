@@ -129,7 +129,15 @@ public class UserService {
     public User updateOneMe(UpdateUserMeRequest updateUserRequest, Credentials credentials) throws ApiException {
         User updatedUser = findOne(credentials.getId());
 
-        if (updateUserRequest.getPassword() != null) {
+        if (updateUserRequest.getCurrentPassword() != null) {
+            boolean check = passwordEncoder.matches(updateUserRequest.getCurrentPassword(),
+                    updatedUser.getPassword());
+            if (!check) {
+                throw new ApiException(400, Exceptions.PASSWORD_NOT_MATCH);
+            }
+        }
+
+        if (updateUserRequest.getPassword() != null && updateUserRequest.getCurrentPassword() != null) {
             updateUserRequest.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
         }
 
