@@ -8,6 +8,7 @@ import com.son.model.Gender;
 import com.son.repository.DepartmentRepository;
 import com.son.repository.PersonnelRepository;
 import com.son.repository.UserRepository;
+import com.son.request.CreatePersonnelRequest;
 import com.son.request.FindAllPersonnelRequest;
 import com.son.request.UpdatePersonnelRequest;
 import com.son.security.Credentials;
@@ -50,6 +51,7 @@ public class PersonnelService {
     @Autowired
     public PersonnelService(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+
         this.modelMapper.addMappings(new PropertyMap<UpdatePersonnelRequest, Personnel>() {
             @SneakyThrows
             @Override
@@ -63,6 +65,24 @@ public class PersonnelService {
                 map().getDepartment().setId(source.getDepartmentId());
 
                 map().getUser().setId(source.getUserId());
+                map().getUser().setFullName(source.getFullName());
+                map().getUser().setAddress(source.getAddress());
+                map().getUser().setPhoneNumber(source.getPhoneNumber());
+                map().getUser().setEmail(source.getEmail());
+            }
+        });
+
+        this.modelMapper.addMappings(new PropertyMap<CreatePersonnelRequest, Personnel>() {
+            @Override
+            protected void configure() {
+                skip(destination.getId());
+                skip(destination.getDepartment().getId());
+                skip(destination.getUser().getId());
+
+                map().setDegree(source.getDegree());
+                map().setPosition(source.getPosition());
+                map().setDescription(source.getDescription());
+
                 map().getUser().setFullName(source.getFullName());
                 map().getUser().setAddress(source.getAddress());
                 map().getUser().setPhoneNumber(source.getPhoneNumber());
@@ -89,10 +109,45 @@ public class PersonnelService {
         return true;
     }
 
+    public Personnel createOne(CreatePersonnelRequest createPersonnelRequest) throws ApiException, ParseException {
+        Optional<User> user = userRepository.findById(createPersonnelRequest.getUserId());
+        Optional<Department> department = departmentRepository.findById(createPersonnelRequest.getDepartmentId());
+        Optional<Personnel> personnel = personnelRepository.findOneByUserId(createPersonnelRequest.getUserId());
+
+        if (!user.isPresent()) {
+            throw new ApiException(404, "UserIdNotFound");
+        }
+
+        if (!department.isPresent()) {
+            throw new ApiException(404, "DepartmentIdNotFound");
+        }
+
+        if (personnel.isPresent()) {
+            throw new ApiException(404, "UserIdIsExist");
+        }
+
+        Personnel newPersonnel = new Personnel();
+        newPersonnel.setUser(user.get());
+        newPersonnel.setDepartment(department.get());
+        modelMapper.map(createPersonnelRequest, newPersonnel);
+
+        if (createPersonnelRequest.getBirthDay() != null) {
+            newPersonnel.getUser().setBirthDay(new SimpleDateFormat("yyyy-MM-dd")
+                .parse(createPersonnelRequest.getBirthDay()));
+        }
+
+        if (createPersonnelRequest.getGender() != null) {
+            newPersonnel.getUser().setGender(Gender.valueOf(createPersonnelRequest.getGender()));
+        }
+
+        return personnelRepository.save(newPersonnel);
+    }
+
     public Personnel updateOne(UpdatePersonnelRequest updatePersonnelRequest, int id) throws ApiException, ParseException {
         Optional<Personnel> oldPersonnel = personnelRepository.findById(id);
         Optional<Department> department = departmentRepository.findById(updatePersonnelRequest.getDepartmentId());
         Optional<User> user = userRepository.findById(updatePersonnelRequest.getUserId());
+        Optional<Personnel> checkPersonnelByUserID = personnelRepository.findOneByUserId(updatePersonnelRequest.getUserId());
 
         if (!oldPersonnel.isPresent()) {
             throw new ApiException(404, "PersonnelIdNotFound");
@@ -104,6 +159,11 @@ public class PersonnelService {
 
         if (!user.isPresent()) {
             throw new ApiException(404, "UserIdNotFound");
+        }
+
+        if (checkPersonnelByUserID.isPresent()
+            && !checkPersonnelByUserID.get().getId().equals(oldPersonnel.get().getId())) {
+            throw new ApiException(404, "UserIdIsExist");
         }
 
         Personnel updatePersonnel = oldPersonnel.get();
