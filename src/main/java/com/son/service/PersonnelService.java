@@ -1,5 +1,6 @@
 package com.son.service;
 
+import com.son.constant.Exceptions;
 import com.son.entity.Department;
 import com.son.entity.Personnel;
 import com.son.entity.User;
@@ -9,6 +10,7 @@ import com.son.repository.DepartmentRepository;
 import com.son.repository.PersonnelRepository;
 import com.son.repository.UserRepository;
 import com.son.request.CreatePersonnelRequest;
+import com.son.request.DeleteManyByIdRequest;
 import com.son.request.FindAllPersonnelRequest;
 import com.son.request.UpdatePersonnelRequest;
 import com.son.security.Credentials;
@@ -94,7 +96,7 @@ public class PersonnelService {
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
         if (!optional.isPresent()) {
-            throw new ApiException(404, "PersonnelNotFound");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
 
         return optional.get();
@@ -103,9 +105,22 @@ public class PersonnelService {
     public Boolean isDeletedOne(int personnelId) throws ApiException {
         Optional<Personnel> personnel = personnelRepository.findById(personnelId);
         if (!personnel.isPresent()) {
-            throw new ApiException(404, "PersonnelIdNotFound");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
         personnelRepository.deleteById(personnelId);
+        return true;
+    }
+
+    public Boolean deteleMany(DeleteManyByIdRequest deleteManyByIdRequest) throws ApiException {
+        List<Integer> ids = deleteManyByIdRequest.getIds();
+        List<Personnel> personnels = (List<Personnel>) personnelRepository.findAllById(ids);
+
+        if (personnels.size() != ids.size()) {
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
+        }
+
+        personnelRepository.deleteAll(personnels);
+
         return true;
     }
 
@@ -115,15 +130,15 @@ public class PersonnelService {
         Optional<Personnel> personnel = personnelRepository.findOneByUserId(createPersonnelRequest.getUserId());
 
         if (!user.isPresent()) {
-            throw new ApiException(404, "UserIdNotFound");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
         }
 
         if (!department.isPresent()) {
-            throw new ApiException(404, "DepartmentIdNotFound");
+            throw new ApiException(404, Exceptions.DEPARTMENT_NOT_FOUND);
         }
 
         if (personnel.isPresent()) {
-            throw new ApiException(404, "UserIdIsExist");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
 
         Personnel newPersonnel = new Personnel();
@@ -150,20 +165,20 @@ public class PersonnelService {
         Optional<Personnel> checkPersonnelByUserID = personnelRepository.findOneByUserId(updatePersonnelRequest.getUserId());
 
         if (!oldPersonnel.isPresent()) {
-            throw new ApiException(404, "PersonnelIdNotFound");
+            throw new ApiException(404, Exceptions.PERSONNEL_NOT_FOUND);
         }
 
         if (!department.isPresent()) {
-            throw new ApiException(404, "DepartmentIdNotFound");
+            throw new ApiException(404, Exceptions.DEPARTMENT_NOT_FOUND);
         }
 
         if (!user.isPresent()) {
-            throw new ApiException(404, "UserIdNotFound");
+            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
         }
 
         if (checkPersonnelByUserID.isPresent()
             && !checkPersonnelByUserID.get().getId().equals(oldPersonnel.get().getId())) {
-            throw new ApiException(404, "UserIdIsExist");
+            throw new ApiException(404, Exceptions.USER_EXIST);
         }
 
         Personnel updatePersonnel = oldPersonnel.get();
