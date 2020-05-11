@@ -5,6 +5,7 @@ public class Exceptions {
     public static final String USERNAME_EXIST = "Username is existed";
     public static final String USER_NOT_FOUND = "User not found";
     public static final String USER_NOT_FOUND_OR_IS_INACTIVE = "User not found or user status is inactive";
+    public static final String USER_EXIST = "User is existed";
 
     public static final String PASSWORD_NOT_MATCH = "Is not your password";
 
@@ -21,8 +22,10 @@ public class Exceptions {
     public static final String BRANCH_NOT_FOUND = "Branch not found";
     public static final String BRANCH_EXISTED = "Branch existed";
 
-    // BRANCH
+    // DEPARTMENT
     public static final String DEPARTMENT_NOT_FOUND = "Department not found";
     public static final String DEPARTMENT_EXISTED = "Department existed";
 
+    // PERSONNEL
+    public static final String PERSONNEL_NOT_FOUND = "Personnel not found";
 }
