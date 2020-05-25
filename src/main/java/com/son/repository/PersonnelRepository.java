@@ -13,6 +13,6 @@ public interface PersonnelRepository extends CrudRepository<Personnel, Integer>,
     PagingAndSortingRepository<Personnel, Integer>,
     JpaSpecificationExecutor<Personnel> {
 
-    @Query(value = "select p from Personnel AS p where p.user.id = :userId")
-    Optional<Personnel> findOneByUserId(@Param("userId") int userId);
+//    @Query(value = "select p from Personnel AS p where p.user.id = :userId")
+//    Optional<Personnel> findOneByUserId(@Param("userId") int userId);
 }

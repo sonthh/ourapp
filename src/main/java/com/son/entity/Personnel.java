@@ -1,11 +1,16 @@
 package com.son.entity;
 
+import com.son.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,22 +23,74 @@ public class Personnel extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId", nullable = false, unique = true)
-    private User user;
+    @Column
+    private String fullName;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String email;
+
+    @Column
+    private Date birthDay;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @OneToOne
+    @JoinColumn(name = "identificationId")
+    private Identification identification;
+
+    @OneToOne
+    @JoinColumn(name = "bankInfoId")
+    private BankInfo bankInfo;
+
+    @OneToOne
+    @JoinColumn(name = "passportId")
+    private Passport passport;
+
+    @Column
+    private String position;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departmentId")
     private Department department;
 
-    @Column(nullable = false)
-    private String position;
+    @OneToOne
+    @JoinColumn(name = "workingTimeId")
+    private WorkingTime workingTime;
 
-    @Column(nullable = false)
-    private String degree;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany
+    @JoinColumn(name = "personnelId")
+    private List<Qualification> qualifications;
 
-    @Column
-    private String description;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany
+    @JoinColumn(name = "personnelId")
+    private List<Certification> certifications;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany
+    @JoinColumn(name = "personnelId")
+    private List<WorkHistory> workHistories;
+
+    @OneToOne
+    @JoinColumn(name = "contactInfoId")
+    private ContactInfo contactInfo;
+
+    @OneToOne
+    @JoinColumn(name = "healthyStatusId")
+    private HealthyStatus healthyStatus;
+
+    @OneToOne
+    @JoinColumn(name = "salaryId")
+    private Salary salary;
+
+    @OneToOne
+    @JoinColumn(name = "additionalInfoId")
+    private AdditionalInfo additionalInfo;
 
 }

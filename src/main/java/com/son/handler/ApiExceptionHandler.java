@@ -20,17 +20,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     // error handler for @Valid @RequestBody Dto
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-        MethodArgumentNotValidException ex,
-        HttpHeaders headers,
-        HttpStatus status, WebRequest request
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status, WebRequest request
     ) {
         List<String> errors = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
-            .map(x -> {
-                return x.getObjectName() + "." + x.getField() + ": " + x.getDefaultMessage();
-            })
-            .collect(Collectors.toList());
+                .getFieldErrors()
+                .stream()
+                .map(x -> {
+//                return x.getObjectName() + "." + x.getField() + ": " + x.getDefaultMessage();
+                    return x.getField() + ": " + x.getDefaultMessage();
+
+                })
+                .collect(Collectors.toList());
 
         ApiExceptionResponse body = new ApiExceptionResponse();
         body.setErrors(errors);
@@ -42,20 +44,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     // error handler for PathVariable RequestParam
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> constraintViolationException(
-        ConstraintViolationException ex
+            ConstraintViolationException ex
     ) {
         List<String> errors = ex.getConstraintViolations()
-            .stream()
-            .map(each -> {
-                String[] arrayPropertyPath = each.getPropertyPath().toString().split("\\.");
+                .stream()
+                .map(each -> {
+                    String[] arrayPropertyPath = each.getPropertyPath().toString().split("\\.");
 
-                if (arrayPropertyPath.length > 0) {
-                    return arrayPropertyPath[arrayPropertyPath.length - 1] + ": " + each.getMessage();
-                }
+                    if (arrayPropertyPath.length > 0) {
+                        return arrayPropertyPath[arrayPropertyPath.length - 1] + ": " + each.getMessage();
+                    }
 
-                return each.getPropertyPath() + ": " + each.getMessage();
-            })
-            .collect(Collectors.toList());
+                    return each.getPropertyPath() + ": " + each.getMessage();
+                })
+                .collect(Collectors.toList());
 
         ApiExceptionResponse body = new ApiExceptionResponse();
         body.setErrors(errors);

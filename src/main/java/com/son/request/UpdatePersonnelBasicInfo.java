@@ -7,48 +7,34 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 @Data
-public class UpdatePersonnelRequest {
-    @ApiModelProperty
-    @NotNull
-    private String degree;
-
-    @ApiModelProperty
-    private String description;
-
-    @ApiModelProperty
-    @NotNull
-    private String position;
-
-    @ApiModelProperty
-    private int departmentId;
-
-    @ApiModelProperty(required = true)
-    @NotNull
-    private int userId;
-
+public class UpdatePersonnelBasicInfo {
     @ApiModelProperty
     @Size(min = 6, max = 20)
     private String fullName;
 
     @ApiModelProperty
-    private String address;
-
-    @ApiModelProperty
-    @IsDateString(pattern = "yyyy-MM-dd")
-    private String birthDay;
+    private String phoneNumber;
 
     @ApiModelProperty
     @Email
     private String email;
 
     @ApiModelProperty
-    private String phoneNumber;
+    @IsDateString(pattern = "yyyy-MM-dd")
+    private String birthDay;
 
     @ApiModelProperty
     @IsEnum(enumClass = Gender.class)
     private String gender;
+
+    @ApiModelProperty
+    @Min(1)
+    private Integer departmentId;
+
+    @ApiModelProperty
+    private String position;
 }
