@@ -48,10 +48,14 @@ public class PersonnelController {
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Personnel> updateOnePersonnel(
             @Valid @RequestBody UpdatePersonnelBasicInfo personnelRequest,
-            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
-        return new ResponseEntity<>(personnelService.updateBasicInfo(personnelRequest, personnelId), HttpStatus.OK);
+        return new ResponseEntity<>(
+                personnelService.updateBasicInfo(personnelRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
     }
 
     @ApiOperation("Delete one personnel")

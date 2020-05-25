@@ -19,7 +19,6 @@ import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,61 +32,11 @@ import static com.son.util.spec.SearchOperation.*;
 @Service
 @RequiredArgsConstructor
 public class PersonnelService {
-
-    @Autowired
-    private PersonnelRepository personnelRepository;
-
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-//    @Autowired
-//    public PersonnelService(ModelMapper modelMapper) {
-//        this.modelMapper = modelMapper;
-//
-//        this.modelMapper.addMappings(new PropertyMap<UpdatePersonnelRequest, Personnel>() {
-//            @SneakyThrows
-//            @Override
-//            protected void configure() {
-//                skip(destination.getId());
-//
-//                map().setDegree(source.getDegree());
-//                map().setPosition(source.getPosition());
-//                map().setDescription(source.getDescription());
-//
-//                map().getDepartment().setId(source.getDepartmentId());
-//
-//                map().getUser().setId(source.getUserId());
-//                map().getUser().setFullName(source.getFullName());
-//                map().getUser().setAddress(source.getAddress());
-//                map().getUser().setPhoneNumber(source.getPhoneNumber());
-//                map().getUser().setEmail(source.getEmail());
-//            }
-//        });
-//
-//        this.modelMapper.addMappings(new PropertyMap<CreatePersonnelRequest, Personnel>() {
-//            @Override
-//            protected void configure() {
-//                skip(destination.getId());
-//                skip(destination.getDepartment().getId());
-//                skip(destination.getUser().getId());
-//
-//                map().setDegree(source.getDegree());
-//                map().setPosition(source.getPosition());
-//                map().setDescription(source.getDescription());
-//
-//                map().getUser().setFullName(source.getFullName());
-//                map().getUser().setAddress(source.getAddress());
-//                map().getUser().setPhoneNumber(source.getPhoneNumber());
-//                map().getUser().setEmail(source.getEmail());
-//            }
-//        });
-//    }
+    private final PersonnelRepository personnelRepository;
+    private final DepartmentRepository departmentRepository;
+    private final DepartmentService departmentService;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -136,48 +85,19 @@ public class PersonnelService {
     }
 
     public Personnel updateBasicInfo(
-            UpdatePersonnelBasicInfo personnelRequest, int personnelId
+            UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         Integer departmentId = personnelRequest.getDepartmentId();
         if (departmentId != null) {
-            Optional<Department> opDepartment = departmentRepository.findById(departmentId);
-
-            if (!opDepartment.isPresent()) {
-                throw new ApiException(404, Exceptions.DEPARTMENT_NOT_FOUND);
-            }
-
-
+            Department department = departmentService.findOne(credentials, departmentId);
+            personnel.setDepartment(department);
         }
-//        if (!department.isPresent()) {
-//            throw new ApiException(404, Exceptions.DEPARTMENT_NOT_FOUND);
-//        }
-//
-//        if (!user.isPresent()) {
-//            throw new ApiException(404, Exceptions.USER_NOT_FOUND);
-//        }
-//
-//        if (checkPersonnelByUserID.isPresent()
-//            && !checkPersonnelByUserID.get().getId().equals(oldPersonnel.get().getId())) {
-//            throw new ApiException(404, Exceptions.USER_EXIST);
-//        }
-//
-//        Personnel updatePersonnel = oldPersonnel.get();
-//
-//        modelMapper.map(updatePersonnelRequest, updatePersonnel);
-//
-//        if (updatePersonnelRequest.getBirthDay() != null) {
-//            updatePersonnel.getUser().setBirthDay(new SimpleDateFormat("yyyy-MM-dd")
-//                .parse(updatePersonnelRequest.getBirthDay()));
-//        }
-//
-//        if (updatePersonnelRequest.getGender() != null) {
-//            updatePersonnel.getUser().setGender(Gender.valueOf(updatePersonnelRequest.getGender()));
-//        }
-//
-//        return personnelRepository.save(updatePersonnel);
-        return null;
+
+        modelMapper.map(personnelRequest, personnel);
+
+        return personnelRepository.save(personnel);
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
