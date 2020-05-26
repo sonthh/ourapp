@@ -145,6 +145,54 @@ public class PersonnelController {
         );
     }
 
+    @ApiOperation("Add qualification")
+    @PostMapping("/{personnelId}/qualifications")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addQualification(
+            @Valid @RequestBody AddQualificationRequest addQualificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addQualification(addQualificationRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update qualification")
+    @PutMapping("/{personnelId}/qualifications/{qualificationId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addQualification(
+            @Valid @RequestBody UpdateQualificationRequest updateQualificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @Min(1) @PathVariable(value = "qualificationId", required = false) Integer qualificationId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateQualification(
+                        updateQualificationRequest, personnelId, qualificationId, credentials
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Delete qualification")
+    @DeleteMapping("/{personnelId}/qualifications/{qualificationId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> deleteQualification(
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @Min(1) @PathVariable(value = "qualificationId", required = false) Integer qualificationId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.deleteQualification(personnelId, qualificationId, credentials),
+                HttpStatus.OK
+        );
+    }
+
     @ApiOperation("Delete one personnel")
     @DeleteMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")

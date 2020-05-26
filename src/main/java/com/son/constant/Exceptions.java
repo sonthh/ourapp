@@ -38,4 +38,5 @@ public class Exceptions {
     public static final String WORKING_TIME_EXISTED = "Thông tin thời gian làm việc tồn tại";
     public static final String WORKING_TIME_NOT_FOUND = "Thông tin thời gian làm việc chưa có";
 
+    public static final String QUALIFICATION_NOT_FOUND = "Thông tin trình độ chuyên môn không được tìm thấy";
 }

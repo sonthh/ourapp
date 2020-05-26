@@ -32,6 +32,7 @@ public class PersonnelService {
     private final IdentificationRepository identificationRepository;
     private final PassportRepository passportRepository;
     private final WorkingTimeRepository workingTimeRepository;
+    private final QualificationRepository qualificationRepository;
     private final ModelMapper modelMapper;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
@@ -192,6 +193,61 @@ public class PersonnelService {
         modelMapper.map(workingTimeRequest, workingTime);
 
         workingTimeRepository.save(workingTime);
+        return true;
+    }
+
+    public Boolean addQualification(
+            AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Qualification qualification = modelMapper.map(qualificationRequest, Qualification.class);
+        qualification = qualificationRepository.save(qualification);
+
+        personnel.getQualifications().add(qualification);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateQualification(
+            UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
+            Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Optional<Qualification> opQualification = qualificationRepository.findById(qualificationId);
+        if (!opQualification.isPresent()) {
+            throw new ApiException(400, Exceptions.QUALIFICATION_NOT_FOUND);
+        }
+        Qualification qualification = opQualification.get();
+
+        List<Qualification> qualifications = personnel.getQualifications();
+        if (!qualifications.contains(qualification)) {
+            throw new ApiException(400, Exceptions.QUALIFICATION_NOT_FOUND);
+        }
+
+        modelMapper.map(qualificationRequest, qualification);
+        qualificationRepository.save(qualification);
+        return true;
+    }
+
+    public Boolean deleteQualification(
+            int personnelId, int qualificationId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Optional<Qualification> opQualification = qualificationRepository.findById(qualificationId);
+        if (!opQualification.isPresent()) {
+            throw new ApiException(400, Exceptions.QUALIFICATION_NOT_FOUND);
+        }
+        Qualification qualification = opQualification.get();
+
+        List<Qualification> qualifications = personnel.getQualifications();
+        if (!qualifications.contains(qualification)) {
+            throw new ApiException(400, Exceptions.QUALIFICATION_NOT_FOUND);
+        }
+
+        qualificationRepository.delete(qualification);
         return true;
     }
 
