@@ -85,6 +85,36 @@ public class PersonnelController {
         );
     }
 
+    @ApiOperation("Add passport")
+    @PutMapping("/{personnelId}/passport/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addPassport(
+            @Valid @RequestBody AddPassportRequest addPassportRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addPassport(addPassportRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update passport")
+    @PutMapping("/{personnelId}/passport/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updatePassport(
+            @Valid @RequestBody UpdatePassportRequest updatePassportRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updatePassport(updatePassportRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
     @ApiOperation("Delete one personnel")
     @DeleteMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")

@@ -1,16 +1,10 @@
 package com.son.service;
 
 import com.son.constant.Exceptions;
-import com.son.entity.Department;
-import com.son.entity.Identification;
-import com.son.entity.Personnel;
-import com.son.entity.User;
+import com.son.entity.*;
 import com.son.handler.ApiException;
 import com.son.model.Gender;
-import com.son.repository.DepartmentRepository;
-import com.son.repository.IdentificationRepository;
-import com.son.repository.PersonnelRepository;
-import com.son.repository.UserRepository;
+import com.son.repository.*;
 import com.son.request.*;
 import com.son.security.Credentials;
 import com.son.util.common.EnumUtil;
@@ -36,6 +30,7 @@ public class PersonnelService {
     private final DepartmentService departmentService;
     private final UserRepository userRepository;
     private final IdentificationRepository identificationRepository;
+    private final PassportRepository passportRepository;
     private final ModelMapper modelMapper;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
@@ -130,6 +125,39 @@ public class PersonnelService {
         modelMapper.map(updateIdentification, identification);
 
         identificationRepository.save(identification);
+        return true;
+    }
+
+    public Boolean addPassport(
+            AddPassportRequest passportRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getPassport() != null) {
+            throw new ApiException(400, Exceptions.PASSPORT_EXISTED);
+        }
+
+        Passport passport = modelMapper.map(passportRequest, Passport.class);
+        passport = passportRepository.save(passport);
+
+        personnel.setPassport(passport);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updatePassport(
+            UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getPassport() == null) {
+            throw new ApiException(400, Exceptions.PASSPORT_NOT_FOUND);
+        }
+
+        Passport passport = personnel.getPassport();
+        modelMapper.map(passportRequest, passport);
+
+        passportRepository.save(passport);
         return true;
     }
 

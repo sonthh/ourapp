@@ -32,4 +32,7 @@ public class Exceptions {
     public static final String IDENTIFICATION_EXISTED = "CMND tồn tại";
     public static final String IDENTIFICATION_NOT_FOUND= "CMND không tồn tại";
 
+    public static final String PASSPORT_EXISTED = "Hộ chiếu tồn tại";
+    public static final String PASSPORT_NOT_FOUND = "Hộ chiếu không tồn tại";
+
 }
