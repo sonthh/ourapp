@@ -30,7 +30,7 @@ public class Exceptions {
     public static final String PERSONNEL_NOT_FOUND = "Nhân sự không tồn tại";
 
     public static final String IDENTIFICATION_EXISTED = "CMND tồn tại";
-    public static final String IDENTIFICATION_NOT_FOUND= "CMND không tồn tại";
+    public static final String IDENTIFICATION_NOT_FOUND = "CMND không tồn tại";
 
     public static final String PASSPORT_EXISTED = "Hộ chiếu tồn tại";
     public static final String PASSPORT_NOT_FOUND = "Hộ chiếu không tồn tại";
@@ -39,4 +39,6 @@ public class Exceptions {
     public static final String WORKING_TIME_NOT_FOUND = "Thông tin thời gian làm việc chưa có";
 
     public static final String QUALIFICATION_NOT_FOUND = "Thông tin trình độ chuyên môn không được tìm thấy";
+
+    public static final String WORK_HISTORY_NOT_FOUND = "Thông tin lịch sử làm việc không được tìm thấy";
 }

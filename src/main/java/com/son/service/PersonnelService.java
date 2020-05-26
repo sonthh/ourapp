@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ public class PersonnelService {
     private final WorkingTimeRepository workingTimeRepository;
     private final QualificationRepository qualificationRepository;
     private final ModelMapper modelMapper;
+    private final WorkHistoryRepository workHistoryRepository;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -82,7 +84,7 @@ public class PersonnelService {
     }
 
     public Personnel updateBasicInfo(
-            UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
+        UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -98,7 +100,7 @@ public class PersonnelService {
     }
 
     public Boolean addIdentification(
-            AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
+        AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -115,7 +117,7 @@ public class PersonnelService {
     }
 
     public Boolean updateIdentification(
-            UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
+        UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -131,7 +133,7 @@ public class PersonnelService {
     }
 
     public Boolean addPassport(
-            AddPassportRequest passportRequest, int personnelId, Credentials credentials
+        AddPassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -148,7 +150,7 @@ public class PersonnelService {
     }
 
     public Boolean updatePassport(
-            UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
+        UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -164,7 +166,7 @@ public class PersonnelService {
     }
 
     public Boolean addWorkingTime(
-            AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+        AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -181,7 +183,7 @@ public class PersonnelService {
     }
 
     public Boolean updateWorkingTime(
-            UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+        UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -197,7 +199,7 @@ public class PersonnelService {
     }
 
     public Boolean addQualification(
-            AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
+        AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -210,8 +212,8 @@ public class PersonnelService {
     }
 
     public Boolean updateQualification(
-            UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
-            Credentials credentials
+        UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
+        Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -232,7 +234,7 @@ public class PersonnelService {
     }
 
     public Boolean deleteQualification(
-            int personnelId, int qualificationId, Credentials credentials
+        int personnelId, int qualificationId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -252,7 +254,7 @@ public class PersonnelService {
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
-            throws ApiException {
+        throws ApiException {
         User.Status status = EnumUtil.getEnum(User.Status.class, findAllPersonnelRequest.getStatus());
         Gender gender = EnumUtil.getEnum(Gender.class, findAllPersonnelRequest.getGender());
 
@@ -278,21 +280,21 @@ public class PersonnelService {
 
         SpecificationBuilder<Personnel> builder = new SpecificationBuilder<>();
         builder
-                .query("position", CONTAINS, position)
-                .query("degree", CONTAINS, degree)
-                .query("description", CONTAINS, description)
-                .query("user.address", CONTAINS, address)
-                .query("user.username", CONTAINS, username)
-                .query("user.email", CONTAINS, email)
-                .query("user.fullName", CONTAINS, fullName)
-                .query("user.phoneNumber", CONTAINS, phoneNumber)
-                .query("user.identification", CONTAINS, identification)
-                .query("user.status", EQUALITY, status)
-                .query("user.gender", EQUALITY, gender)
-                .query("user.id", IN, userIds)
-                .query("department.name", CONTAINS, department)
-                .query("createdBy.username", CONTAINS, createdBy)
-                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+            .query("position", CONTAINS, position)
+            .query("degree", CONTAINS, degree)
+            .query("description", CONTAINS, description)
+            .query("user.address", CONTAINS, address)
+            .query("user.username", CONTAINS, username)
+            .query("user.email", CONTAINS, email)
+            .query("user.fullName", CONTAINS, fullName)
+            .query("user.phoneNumber", CONTAINS, phoneNumber)
+            .query("user.identification", CONTAINS, identification)
+            .query("user.status", EQUALITY, status)
+            .query("user.gender", EQUALITY, gender)
+            .query("user.id", IN, userIds)
+            .query("department.name", CONTAINS, department)
+            .query("createdBy.username", CONTAINS, createdBy)
+            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
         Specification<Personnel> spec = builder.build();
 
@@ -300,4 +302,60 @@ public class PersonnelService {
 
         return personnelRepository.findAll(spec, pageable);
     }
+
+    public Personnel createWorkHistory(AddWorkHistoryRequest historyRequests, Integer personnelId)
+        throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        WorkHistory workHistory = modelMapper.map(historyRequests, WorkHistory.class);
+        workHistory = workHistoryRepository.save(workHistory);
+
+        personnel.getWorkHistories().add(workHistory);
+
+        return personnelRepository.save(personnel);
+    }
+
+    public Boolean updateWorkHistory(UpdateWorkHistoryRequest historyRequests,
+                                     Integer personnelId, Integer workHistoryId)
+        throws ApiException {
+        Personnel personnel = findOne(personnelId);
+        Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(workHistoryId);
+
+        if (!findWorkHistory.isPresent()) {
+            throw new ApiException(400, Exceptions.WORK_HISTORY_NOT_FOUND);
+        }
+
+        WorkHistory workHistory = findWorkHistory.get();
+
+        if (!personnel.getWorkHistories().contains(workHistory)) {
+            throw new ApiException(400, Exceptions.WORK_HISTORY_NOT_FOUND);
+        }
+
+        modelMapper.map(historyRequests, workHistory);
+        workHistoryRepository.save(workHistory);
+
+        return true;
+    }
+
+    public Boolean deleteWorkHistory(Integer personnelId, Integer workHistoryId) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(workHistoryId);
+
+        if (!findWorkHistory.isPresent()) {
+            throw new ApiException(400, Exceptions.WORK_HISTORY_NOT_FOUND);
+        }
+
+        WorkHistory workHistory = findWorkHistory.get();
+        List<WorkHistory> list = personnel.getWorkHistories();
+
+        if (!list.contains(workHistory)) {
+            throw new ApiException(400, Exceptions.WORK_HISTORY_NOT_FOUND);
+        }
+
+        workHistoryRepository.delete(workHistory);
+
+        return true;
+    }
 }
+
