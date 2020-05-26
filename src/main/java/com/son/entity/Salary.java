@@ -29,9 +29,4 @@ public class Salary {
 
     @Column
     private Double baseSalary;
-
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
-    @JoinColumn(name = "salaryId")
-    private List<Allowance> allowances;
 }

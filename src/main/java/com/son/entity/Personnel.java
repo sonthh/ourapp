@@ -89,6 +89,11 @@ public class Personnel extends BaseEntity {
     @JoinColumn(name = "salaryId")
     private Salary salary;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany
+    @JoinColumn(name = "personnelId")
+    private List<Allowance> allowances;
+
     @OneToOne
     @JoinColumn(name = "additionalInfoId")
     private AdditionalInfo additionalInfo;

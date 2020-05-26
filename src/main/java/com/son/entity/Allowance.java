@@ -22,5 +22,5 @@ public class Allowance {
     private String name;
 
     @Column
-    private Double money;
+    private Double amount;
 }
