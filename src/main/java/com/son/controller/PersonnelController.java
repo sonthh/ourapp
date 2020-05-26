@@ -2,10 +2,7 @@ package com.son.controller;
 
 import com.son.entity.Personnel;
 import com.son.handler.ApiException;
-import com.son.request.CreatePersonnelRequest;
-import com.son.request.DeleteManyByIdRequest;
-import com.son.request.FindAllPersonnelRequest;
-import com.son.request.UpdatePersonnelBasicInfo;
+import com.son.request.*;
 import com.son.security.Credentials;
 import com.son.service.PersonnelService;
 import io.swagger.annotations.Api;
@@ -46,7 +43,7 @@ public class PersonnelController {
     @ApiOperation("Update one personnel / basic information")
     @PutMapping("/{personnelId}/basicInfo")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
-    public ResponseEntity<Personnel> updateOnePersonnel(
+    public ResponseEntity<Personnel> updateBasicInfo(
             @Valid @RequestBody UpdatePersonnelBasicInfo personnelRequest,
             @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -54,6 +51,36 @@ public class PersonnelController {
 
         return new ResponseEntity<>(
                 personnelService.updateBasicInfo(personnelRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Add identification")
+    @PutMapping("/{personnelId}/identification/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addIdentification(
+            @Valid @RequestBody AddIdentificationRequest addIdentificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addIdentification(addIdentificationRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update identification")
+    @PutMapping("/{personnelId}/identification/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateIdentification(
+            @Valid @RequestBody UpdateIdentificationRequest updateIdentificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateIdentification(updateIdentificationRequest, personnelId, credentials),
                 HttpStatus.OK
         );
     }
@@ -81,7 +108,7 @@ public class PersonnelController {
     @ApiOperation("get one personnel")
     @GetMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
-    public ResponseEntity<Personnel> findOneUser(
+    public ResponseEntity<Personnel> findOnePersonnel(
             @Min(1) @PathVariable Integer personnelId
     ) throws ApiException {
         Personnel personnel = personnelService.findOne(personnelId);

@@ -2,17 +2,16 @@ package com.son.service;
 
 import com.son.constant.Exceptions;
 import com.son.entity.Department;
+import com.son.entity.Identification;
 import com.son.entity.Personnel;
 import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.model.Gender;
 import com.son.repository.DepartmentRepository;
+import com.son.repository.IdentificationRepository;
 import com.son.repository.PersonnelRepository;
 import com.son.repository.UserRepository;
-import com.son.request.CreatePersonnelRequest;
-import com.son.request.DeleteManyByIdRequest;
-import com.son.request.FindAllPersonnelRequest;
-import com.son.request.UpdatePersonnelBasicInfo;
+import com.son.request.*;
 import com.son.security.Credentials;
 import com.son.util.common.EnumUtil;
 import com.son.util.page.PageUtil;
@@ -36,6 +35,7 @@ public class PersonnelService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentService departmentService;
     private final UserRepository userRepository;
+    private final IdentificationRepository identificationRepository;
     private final ModelMapper modelMapper;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
@@ -98,6 +98,39 @@ public class PersonnelService {
         modelMapper.map(personnelRequest, personnel);
 
         return personnelRepository.save(personnel);
+    }
+
+    public Boolean addIdentification(
+            AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getIdentification() != null) {
+            throw new ApiException(400, Exceptions.IDENTIFICATION_EXISTED);
+        }
+
+        Identification identification = modelMapper.map(addIdentification, Identification.class);
+        identification = identificationRepository.save(identification);
+
+        personnel.setIdentification(identification);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateIdentification(
+            UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getIdentification() == null) {
+            throw new ApiException(400, Exceptions.IDENTIFICATION_NOT_FOUND);
+        }
+
+        Identification identification = personnel.getIdentification();
+        modelMapper.map(updateIdentification, identification);
+
+        identificationRepository.save(identification);
+        return true;
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)

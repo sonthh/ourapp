@@ -27,5 +27,9 @@ public class Exceptions {
     public static final String DEPARTMENT_EXISTED = "Department existed";
 
     // PERSONNEL
-    public static final String PERSONNEL_NOT_FOUND = "Personnel not found";
+    public static final String PERSONNEL_NOT_FOUND = "Nhân sự không tồn tại";
+
+    public static final String IDENTIFICATION_EXISTED = "CMND tồn tại";
+    public static final String IDENTIFICATION_NOT_FOUND= "CMND không tồn tại";
+
 }
