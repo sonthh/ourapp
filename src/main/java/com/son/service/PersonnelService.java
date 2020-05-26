@@ -31,6 +31,7 @@ public class PersonnelService {
     private final UserRepository userRepository;
     private final IdentificationRepository identificationRepository;
     private final PassportRepository passportRepository;
+    private final WorkingTimeRepository workingTimeRepository;
     private final ModelMapper modelMapper;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
@@ -158,6 +159,39 @@ public class PersonnelService {
         modelMapper.map(passportRequest, passport);
 
         passportRepository.save(passport);
+        return true;
+    }
+
+    public Boolean addWorkingTime(
+            AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getWorkingTime() != null) {
+            throw new ApiException(400, Exceptions.WORKING_TIME_EXISTED);
+        }
+
+        WorkingTime workingTime = modelMapper.map(workingTimeRequest, WorkingTime.class);
+        workingTime = workingTimeRepository.save(workingTime);
+
+        personnel.setWorkingTime(workingTime);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateWorkingTime(
+            UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getWorkingTime() == null) {
+            throw new ApiException(400, Exceptions.WORKING_TIME_NOT_FOUND);
+        }
+
+        WorkingTime workingTime = personnel.getWorkingTime();
+        modelMapper.map(workingTimeRequest, workingTime);
+
+        workingTimeRepository.save(workingTime);
         return true;
     }
 

@@ -35,4 +35,7 @@ public class Exceptions {
     public static final String PASSPORT_EXISTED = "Hộ chiếu tồn tại";
     public static final String PASSPORT_NOT_FOUND = "Hộ chiếu không tồn tại";
 
+    public static final String WORKING_TIME_EXISTED = "Thông tin thời gian làm việc tồn tại";
+    public static final String WORKING_TIME_NOT_FOUND = "Thông tin thời gian làm việc chưa có";
+
 }

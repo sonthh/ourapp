@@ -115,6 +115,36 @@ public class PersonnelController {
         );
     }
 
+    @ApiOperation("Add working time")
+    @PutMapping("/{personnelId}/workingTime/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addWorkingTime(
+            @Valid @RequestBody AddWorkingTimeRequest addWorkingTimeRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addWorkingTime(addWorkingTimeRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update working time")
+    @PutMapping("/{personnelId}/workingTime/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateWorkingTime(
+            @Valid @RequestBody UpdateWorkingTimeRequest updateWorkingTimeRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateWorkingTime(updateWorkingTimeRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
     @ApiOperation("Delete one personnel")
     @DeleteMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
