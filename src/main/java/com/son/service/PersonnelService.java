@@ -36,6 +36,7 @@ public class PersonnelService {
     private final QualificationRepository qualificationRepository;
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
+    private final CertificationRepository certificationRepository;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -303,6 +304,8 @@ public class PersonnelService {
         return personnelRepository.findAll(spec, pageable);
     }
 
+
+    /*====================================WORK HISTORY START==========================================================*/
     public Personnel createWorkHistory(AddWorkHistoryRequest historyRequests, Integer personnelId)
         throws ApiException {
         Personnel personnel = findOne(personnelId);
@@ -357,5 +360,58 @@ public class PersonnelService {
 
         return true;
     }
+    /*====================================WORK HISTORY END============================================================*/
+
+
+    /*====================================CERTIFICATION START=========================================================*/
+    public Personnel createCertification(AddCertificationRequest certificationRequest, Integer personnelId)
+        throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Certification certification = modelMapper.map(certificationRequest, Certification.class);
+        certification = certificationRepository.save(certification);
+
+        personnel.getCertifications().add(certification);
+
+        return personnelRepository.save(personnel);
+    }
+
+    public Boolean updateCertification(UpdateCertificationRequest certificationRequest,
+                                       Integer personnelId, Integer certificationId) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Optional<Certification> findCertification = certificationRepository.findById(certificationId);
+        if (!findCertification.isPresent()) {
+            throw new ApiException(400, Exceptions.CERTIFICATION_NOT_FOUND);
+        }
+        Certification certification = findCertification.get();
+
+        if (!personnel.getCertifications().contains(certification)) {
+            throw new ApiException(400, Exceptions.CERTIFICATION_NOT_FOUND);
+        }
+        modelMapper.map(certificationRequest, certification);
+        certificationRepository.save(certification);
+
+        return true;
+    }
+
+    public Boolean deleteCertification(Integer personnelId, Integer certificationId) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Optional<Certification> findCertification = certificationRepository.findById(certificationId);
+        if (!findCertification.isPresent()) {
+            throw new ApiException(400, Exceptions.CERTIFICATION_NOT_FOUND);
+        }
+
+        Certification certification = findCertification.get();
+        if (!personnel.getCertifications().contains(certification)) {
+            throw new ApiException(400, Exceptions.CERTIFICATION_NOT_FOUND);
+        }
+
+        certificationRepository.delete(certification);
+
+        return true;
+    }
+    /*====================================CERTIFICATION END===========================================================*/
 }
 

@@ -41,4 +41,6 @@ public class Exceptions {
     public static final String QUALIFICATION_NOT_FOUND = "Thông tin trình độ chuyên môn không được tìm thấy";
 
     public static final String WORK_HISTORY_NOT_FOUND = "Thông tin lịch sử làm việc không được tìm thấy";
+
+    public static final String CERTIFICATION_NOT_FOUND = "Thông tin chứng chỉ chuyên ngành không được tìm thấy";
 }
