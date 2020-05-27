@@ -35,6 +35,7 @@ public class PersonnelService {
     private final PassportRepository passportRepository;
     private final WorkingTimeRepository workingTimeRepository;
     private final AdditionalInfoRepository additionalInfoRepository;
+    private final HealthyStatusRepository healthyStatusRepository;
     private final QualificationRepository qualificationRepository;
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
@@ -417,6 +418,8 @@ public class PersonnelService {
 
 
     /*====================================CERTIFICATION END===========================================================*/
+
+    /*====================================ADDITIONAL INFO START=======================================================*/
     public Boolean addAdditionalInfo(
             @Valid AddAdditionalInfoRequest addAdditionalInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
@@ -449,6 +452,42 @@ public class PersonnelService {
         additionalInfoRepository.save(additionalInfo);
         return true;
     }
+    /*====================================ADDITIONAL INFO END=========================================================*/
+
+    /*====================================HEALTHY STATUS START========================================================*/
+    public Boolean addHealthyStatus(
+            @Valid AddHealthyStatusRequest addHealthyStatusRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getHealthyStatus() != null) {
+            throw new ApiException(400, Exceptions.HEALTHY_STATUS_EXISTED);
+        }
+
+        HealthyStatus healthyStatus = modelMapper.map(addHealthyStatusRequest, HealthyStatus.class);
+        healthyStatus = healthyStatusRepository.save(healthyStatus);
+
+        personnel.setHealthyStatus(healthyStatus);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateHealthyStatus(
+            UpdateHealthyStatusRequest updateHealthyStatusRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getHealthyStatus() == null) {
+            throw new ApiException(400, Exceptions.HEALTHY_STATUS_NOT_FOUND);
+        }
+
+        HealthyStatus healthyStatus = personnel.getHealthyStatus();
+        modelMapper.map(updateHealthyStatusRequest, healthyStatus);
+
+        healthyStatusRepository.save(healthyStatus);
+        return true;
+    }
+    /*====================================HEALTHY STATUS END==========================================================*/
 }
 
 
