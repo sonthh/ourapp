@@ -238,6 +238,8 @@ public class PersonnelController {
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
+
+    /*====================================WORK HISTORY START==========================================================*/
     @ApiOperation("create work history")
     @PostMapping("/{personnelId}/workHistories")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
@@ -265,4 +267,39 @@ public class PersonnelController {
         @Min(1) @PathVariable(value = "workHistoryId", required = false) Integer workHistoryId) throws ApiException {
         return new ResponseEntity<>(personnelService.deleteWorkHistory(id, workHistoryId), HttpStatus.OK);
     }
+    /*====================================WORK HISTORY END============================================================*/
+
+
+    /*====================================CERTIFICATION START=========================================================*/
+    @ApiOperation("create certification")
+    @PostMapping("/{personnelId}/certifications")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Personnel> createCertification(
+        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+        @Valid @RequestBody AddCertificationRequest certificationRequest) throws ApiException {
+        return new ResponseEntity<>(personnelService.createCertification(certificationRequest, id), HttpStatus.OK);
+    }
+
+    @ApiOperation("update certification")
+    @PutMapping("/{personnelId}/certifications/{certificationId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateCertification(
+        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+        @Min(1) @PathVariable(value = "certificationId", required = false) Integer certificationId,
+        @Valid @RequestBody UpdateCertificationRequest certificationRequest
+    ) throws ApiException {
+        return new ResponseEntity<>(
+            personnelService.updateCertification(certificationRequest, id, certificationId), HttpStatus.OK);
+    }
+
+    @ApiOperation("delete certification")
+    @DeleteMapping("/{personnelId}/certifications/{certificationId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_DELETE)")
+    public ResponseEntity<Boolean> deleteCertification(
+        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+        @Min(1) @PathVariable(value = "certificationId", required = false) Integer certificationId
+    ) throws ApiException {
+        return new ResponseEntity<>(personnelService.deleteCertification(id, certificationId), HttpStatus.OK);
+    }
+    /*====================================CERTIFICATION END===========================================================*/
 }
