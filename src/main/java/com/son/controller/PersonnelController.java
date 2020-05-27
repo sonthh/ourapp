@@ -333,6 +333,40 @@ public class PersonnelController {
                 HttpStatus.OK
         );
     }
-    /*====================================ADDITIONAL INFO END===========================================================*/
+    /*====================================ADDITIONAL INFO END=========================================================*/
+
+    /*====================================HEALTHY STATUS START========================================================*/
+
+    @ApiOperation("Add healthy status")
+    @PutMapping("/{personnelId}/healthyStatus/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Boolean> addHealthyStatus(
+            @Valid @RequestBody AddHealthyStatusRequest addHealthyStatusRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addHealthyStatus(addHealthyStatusRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update healthy status")
+    @PutMapping("/{personnelId}/healthyStatus/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateHealthyStatus(
+            @Valid @RequestBody UpdateHealthyStatusRequest updateHealthyStatusRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateHealthyStatus(updateHealthyStatusRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    /*====================================HEALTHY STATUS END==========================================================*/
 }
 
