@@ -36,6 +36,7 @@ public class PersonnelService {
     private final WorkingTimeRepository workingTimeRepository;
     private final AdditionalInfoRepository additionalInfoRepository;
     private final HealthyStatusRepository healthyStatusRepository;
+    private final ContactInfoRepository contactInfoRepository;
     private final QualificationRepository qualificationRepository;
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
@@ -488,6 +489,41 @@ public class PersonnelService {
         return true;
     }
     /*====================================HEALTHY STATUS END==========================================================*/
+
+    /*====================================CONTACT INFO START==========================================================*/
+    public Boolean addContactInfo(
+            @Valid AddContactInfoRequest addContactInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getContactInfo() != null) {
+            throw new ApiException(400, Exceptions.CONTACT_INFO_EXISTED);
+        }
+
+        ContactInfo contactInfo = modelMapper.map(addContactInfoRequest, ContactInfo.class);
+        contactInfo = contactInfoRepository.save(contactInfo);
+
+        personnel.setContactInfo(contactInfo);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateContactInfo(
+            UpdateContactInfoRequest updateContactInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getContactInfo() == null) {
+            throw new ApiException(400, Exceptions.CONTACT_INFO_NOT_FOUND);
+        }
+
+        ContactInfo contactInfo = personnel.getContactInfo();
+        modelMapper.map(updateContactInfoRequest, contactInfo);
+
+        contactInfoRepository.save(contactInfo);
+        return true;
+    }
+    /*====================================CONTACT INFO END============================================================*/
 }
 
 
