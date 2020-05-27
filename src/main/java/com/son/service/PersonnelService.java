@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class PersonnelService {
     private final IdentificationRepository identificationRepository;
     private final PassportRepository passportRepository;
     private final WorkingTimeRepository workingTimeRepository;
+    private final AdditionalInfoRepository additionalInfoRepository;
     private final QualificationRepository qualificationRepository;
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
@@ -412,6 +414,41 @@ public class PersonnelService {
 
         return true;
     }
+
+
     /*====================================CERTIFICATION END===========================================================*/
+    public Boolean addAdditionalInfo(
+            @Valid AddAdditionalInfoRequest addAdditionalInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getAdditionalInfo() != null) {
+            throw new ApiException(400, Exceptions.ADDITIONAL_INFO_EXISTED);
+        }
+
+        AdditionalInfo additionalInfo = modelMapper.map(addAdditionalInfoRequest, AdditionalInfo.class);
+        additionalInfo = additionalInfoRepository.save(additionalInfo);
+
+        personnel.setAdditionalInfo(additionalInfo);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateAdditionalInfo(
+            UpdateAdditionalInfoRequest updateAdditionalInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getAdditionalInfo() == null) {
+            throw new ApiException(400, Exceptions.ADDITIONAL_INFO_NOT_FOUND);
+        }
+
+        AdditionalInfo additionalInfo = personnel.getAdditionalInfo();
+        modelMapper.map(updateAdditionalInfoRequest, additionalInfo);
+
+        additionalInfoRepository.save(additionalInfo);
+        return true;
+    }
 }
+
 

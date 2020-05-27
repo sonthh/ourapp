@@ -302,4 +302,37 @@ public class PersonnelController {
         return new ResponseEntity<>(personnelService.deleteCertification(id, certificationId), HttpStatus.OK);
     }
     /*====================================CERTIFICATION END===========================================================*/
+
+    /*====================================ADDITIONAL INFO START===========================================================*/
+    @ApiOperation("Add additional info")
+    @PutMapping("/{personnelId}/additionalInfo/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addAdditionalInfo(
+            @Valid @RequestBody AddAdditionalInfoRequest addAdditionalInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addAdditionalInfo(addAdditionalInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update additional info")
+    @PutMapping("/{personnelId}/additionalInfo/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateAdditionalInfo(
+            @Valid @RequestBody UpdateAdditionalInfoRequest updateAdditionalInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateAdditionalInfo(updateAdditionalInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+    /*====================================ADDITIONAL INFO END===========================================================*/
 }
+
