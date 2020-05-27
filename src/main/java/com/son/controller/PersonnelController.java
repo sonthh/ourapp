@@ -368,5 +368,37 @@ public class PersonnelController {
     }
 
     /*====================================HEALTHY STATUS END==========================================================*/
+
+    /*====================================CONTACT INFO START==========================================================*/
+    @ApiOperation("Add contact info")
+    @PutMapping("/{personnelId}/contactInfo/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Boolean> addContactInfo(
+            @Valid @RequestBody AddContactInfoRequest addContactInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addContactInfo(addContactInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update contact info")
+    @PutMapping("/{personnelId}/contactInfo/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateContactInfo(
+            @Valid @RequestBody UpdateContactInfoRequest updateHealthyStatusRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateContactInfo(updateHealthyStatusRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+    /*====================================CONTACT INFO END============================================================*/
 }
 
