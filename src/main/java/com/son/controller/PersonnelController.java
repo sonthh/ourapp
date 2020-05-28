@@ -389,13 +389,13 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/contactInfo/update")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updateContactInfo(
-            @Valid @RequestBody UpdateContactInfoRequest updateHealthyStatusRequest,
+            @Valid @RequestBody UpdateContactInfoRequest contactInfoRequest,
             @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-                personnelService.updateContactInfo(updateHealthyStatusRequest, personnelId, credentials),
+                personnelService.updateContactInfo(contactInfoRequest, personnelId, credentials),
                 HttpStatus.OK
         );
     }
