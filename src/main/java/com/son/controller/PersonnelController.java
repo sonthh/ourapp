@@ -302,4 +302,103 @@ public class PersonnelController {
         return new ResponseEntity<>(personnelService.deleteCertification(id, certificationId), HttpStatus.OK);
     }
     /*====================================CERTIFICATION END===========================================================*/
+
+    /*====================================ADDITIONAL INFO START===========================================================*/
+    @ApiOperation("Add additional info")
+    @PutMapping("/{personnelId}/additionalInfo/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addAdditionalInfo(
+            @Valid @RequestBody AddAdditionalInfoRequest addAdditionalInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addAdditionalInfo(addAdditionalInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update additional info")
+    @PutMapping("/{personnelId}/additionalInfo/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateAdditionalInfo(
+            @Valid @RequestBody UpdateAdditionalInfoRequest updateAdditionalInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateAdditionalInfo(updateAdditionalInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+    /*====================================ADDITIONAL INFO END=========================================================*/
+
+    /*====================================HEALTHY STATUS START========================================================*/
+
+    @ApiOperation("Add healthy status")
+    @PutMapping("/{personnelId}/healthyStatus/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Boolean> addHealthyStatus(
+            @Valid @RequestBody AddHealthyStatusRequest addHealthyStatusRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addHealthyStatus(addHealthyStatusRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update healthy status")
+    @PutMapping("/{personnelId}/healthyStatus/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateHealthyStatus(
+            @Valid @RequestBody UpdateHealthyStatusRequest updateHealthyStatusRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateHealthyStatus(updateHealthyStatusRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    /*====================================HEALTHY STATUS END==========================================================*/
+
+    /*====================================CONTACT INFO START==========================================================*/
+    @ApiOperation("Add contact info")
+    @PutMapping("/{personnelId}/contactInfo/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Boolean> addContactInfo(
+            @Valid @RequestBody AddContactInfoRequest addContactInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addContactInfo(addContactInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update contact info")
+    @PutMapping("/{personnelId}/contactInfo/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateContactInfo(
+            @Valid @RequestBody UpdateContactInfoRequest contactInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateContactInfo(contactInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+    /*====================================CONTACT INFO END============================================================*/
 }
+
