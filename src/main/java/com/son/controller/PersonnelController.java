@@ -405,6 +405,19 @@ public class PersonnelController {
     }
     /*====================================CONTACT INFO END============================================================*/
 
+    @ApiOperation("update avatar")
+    @PostMapping("/{personnelId}/avatar")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_UPDATE, @scopes.PER_USER_UPDATE)")
+    public ResponseEntity<String> updateAvatar(
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials,
+            @Valid UpdateAvatarRequest updateAvatarRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId
+    ) throws ApiException {
+        String avatar = personnelService.updateAvatar(personnelId, updateAvatarRequest, credentials);
+
+        return new ResponseEntity<>(avatar, HttpStatus.OK);
+    }
+
     @GetMapping("/export/list")
     public ResponseEntity<Resource> getFile() {
         String filename = "danhsachnhanvien.xlsx";

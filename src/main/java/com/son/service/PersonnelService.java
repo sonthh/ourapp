@@ -48,6 +48,7 @@ public class PersonnelService {
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
     private final CertificationRepository certificationRepository;
+    private final CloudinaryService cloudinaryService;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -564,6 +565,28 @@ public class PersonnelService {
         } catch (IOException e) {
             throw new RuntimeException("fail to import data to Excel file: " + e.getMessage());
         }
+    }
+
+    public String updateAvatar(
+            Integer personnelId, UpdateAvatarRequest updateAvatarRequest, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        String avatar;
+        try {
+            avatar = cloudinaryService.upload(updateAvatarRequest.getAvatar());
+        } catch (IOException e) {
+            throw new ApiException(400, Exceptions.UPLOAD_FAILURE);
+        }
+
+        if (avatar == null) {
+            throw new ApiException(400, Exceptions.UPLOAD_FAILURE);
+        }
+
+        personnel.setAvatar(avatar);
+        personnelRepository.save(personnel);
+
+        return avatar;
     }
 }
 
