@@ -17,16 +17,13 @@ public class AddWorkHistoryRequest {
     private String role;
 
     @ApiModelProperty
-    @NotNull
     private Integer workTime;
 
     @ApiModelProperty
-    @NotNull
     @IsDateString(pattern = "yyyy-MM-dd")
     private String startDate;
 
     @ApiModelProperty
-    @NotNull
     @IsDateString(pattern = "yyyy-MM-dd")
     private String endDate;
 }

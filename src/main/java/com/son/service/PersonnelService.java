@@ -11,6 +11,11 @@ import com.son.util.common.EnumUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +23,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,7 +96,7 @@ public class PersonnelService {
     }
 
     public Personnel updateBasicInfo(
-        UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
+            UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -105,7 +112,7 @@ public class PersonnelService {
     }
 
     public Boolean addIdentification(
-        AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
+            AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -122,7 +129,7 @@ public class PersonnelService {
     }
 
     public Boolean updateIdentification(
-        UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
+            UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -138,7 +145,7 @@ public class PersonnelService {
     }
 
     public Boolean addPassport(
-        AddPassportRequest passportRequest, int personnelId, Credentials credentials
+            AddPassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -155,7 +162,7 @@ public class PersonnelService {
     }
 
     public Boolean updatePassport(
-        UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
+            UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -171,7 +178,7 @@ public class PersonnelService {
     }
 
     public Boolean addWorkingTime(
-        AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+            AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -188,7 +195,7 @@ public class PersonnelService {
     }
 
     public Boolean updateWorkingTime(
-        UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+            UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -204,7 +211,7 @@ public class PersonnelService {
     }
 
     public Boolean addQualification(
-        AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
+            AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -217,8 +224,8 @@ public class PersonnelService {
     }
 
     public Boolean updateQualification(
-        UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
-        Credentials credentials
+            UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
+            Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -239,7 +246,7 @@ public class PersonnelService {
     }
 
     public Boolean deleteQualification(
-        int personnelId, int qualificationId, Credentials credentials
+            int personnelId, int qualificationId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -259,7 +266,7 @@ public class PersonnelService {
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
-        throws ApiException {
+            throws ApiException {
         User.Status status = EnumUtil.getEnum(User.Status.class, findAllPersonnelRequest.getStatus());
         Gender gender = EnumUtil.getEnum(Gender.class, findAllPersonnelRequest.getGender());
 
@@ -285,21 +292,21 @@ public class PersonnelService {
 
         SpecificationBuilder<Personnel> builder = new SpecificationBuilder<>();
         builder
-            .query("position", CONTAINS, position)
-            .query("degree", CONTAINS, degree)
-            .query("description", CONTAINS, description)
-            .query("user.address", CONTAINS, address)
-            .query("user.username", CONTAINS, username)
-            .query("user.email", CONTAINS, email)
-            .query("user.fullName", CONTAINS, fullName)
-            .query("user.phoneNumber", CONTAINS, phoneNumber)
-            .query("user.identification", CONTAINS, identification)
-            .query("user.status", EQUALITY, status)
-            .query("user.gender", EQUALITY, gender)
-            .query("user.id", IN, userIds)
-            .query("department.name", CONTAINS, department)
-            .query("createdBy.username", CONTAINS, createdBy)
-            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+                .query("position", CONTAINS, position)
+                .query("degree", CONTAINS, degree)
+                .query("description", CONTAINS, description)
+                .query("user.address", CONTAINS, address)
+                .query("user.username", CONTAINS, username)
+                .query("user.email", CONTAINS, email)
+                .query("user.fullName", CONTAINS, fullName)
+                .query("user.phoneNumber", CONTAINS, phoneNumber)
+                .query("user.identification", CONTAINS, identification)
+                .query("user.status", EQUALITY, status)
+                .query("user.gender", EQUALITY, gender)
+                .query("user.id", IN, userIds)
+                .query("department.name", CONTAINS, department)
+                .query("createdBy.username", CONTAINS, createdBy)
+                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
         Specification<Personnel> spec = builder.build();
 
@@ -311,7 +318,7 @@ public class PersonnelService {
 
     /*====================================WORK HISTORY START==========================================================*/
     public Personnel createWorkHistory(AddWorkHistoryRequest historyRequests, Integer personnelId)
-        throws ApiException {
+            throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         WorkHistory workHistory = modelMapper.map(historyRequests, WorkHistory.class);
@@ -324,7 +331,7 @@ public class PersonnelService {
 
     public Boolean updateWorkHistory(UpdateWorkHistoryRequest historyRequests,
                                      Integer personnelId, Integer workHistoryId)
-        throws ApiException {
+            throws ApiException {
         Personnel personnel = findOne(personnelId);
         Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(workHistoryId);
 
@@ -369,7 +376,7 @@ public class PersonnelService {
 
     /*====================================CERTIFICATION START=========================================================*/
     public Personnel createCertification(AddCertificationRequest certificationRequest, Integer personnelId)
-        throws ApiException {
+            throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         Certification certification = modelMapper.map(certificationRequest, Certification.class);
@@ -524,6 +531,40 @@ public class PersonnelService {
         return true;
     }
     /*====================================CONTACT INFO END============================================================*/
+
+    public static ByteArrayInputStream exportPersonnel() {
+        String[] HEADERs = {"Id", "Title", "Description", "Published"};
+        String SHEET = "Danh sách nhân v";
+
+        try (
+                Workbook workbook = new XSSFWorkbook();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ) {
+            Sheet sheet = workbook.createSheet(SHEET);
+
+            // Header
+            Row headerRow = sheet.createRow(0);
+
+            for (int col = 0; col < HEADERs.length; col++) {
+                Cell cell = headerRow.createCell(col);
+                cell.setCellValue(HEADERs[col]);
+            }
+
+            int rowIdx = 1;
+            for (int i = 0; i < 10; i++) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue("personnel" + i);
+                row.createCell(1).setCellValue("personnel" + i);
+                row.createCell(2).setCellValue("personnel" + i);
+                row.createCell(3).setCellValue("personnel" + i);
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("fail to import data to Excel file: " + e.getMessage());
+        }
+    }
 }
 
 
