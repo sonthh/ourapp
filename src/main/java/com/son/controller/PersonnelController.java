@@ -407,7 +407,7 @@ public class PersonnelController {
 
     @ApiOperation("update avatar")
     @PostMapping("/{personnelId}/avatar")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_UPDATE, @scopes.PER_USER_UPDATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<String> updateAvatar(
             @ApiIgnore @AuthenticationPrincipal Credentials credentials,
             @Valid UpdateAvatarRequest updateAvatarRequest,

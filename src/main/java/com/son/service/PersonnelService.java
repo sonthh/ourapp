@@ -268,21 +268,15 @@ public class PersonnelService {
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
             throws ApiException {
-        User.Status status = EnumUtil.getEnum(User.Status.class, findAllPersonnelRequest.getStatus());
         Gender gender = EnumUtil.getEnum(Gender.class, findAllPersonnelRequest.getGender());
 
         String createdBy = findAllPersonnelRequest.getCreatedBy();
         String lastModifiedBy = findAllPersonnelRequest.getLastModifiedBy();
-        String username = findAllPersonnelRequest.getUsername();
-        String address = findAllPersonnelRequest.getAddress();
         String fullName = findAllPersonnelRequest.getFullName();
-        String identification = findAllPersonnelRequest.getIdentification();
-        String phoneNumber = findAllPersonnelRequest.getPhoneNumber();
         String email = findAllPersonnelRequest.getEmail();
         String position = findAllPersonnelRequest.getPosition();
-        String degree = findAllPersonnelRequest.getDegree();
-        String description = findAllPersonnelRequest.getDescription();
-        String department = findAllPersonnelRequest.getDepartment();
+        Integer departmentId = findAllPersonnelRequest.getDepartmentId();
+        Boolean isStopWork = findAllPersonnelRequest.getIsStopWork();
         List<Integer> userIds = findAllPersonnelRequest.getIds();
 
         Integer currentPage = findAllPersonnelRequest.getCurrentPage();
@@ -294,20 +288,17 @@ public class PersonnelService {
         SpecificationBuilder<Personnel> builder = new SpecificationBuilder<>();
         builder
                 .query("position", CONTAINS, position)
-                .query("degree", CONTAINS, degree)
-                .query("description", CONTAINS, description)
-                .query("user.address", CONTAINS, address)
-                .query("user.username", CONTAINS, username)
-                .query("user.email", CONTAINS, email)
-                .query("user.fullName", CONTAINS, fullName)
-                .query("user.phoneNumber", CONTAINS, phoneNumber)
-                .query("user.identification", CONTAINS, identification)
-                .query("user.status", EQUALITY, status)
-                .query("user.gender", EQUALITY, gender)
-                .query("user.id", IN, userIds)
-                .query("department.name", CONTAINS, department)
+                .query("email", CONTAINS, email)
+                .query("fullName", CONTAINS, fullName)
+                .query("gender", EQUALITY, gender)
+                .query("id", IN, userIds)
+                .query("department.id", EQUALITY, departmentId)
                 .query("createdBy.username", CONTAINS, createdBy)
                 .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+
+        if (isStopWork != null && isStopWork) {
+            builder.query("workingTime.isStopWork", EQUALITY, true);
+        }
 
         Specification<Personnel> spec = builder.build();
 
