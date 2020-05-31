@@ -1,6 +1,5 @@
 package com.son.request;
 
-import com.son.entity.User;
 import com.son.model.Gender;
 import com.son.model.SortDirection;
 import com.son.validator.IsEnum;
@@ -34,32 +33,12 @@ public class FindAllPersonnelRequest {
     private String sortBy = "id";
 
     @ApiModelProperty
-    @IsEnum(enumClass = User.Status.class)
-    private String status;
-
-    @ApiModelProperty
     @IsEnum(enumClass = Gender.class)
     private String gender;
 
     @ApiModelProperty()
     @Size(min = 1)
-    private String username;
-
-    @ApiModelProperty()
-    @Size(min = 1)
-    private String address;
-
-    @ApiModelProperty()
-    @Size(min = 1)
     private String fullName;
-
-    @ApiModelProperty()
-    @Size(min = 1)
-    private String identification;
-
-    @ApiModelProperty()
-    @Size(min = 1)
-    private String phoneNumber;
 
     @ApiModelProperty()
     @Size(min = 1)
@@ -73,21 +52,15 @@ public class FindAllPersonnelRequest {
     private String email;
 
     @ApiModelProperty()
-    private List<Integer> ids;
+    private Boolean isStopWork;
 
     @ApiModelProperty()
-    @Size(min = 1)
-    private String degree;
+    private List<Integer> ids;
 
     @ApiModelProperty()
     @Size(min = 1)
     private String position;
 
     @ApiModelProperty()
-    @Size(min = 1)
-    private String description;
-
-    @ApiModelProperty()
-    @Size(min = 1)
-    private String department;
+    private Integer departmentId;
 }

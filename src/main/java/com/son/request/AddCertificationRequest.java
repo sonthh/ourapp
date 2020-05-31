@@ -17,15 +17,12 @@ public class AddCertificationRequest {
     private String type;
 
     @ApiModelProperty
-    @NotNull
     @IsDateString(pattern = "yyyy-MM-dd")
     private String issueDate;
 
     @ApiModelProperty
-    @NotNull
     private String issueAt;
 
     @ApiModelProperty
-    @NotNull
     private String note;
 }

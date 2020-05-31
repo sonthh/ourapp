@@ -13,7 +13,7 @@ public class Exceptions {
     public static final String ROLE_NOT_FOUND = "Role not found";
 
     // UPLOAD
-    public static final String UPLOAD_FAILURE = "Error when uploading file";
+    public static final String UPLOAD_FAILURE = "Lỗi trong quá trình tải file";
 
     // PERMISSION
     public static final String NO_PERMISSION = "Sorry, but you do not have permission to access";

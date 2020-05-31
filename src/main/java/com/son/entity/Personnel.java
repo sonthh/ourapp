@@ -36,6 +36,9 @@ public class Personnel extends BaseEntity {
     private Date birthDay;
 
     @Column
+    private String avatar;
+
+    @Column
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

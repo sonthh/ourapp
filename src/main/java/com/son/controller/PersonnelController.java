@@ -8,8 +8,12 @@ import com.son.service.PersonnelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,7 +39,7 @@ public class PersonnelController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
     public ResponseEntity<Personnel> createOnePersonnel(
-        @Valid @RequestBody CreatePersonnelRequest createPersonnelRequest
+            @Valid @RequestBody CreatePersonnelRequest createPersonnelRequest
     ) throws ApiException {
 
         return new ResponseEntity<>(personnelService.createOne(createPersonnelRequest), HttpStatus.OK);
@@ -45,14 +49,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/basicInfo")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Personnel> updateBasicInfo(
-        @Valid @RequestBody UpdatePersonnelBasicInfo personnelRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody UpdatePersonnelBasicInfo personnelRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.updateBasicInfo(personnelRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.updateBasicInfo(personnelRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -60,14 +64,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/identification/add")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> addIdentification(
-        @Valid @RequestBody AddIdentificationRequest addIdentificationRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody AddIdentificationRequest addIdentificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.addIdentification(addIdentificationRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.addIdentification(addIdentificationRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -75,14 +79,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/identification/update")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updateIdentification(
-        @Valid @RequestBody UpdateIdentificationRequest updateIdentificationRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody UpdateIdentificationRequest updateIdentificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.updateIdentification(updateIdentificationRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.updateIdentification(updateIdentificationRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -90,14 +94,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/passport/add")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> addPassport(
-        @Valid @RequestBody AddPassportRequest addPassportRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody AddPassportRequest addPassportRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.addPassport(addPassportRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.addPassport(addPassportRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -105,14 +109,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/passport/update")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updatePassport(
-        @Valid @RequestBody UpdatePassportRequest updatePassportRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody UpdatePassportRequest updatePassportRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.updatePassport(updatePassportRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.updatePassport(updatePassportRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -120,14 +124,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/workingTime/add")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> addWorkingTime(
-        @Valid @RequestBody AddWorkingTimeRequest addWorkingTimeRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody AddWorkingTimeRequest addWorkingTimeRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.addWorkingTime(addWorkingTimeRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.addWorkingTime(addWorkingTimeRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -135,14 +139,14 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/workingTime/update")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updateWorkingTime(
-        @Valid @RequestBody UpdateWorkingTimeRequest updateWorkingTimeRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody UpdateWorkingTimeRequest updateWorkingTimeRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.updateWorkingTime(updateWorkingTimeRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.updateWorkingTime(updateWorkingTimeRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -150,14 +154,14 @@ public class PersonnelController {
     @PostMapping("/{personnelId}/qualifications")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> addQualification(
-        @Valid @RequestBody AddQualificationRequest addQualificationRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody AddQualificationRequest addQualificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.addQualification(addQualificationRequest, personnelId, credentials),
-            HttpStatus.OK
+                personnelService.addQualification(addQualificationRequest, personnelId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -165,17 +169,17 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/qualifications/{qualificationId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> addQualification(
-        @Valid @RequestBody UpdateQualificationRequest updateQualificationRequest,
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @Min(1) @PathVariable(value = "qualificationId", required = false) Integer qualificationId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid @RequestBody UpdateQualificationRequest updateQualificationRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @Min(1) @PathVariable(value = "qualificationId", required = false) Integer qualificationId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.updateQualification(
-                updateQualificationRequest, personnelId, qualificationId, credentials
-            ),
-            HttpStatus.OK
+                personnelService.updateQualification(
+                        updateQualificationRequest, personnelId, qualificationId, credentials
+                ),
+                HttpStatus.OK
         );
     }
 
@@ -183,14 +187,14 @@ public class PersonnelController {
     @DeleteMapping("/{personnelId}/qualifications/{qualificationId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> deleteQualification(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
-        @Min(1) @PathVariable(value = "qualificationId", required = false) Integer qualificationId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @Min(1) @PathVariable(value = "qualificationId", required = false) Integer qualificationId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-            personnelService.deleteQualification(personnelId, qualificationId, credentials),
-            HttpStatus.OK
+                personnelService.deleteQualification(personnelId, qualificationId, credentials),
+                HttpStatus.OK
         );
     }
 
@@ -198,7 +202,7 @@ public class PersonnelController {
     @DeleteMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
     public ResponseEntity<Boolean> deleteOne(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id) throws ApiException {
 
         Boolean isDeleted = personnelService.isDeletedOne(id);
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
@@ -208,7 +212,7 @@ public class PersonnelController {
     @DeleteMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_USER_DELETE)")
     public ResponseEntity<Boolean> deleteMany(@Valid @RequestBody DeleteManyByIdRequest deleteManyByIdRequest)
-        throws ApiException {
+            throws ApiException {
 
         Boolean isDeleted = personnelService.deteleMany(deleteManyByIdRequest);
         return new ResponseEntity<>(isDeleted, HttpStatus.OK);
@@ -218,7 +222,7 @@ public class PersonnelController {
     @GetMapping("/{personnelId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
     public ResponseEntity<Personnel> findOnePersonnel(
-        @Min(1) @PathVariable Integer personnelId
+            @Min(1) @PathVariable Integer personnelId
     ) throws ApiException {
         Personnel personnel = personnelService.findOne(personnelId);
 
@@ -229,9 +233,9 @@ public class PersonnelController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
     public ResponseEntity<Page<Personnel>> findMany(
-        @Valid FindAllPersonnelRequest findAllPersonnelRequest,
-        @ApiIgnore BindingResult errors,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid FindAllPersonnelRequest findAllPersonnelRequest,
+            @ApiIgnore BindingResult errors,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
         Page<Personnel> page = personnelService.findMany(credentials, findAllPersonnelRequest);
 
@@ -244,8 +248,8 @@ public class PersonnelController {
     @PostMapping("/{personnelId}/workHistories")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
     public ResponseEntity<Personnel> createWorkHistory(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
-        @Valid @RequestBody AddWorkHistoryRequest historyRequests) throws ApiException {
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+            @Valid @RequestBody AddWorkHistoryRequest historyRequests) throws ApiException {
         return new ResponseEntity<>(personnelService.createWorkHistory(historyRequests, id), HttpStatus.OK);
     }
 
@@ -253,9 +257,9 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/workHistories/{workHistoryId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updateWorkHistory(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
-        @Min(1) @PathVariable(value = "workHistoryId", required = false) Integer workHistoryId,
-        @Valid @RequestBody UpdateWorkHistoryRequest historyRequests) throws ApiException {
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+            @Min(1) @PathVariable(value = "workHistoryId", required = false) Integer workHistoryId,
+            @Valid @RequestBody UpdateWorkHistoryRequest historyRequests) throws ApiException {
         return new ResponseEntity<>(personnelService.updateWorkHistory(historyRequests, id, workHistoryId), HttpStatus.OK);
     }
 
@@ -263,8 +267,8 @@ public class PersonnelController {
     @DeleteMapping("/{personnelId}/workHistories/{workHistoryId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_DELETE)")
     public ResponseEntity<Boolean> deleteWorkHistory(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
-        @Min(1) @PathVariable(value = "workHistoryId", required = false) Integer workHistoryId) throws ApiException {
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+            @Min(1) @PathVariable(value = "workHistoryId", required = false) Integer workHistoryId) throws ApiException {
         return new ResponseEntity<>(personnelService.deleteWorkHistory(id, workHistoryId), HttpStatus.OK);
     }
     /*====================================WORK HISTORY END============================================================*/
@@ -275,8 +279,8 @@ public class PersonnelController {
     @PostMapping("/{personnelId}/certifications")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
     public ResponseEntity<Personnel> createCertification(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
-        @Valid @RequestBody AddCertificationRequest certificationRequest) throws ApiException {
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+            @Valid @RequestBody AddCertificationRequest certificationRequest) throws ApiException {
         return new ResponseEntity<>(personnelService.createCertification(certificationRequest, id), HttpStatus.OK);
     }
 
@@ -284,20 +288,20 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/certifications/{certificationId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updateCertification(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
-        @Min(1) @PathVariable(value = "certificationId", required = false) Integer certificationId,
-        @Valid @RequestBody UpdateCertificationRequest certificationRequest
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+            @Min(1) @PathVariable(value = "certificationId", required = false) Integer certificationId,
+            @Valid @RequestBody UpdateCertificationRequest certificationRequest
     ) throws ApiException {
         return new ResponseEntity<>(
-            personnelService.updateCertification(certificationRequest, id, certificationId), HttpStatus.OK);
+                personnelService.updateCertification(certificationRequest, id, certificationId), HttpStatus.OK);
     }
 
     @ApiOperation("delete certification")
     @DeleteMapping("/{personnelId}/certifications/{certificationId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_DELETE)")
     public ResponseEntity<Boolean> deleteCertification(
-        @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
-        @Min(1) @PathVariable(value = "certificationId", required = false) Integer certificationId
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer id,
+            @Min(1) @PathVariable(value = "certificationId", required = false) Integer certificationId
     ) throws ApiException {
         return new ResponseEntity<>(personnelService.deleteCertification(id, certificationId), HttpStatus.OK);
     }
@@ -389,13 +393,13 @@ public class PersonnelController {
     @PutMapping("/{personnelId}/contactInfo/update")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
     public ResponseEntity<Boolean> updateContactInfo(
-            @Valid @RequestBody UpdateContactInfoRequest updateHealthyStatusRequest,
+            @Valid @RequestBody UpdateContactInfoRequest contactInfoRequest,
             @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
         return new ResponseEntity<>(
-                personnelService.updateContactInfo(updateHealthyStatusRequest, personnelId, credentials),
+                personnelService.updateContactInfo(contactInfoRequest, personnelId, credentials),
                 HttpStatus.OK
         );
     }
@@ -432,5 +436,28 @@ public class PersonnelController {
         );
     }
     /*====================================BANK INFO END===============================================================*/
+    @ApiOperation("update avatar")
+    @PostMapping("/{personnelId}/avatar")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<String> updateAvatar(
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials,
+            @Valid UpdateAvatarRequest updateAvatarRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId
+    ) throws ApiException {
+        String avatar = personnelService.updateAvatar(personnelId, updateAvatarRequest, credentials);
+
+        return new ResponseEntity<>(avatar, HttpStatus.OK);
+    }
+
+    @GetMapping("/export/list")
+    public ResponseEntity<Resource> getFile() {
+        String filename = "danhsachnhanvien.xlsx";
+        InputStreamResource file = new InputStreamResource(personnelService.exportPersonnel());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
+    }
 }
 

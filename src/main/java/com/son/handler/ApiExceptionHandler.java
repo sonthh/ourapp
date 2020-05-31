@@ -3,6 +3,7 @@ package com.son.handler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -91,5 +92,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         body.setStatus(ex.getStatus());
 
         return new ResponseEntity<>(body, HttpStatus.valueOf(ex.getStatus()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> apiException(AccessDeniedException ex) {
+        ApiExceptionResponse body = new ApiExceptionResponse();
+        body.setErrors("Access is denied");
+        body.setStatus(403);
+
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 }
