@@ -405,6 +405,37 @@ public class PersonnelController {
     }
     /*====================================CONTACT INFO END============================================================*/
 
+    /*====================================BANK INFO END===============================================================*/
+    @ApiOperation("Add bank info")
+    @PutMapping("/{personnelId}/bankInfo/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Boolean> addBankInfo(
+            @Valid @RequestBody AddBankInfoRequest addBankInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addBankInfo(addBankInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update bank info")
+    @PutMapping("/{personnelId}/bankInfo/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateBankInfo(
+            @Valid @RequestBody UpdateBankInfoRequest updateBankInfoRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateBankInfo(updateBankInfoRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+    /*====================================BANK INFO END===============================================================*/
     @ApiOperation("update avatar")
     @PostMapping("/{personnelId}/avatar")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
