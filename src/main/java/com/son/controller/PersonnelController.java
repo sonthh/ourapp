@@ -459,5 +459,36 @@ public class PersonnelController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(file);
     }
+    /*====================================SALARY END==================================================================*/
+    @ApiOperation("Add salary")
+    @PutMapping("/{personnelId}/salary/add")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    public ResponseEntity<Boolean> addSalary(
+            @Valid @RequestBody AddSalaryRequest addSalaryRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addSalary(addSalaryRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update salary")
+    @PutMapping("/{personnelId}/salary/update")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateSalary(
+            @Valid @RequestBody UpdateSalaryRequest updateSalaryRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateSalary(updateSalaryRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+    /*====================================SALARY END==================================================================*/
 }
 

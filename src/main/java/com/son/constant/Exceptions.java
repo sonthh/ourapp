@@ -50,6 +50,9 @@ public class Exceptions {
     public static final String BANK_INFO_EXISTED = "Thông tin ngân hàng tồn tại";
     public static final String BANK_INFO_NOT_FOUND = "Thông tin ngân hàng chưa có";
 
+    public static final String SALARY_EXISTED = "Lương tồn tại";
+    public static final String SALARY_NOT_FOUND = "Lương chưa có";
+
     public static final String QUALIFICATION_NOT_FOUND = "Thông tin trình độ chuyên môn không được tìm thấy";
 
     public static final String WORK_HISTORY_NOT_FOUND = "Thông tin lịch sử làm việc không được tìm thấy";
