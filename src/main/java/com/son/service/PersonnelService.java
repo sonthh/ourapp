@@ -41,6 +41,7 @@ public class PersonnelService {
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
     private final CertificationRepository certificationRepository;
+    private final BankInfoRepository bankInfoRepository;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -524,6 +525,41 @@ public class PersonnelService {
         return true;
     }
     /*====================================CONTACT INFO END============================================================*/
+
+    /*====================================BANK INFO END============================================================*/
+    public Boolean addBankInfo(
+            @Valid AddBankInfoRequest addBankInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getBankInfo() != null) {
+            throw new ApiException(400, Exceptions.BANK_INFO_EXISTED);
+        }
+
+        BankInfo bankInfo = modelMapper.map(addBankInfoRequest, BankInfo.class);
+        bankInfo = bankInfoRepository.save(bankInfo);
+
+        personnel.setBankInfo(bankInfo);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateBankInfo(
+            UpdateBankInfoRequest updateBankInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getBankInfo() == null) {
+            throw new ApiException(400, Exceptions.BANK_INFO_NOT_FOUND);
+        }
+
+        BankInfo bankInfo = personnel.getBankInfo();
+        modelMapper.map(updateBankInfoRequest, bankInfo);
+
+        bankInfoRepository.save(bankInfo);
+        return true;
+    }
+    /*====================================BANK INFO END============================================================*/
 }
 
 
