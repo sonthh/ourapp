@@ -48,7 +48,9 @@ public class PersonnelService {
     private final ModelMapper modelMapper;
     private final WorkHistoryRepository workHistoryRepository;
     private final CertificationRepository certificationRepository;
+    private final BankInfoRepository bankInfoRepository;
     private final CloudinaryService cloudinaryService;
+    private final SalaryRepository salaryRepository;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -524,6 +526,40 @@ public class PersonnelService {
     }
     /*====================================CONTACT INFO END============================================================*/
 
+    /*====================================BANK INFO END===============================================================*/
+    public Boolean addBankInfo(
+            @Valid AddBankInfoRequest addBankInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getBankInfo() != null) {
+            throw new ApiException(400, Exceptions.BANK_INFO_EXISTED);
+        }
+
+        BankInfo bankInfo = modelMapper.map(addBankInfoRequest, BankInfo.class);
+        bankInfo = bankInfoRepository.save(bankInfo);
+
+        personnel.setBankInfo(bankInfo);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateBankInfo(
+            UpdateBankInfoRequest updateBankInfoRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getBankInfo() == null) {
+            throw new ApiException(400, Exceptions.BANK_INFO_NOT_FOUND);
+        }
+
+        BankInfo bankInfo = personnel.getBankInfo();
+        modelMapper.map(updateBankInfoRequest, bankInfo);
+
+        bankInfoRepository.save(bankInfo);
+        return true;
+    }
+    /*====================================BANK INFO END===============================================================*/
     public static ByteArrayInputStream exportPersonnel() {
         String[] HEADERs = {"Id", "Title", "Description", "Published"};
         String SHEET = "Danh sách nhân v";
@@ -579,6 +615,41 @@ public class PersonnelService {
 
         return avatar;
     }
+
+    /*====================================BANK INFO END===============================================================*/
+    public Boolean addSalary(
+            @Valid AddSalaryRequest addSalaryRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getSalary() != null) {
+            throw new ApiException(400, Exceptions.SALARY_EXISTED);
+        }
+
+        Salary salary = modelMapper.map(addSalaryRequest, Salary.class);
+        salary = salaryRepository.save(salary);
+
+        personnel.setSalary(salary);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateSalary(
+            UpdateSalaryRequest updateSalaryRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getSalary() == null) {
+            throw new ApiException(400, Exceptions.SALARY_NOT_FOUND);
+        }
+
+        Salary salary = personnel.getSalary();
+        modelMapper.map(updateSalaryRequest, salary);
+
+        salaryRepository.save(salary);
+        return true;
+    }
+    /*====================================BANK INFO END===============================================================*/
 }
 
 
