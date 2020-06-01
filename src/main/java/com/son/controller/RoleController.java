@@ -2,6 +2,7 @@ package com.son.controller;
 
 import com.son.entity.Role;
 import com.son.handler.ApiException;
+import com.son.request.UpdateRoleScopes;
 import com.son.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,11 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -42,6 +41,27 @@ public class RoleController {
             @Min(1) @PathVariable Integer roleId
     ) throws ApiException {
         Role role = roleService.findOne(roleId);
+
+        return new ResponseEntity<>(role, HttpStatus.OK);
+    }
+
+    @ApiOperation("get all permission")
+    @GetMapping("/permissions")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERMISSION_READ)")
+    public ResponseEntity<List<String>> findManyPermission() throws ApiException {
+        List<String> permissions = roleService.findPermissions();
+
+        return new ResponseEntity<>(permissions, HttpStatus.OK);
+    }
+
+    @ApiOperation("update scopes")
+    @PutMapping("/{roleId}/scopes")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_ROLE_UPDATE)")
+    public ResponseEntity<Role> updateScopes(
+            @Min(1) @PathVariable Integer roleId,
+            @Valid @RequestBody UpdateRoleScopes roleScopes
+    ) throws ApiException {
+        Role role = roleService.updateRoleScopes(roleId, roleScopes);
 
         return new ResponseEntity<>(role, HttpStatus.OK);
     }

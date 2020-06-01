@@ -14,6 +14,8 @@ public interface Roles {
             ALL_ROLE_READ,
             ALL_ROLE_UPDATE,
 
+            ALL_PERMISSION_READ,
+
             ALL_PERSONNEL_READ,
             ALL_PERSONNEL_UPDATE,
             ALL_PERSONNEL_CREATE,

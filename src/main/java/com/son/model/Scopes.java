@@ -5,35 +5,37 @@ import org.springframework.stereotype.Component;
 @Component("scopes")
 public final class Scopes {
     // USER
-    public static final String ALL_USER_READ                    = "ALL:USER:READ";
-    public static final String ALL_USER_UPDATE                  = "ALL:USER:UPDATE";
-    public static final String ALL_USER_CREATE                  = "ALL:USER:CREATE";
-    public static final String ALL_USER_DELETE                  = "ALL:USER:DELETE";
+    public static final String ALL_USER_READ                    = "ALL_USER_READ";
+    public static final String ALL_USER_UPDATE                  = "ALL_USER_UPDATE";
+    public static final String ALL_USER_CREATE                  = "ALL_USER_CREATE";
+    public static final String ALL_USER_DELETE                  = "ALL_USER_DELETE";
 
-    // USER
-    public static final String ALL_ROLE_READ                    = "ALL:ROLE:READ";
-    public static final String ALL_ROLE_UPDATE                  = "ALL:ROLE:UPDATE";
-    public static final String ALL_ROLE_CREATE                  = "ALL:ROLE:CREATE";
-    public static final String ALL_ROLE_DELETE                  = "ALL:ROLE:DELETE";
+    public static final String PER_USER_READ                    = "PER_USER_READ";
+    public static final String PER_USER_UPDATE                  = "PER_USER_UPDATE";
 
-    public static final String PER_USER_READ                    = "PER:USER:READ";
-    public static final String PER_USER_UPDATE                  = "PER:USER:UPDATE";
+    // ROLE
+    public static final String ALL_ROLE_READ                    = "ALL_ROLE_READ";
+    public static final String ALL_ROLE_UPDATE                  = "ALL_ROLE_UPDATE";
+    public static final String ALL_ROLE_CREATE                  = "ALL_ROLE_CREATE";
+    public static final String ALL_ROLE_DELETE                  = "ALL_ROLE_DELETE";
+
+    public static final String ALL_PERMISSION_READ              = "ALL_PERMISSION_READ";
 
     //PERSONNEL
-    public static final String ALL_PERSONNEL_READ               = "ALL:PERSONNEL:READ";
-    public static final String ALL_PERSONNEL_UPDATE             = "ALL:PERSONNEL:UPDATE";
-    public static final String ALL_PERSONNEL_CREATE             = "ALL:PERSONNEL:CREATE";
-    public static final String ALL_PERSONNEL_DELETE             = "ALL:PERSONNEL:DELETE";
+    public static final String ALL_PERSONNEL_READ               = "ALL_PERSONNEL_READ";
+    public static final String ALL_PERSONNEL_UPDATE             = "ALL_PERSONNEL_UPDATE";
+    public static final String ALL_PERSONNEL_CREATE             = "ALL_PERSONNEL_CREATE";
+    public static final String ALL_PERSONNEL_DELETE             = "ALL_PERSONNEL_DELETE";
 
     // BRANCH
-    public static final String ALL_BRANCH_READ                  = "ALL:BRANCH:READ";
-    public static final String ALL_BRANCH_UPDATE                = "ALL:BRANCH:UPDATE";
-    public static final String ALL_BRANCH_CREATE                = "ALL:BRANCH:CREATE";
-    public static final String ALL_BRANCH_DELETE                = "ALL:BRANCH:DELETE";
+    public static final String ALL_BRANCH_READ                  = "ALL_BRANCH_READ";
+    public static final String ALL_BRANCH_UPDATE                = "ALL_BRANCH_UPDATE";
+    public static final String ALL_BRANCH_CREATE                = "ALL_BRANCH_CREATE";
+    public static final String ALL_BRANCH_DELETE                = "ALL_BRANCH_DELETE";
 
-    // BRANCH
-    public static final String ALL_DEPARTMENT_READ                  = "ALL:DEPARTMENT:READ";
-    public static final String ALL_DEPARTMENT_UPDATE                = "ALL:DEPARTMENT:UPDATE";
-    public static final String ALL_DEPARTMENT_CREATE                = "ALL:DEPARTMENT:CREATE";
-    public static final String ALL_DEPARTMENT_DELETE                = "ALL:DEPARTMENT:DELETE";
+    // DEPARTMENT
+    public static final String ALL_DEPARTMENT_READ              = "ALL_DEPARTMENT_READ";
+    public static final String ALL_DEPARTMENT_UPDATE            = "ALL_DEPARTMENT_UPDATE";
+    public static final String ALL_DEPARTMENT_CREATE            = "ALL_DEPARTMENT_CREATE";
+    public static final String ALL_DEPARTMENT_DELETE            = "ALL_DEPARTMENT_DELETE";
 }
