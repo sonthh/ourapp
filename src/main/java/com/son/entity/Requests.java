@@ -33,4 +33,8 @@ public class Requests extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "receiverId")
     private User receiver;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "confirmBy")
+    private User confirmBy;
 }

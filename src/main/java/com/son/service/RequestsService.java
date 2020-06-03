@@ -6,6 +6,7 @@ import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.RequestsRepository;
 import com.son.request.AddRequests;
+import com.son.request.UpdateConfirmRequests;
 import com.son.request.UpdateRequests;
 import com.son.security.Credentials;
 import lombok.RequiredArgsConstructor;
@@ -51,12 +52,13 @@ public class RequestsService {
     public Boolean deleteRequests(Integer requestsId, Credentials credentials) throws ApiException {
         Requests requests = findOne(requestsId);
 
-        if (!credentials.getId().equals(requests.getReceiver().getId())) {
+        if (credentials.getUserEntity().getUsername().equals("admin")
+            || credentials.getId().equals(requests.getReceiver().getId())) {
+            requestsRepository.delete(requests);
+            return true;
+        } else {
             throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
         }
-
-        requestsRepository.delete(requests);
-        return true;
     }
 
     public Requests updateRequests(Integer requestsId, UpdateRequests updateRequests, Credentials credentials)
@@ -74,6 +76,20 @@ public class RequestsService {
         modelMapper.map(updateRequests, requests);
         requests.setReceiver(receiver);
         return requestsRepository.save(requests);
+    }
+
+    public Requests confirmRequests(UpdateConfirmRequests updateConfirmRequests, Credentials credentials)
+        throws ApiException {
+        Requests requests = findOne(updateConfirmRequests.getRequestsId());
+
+        if (credentials.getUserEntity().getUsername().equals("admin")
+            || credentials.getId().equals(requests.getReceiver().getId())) {
+            requests.setStatus(updateConfirmRequests.getStatus());
+            requests.setConfirmBy(credentials.getUserEntity());
+            return requestsRepository.save(requests);
+        } else {
+            throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
+        }
     }
     /*====================================REQUESTS END================================================================*/
 }

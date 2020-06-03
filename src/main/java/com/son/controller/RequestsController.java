@@ -3,6 +3,7 @@ package com.son.controller;
 import com.son.entity.Requests;
 import com.son.handler.ApiException;
 import com.son.request.AddRequests;
+import com.son.request.UpdateConfirmRequests;
 import com.son.request.UpdateRequests;
 import com.son.security.Credentials;
 import com.son.service.RequestsService;
@@ -56,6 +57,15 @@ public class RequestsController {
         @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
         return new ResponseEntity<>(requestsService.updateRequests(requestsId, updateRequests, credentials), HttpStatus.OK);
+    }
+
+    @ApiOperation("confirm requests")
+    @PutMapping("/confirm")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Requests> confirmRequests(@Valid @RequestBody UpdateConfirmRequests updateConfirmRequests,
+                                                    @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        return new ResponseEntity<>(requestsService.confirmRequests(updateConfirmRequests, credentials), HttpStatus.OK);
     }
     /*====================================REQUESTS END================================================================*/
 }
