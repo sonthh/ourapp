@@ -24,7 +24,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.List;
+import java.io.ByteArrayInputStream;
 
 @Api(tags = "Personnel", value = "Personnel Controller")
 @RestController
@@ -435,6 +435,7 @@ public class PersonnelController {
                 HttpStatus.OK
         );
     }
+
     /*====================================BANK INFO END===============================================================*/
     @ApiOperation("update avatar")
     @PostMapping("/{personnelId}/avatar")
@@ -449,16 +450,6 @@ public class PersonnelController {
         return new ResponseEntity<>(avatar, HttpStatus.OK);
     }
 
-    @GetMapping("/export/list")
-    public ResponseEntity<Resource> getFile() {
-        String filename = "danhsachnhanvien.xlsx";
-        InputStreamResource file = new InputStreamResource(personnelService.exportPersonnel());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(file);
-    }
     /*====================================SALARY END==================================================================*/
     @ApiOperation("Add salary")
     @PutMapping("/{personnelId}/salary/add")
@@ -490,5 +481,24 @@ public class PersonnelController {
         );
     }
     /*====================================SALARY END==================================================================*/
+
+    @ApiOperation("export personnel to excel file")
+    @GetMapping("export/excel")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    public ResponseEntity<Resource> exportPersonnelToExcel(
+            @Valid FindAllPersonnelExcelRequest request,
+            @ApiIgnore BindingResult errors,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        String filename = "DANHSACHNHANVIEN.xlsx";
+
+        ByteArrayInputStream is = personnelService.exportPersonnelToExcel(credentials, request);
+        InputStreamResource file = new InputStreamResource(is);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
+    }
 }
 

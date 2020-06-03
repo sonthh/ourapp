@@ -11,10 +11,8 @@ import com.son.util.common.EnumUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -26,6 +24,7 @@ import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -559,10 +558,11 @@ public class PersonnelService {
         bankInfoRepository.save(bankInfo);
         return true;
     }
+
     /*====================================BANK INFO END===============================================================*/
-    public static ByteArrayInputStream exportPersonnel() {
+    public ByteArrayInputStream exportPersonnel() {
         String[] HEADERs = {"Id", "Title", "Description", "Published"};
-        String SHEET = "Danh sách nhân v";
+        String SHEET = "Danh sách nhân viên";
 
         try (
                 Workbook workbook = new XSSFWorkbook();
@@ -650,6 +650,144 @@ public class PersonnelService {
         return true;
     }
     /*====================================BANK INFO END===============================================================*/
+
+    public ByteArrayInputStream exportPersonnelToExcel(
+            Credentials credentials, FindAllPersonnelExcelRequest request
+    ) throws ApiException {
+        final String COLUMN_ORDINAL_NUMBER = "STT";
+        final String COLUMN_ID = "Mã nhân viên";
+        final String COLUMN_FULL_NAME = "Họ tên";
+        final String COLUMN_IDENTIFICATION = "Chứng minh nhân dân";
+        final String COLUMN_WORKING_TIME = "Thời gian làm việc";
+        final String COLUMN_PHONE_NUMBER = "Số điện thoại";
+        final String COLUMN_WORKING_BANK = "Thông tin ngân hàng";
+        final String COLUMN_GENDER = "Giới tính";
+        final String COLUMN_EMAIL = "Email";
+        final String COLUMN_POSITION = "Vị trí";
+        final String COLUMN_DEPARTMENT = "Phòng ban";
+
+        String[] headers = {
+                COLUMN_ID, COLUMN_FULL_NAME, COLUMN_IDENTIFICATION, COLUMN_WORKING_TIME, COLUMN_PHONE_NUMBER,
+                COLUMN_WORKING_BANK, COLUMN_GENDER, COLUMN_EMAIL, COLUMN_POSITION, COLUMN_DEPARTMENT, COLUMN_ORDINAL_NUMBER
+        };
+        List<String> columns = request.getColumns();
+        if (!columns.contains(COLUMN_ORDINAL_NUMBER)) {
+            columns.add(0, COLUMN_ORDINAL_NUMBER);
+        }
+
+        boolean validate = columns.stream().anyMatch(each -> !ArrayUtils.contains(headers, each));
+        if (validate) {
+            String message = "Each item in columns must be any of: " + Arrays.toString(headers);
+            throw new ApiException(400, message);
+        }
+        String SHEET = "Danh sách nhân viên";
+
+        try {
+            request.setLimit(Integer.MAX_VALUE);
+            FindAllPersonnelRequest findAll = modelMapper.map(request, FindAllPersonnelRequest.class);
+            Page<Personnel> page = findMany(credentials, findAll);
+            List<Personnel> personnelList = page.getContent();
+
+            Workbook workbook = new XSSFWorkbook();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Sheet sheet = workbook.createSheet(SHEET);
+
+            // HEADER
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < columns.size(); i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columns.get(i));
+
+                Font font = workbook.createFont();
+                font.setBold(true);
+                CellStyle style = workbook.createCellStyle();
+                style.setFont(font);
+
+                cell.setCellStyle(style);
+
+                sheet.autoSizeColumn(i);
+            }
+
+            // ROWS
+            int rowIdx = 1;
+            for (Personnel personnel : personnelList) {
+                Row row = sheet.createRow(rowIdx++);
+
+                for (int j = 0; j < columns.size(); j++) {
+                    String column = columns.get(j);
+                    String value = "";
+
+                    switch (column) {
+                        case COLUMN_ID: {
+                            value = personnel.getId() + "";
+                            break;
+                        }
+                        case COLUMN_FULL_NAME: {
+                            value = personnel.getFullName();
+                            break;
+                        }
+                        case COLUMN_IDENTIFICATION: {
+                            if (personnel.getIdentification() != null) {
+                                value = personnel.getIdentification().getNumber();
+                            }
+                            break;
+                        }
+                        case COLUMN_PHONE_NUMBER: {
+                            value = personnel.getPhoneNumber();
+                            break;
+                        }
+                        case COLUMN_EMAIL: {
+                            value = personnel.getEmail();
+                            break;
+                        }
+                        case COLUMN_GENDER: {
+                            Gender gender = personnel.getGender();
+                            if (gender == null) {
+                                value = "";
+                            }
+                            if (gender == Gender.FEMALE) {
+                                value = "Nữ";
+                            }
+                            if (gender == Gender.MALE) {
+                                value = "Nam";
+                            }
+                            break;
+                        }
+                        case COLUMN_POSITION: {
+                            if (personnel.getPosition() != null) {
+                                value = personnel.getPosition();
+                            }
+                            break;
+                        }
+                        case COLUMN_DEPARTMENT: {
+                            if (personnel.getDepartment() != null) {
+                                value = personnel.getDepartment().getName();
+                            }
+                            break;
+                        }
+                        case COLUMN_ORDINAL_NUMBER: {
+                            value = (rowIdx - 1) + "";
+                            break;
+                        }
+                    }
+
+                    Cell cell = row.createCell(j);
+                    cell.setCellValue(value == null ? "" : value);
+
+                    CellStyle style = workbook.createCellStyle();
+                    style.setWrapText(true);
+
+                    cell.setCellStyle(style);
+                }
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new ApiException(500, "Fail to export data");
+        }
+    }
+
 }
 
 
