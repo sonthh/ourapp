@@ -32,6 +32,13 @@ public class Contract extends BaseEntity {
     @Column
     private String contractNumber;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "signerId")
+    private User signer;
+
+    @Column
+    private String workType;
+
     @Column
     private Date validDate;
 
