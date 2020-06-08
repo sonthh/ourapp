@@ -98,7 +98,7 @@ public class PersonnelService {
     }
 
     public Personnel updateBasicInfo(
-            UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
+        UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -114,7 +114,7 @@ public class PersonnelService {
     }
 
     public Boolean addIdentification(
-            AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
+        AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -131,7 +131,7 @@ public class PersonnelService {
     }
 
     public Boolean updateIdentification(
-            UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
+        UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -147,7 +147,7 @@ public class PersonnelService {
     }
 
     public Boolean addPassport(
-            AddPassportRequest passportRequest, int personnelId, Credentials credentials
+        AddPassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -164,7 +164,7 @@ public class PersonnelService {
     }
 
     public Boolean updatePassport(
-            UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
+        UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -180,7 +180,7 @@ public class PersonnelService {
     }
 
     public Boolean addWorkingTime(
-            AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+        AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -197,7 +197,7 @@ public class PersonnelService {
     }
 
     public Boolean updateWorkingTime(
-            UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+        UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -213,7 +213,7 @@ public class PersonnelService {
     }
 
     public Boolean addQualification(
-            AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
+        AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -226,8 +226,8 @@ public class PersonnelService {
     }
 
     public Boolean updateQualification(
-            UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
-            Credentials credentials
+        UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
+        Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -248,7 +248,7 @@ public class PersonnelService {
     }
 
     public Boolean deleteQualification(
-            int personnelId, int qualificationId, Credentials credentials
+        int personnelId, int qualificationId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -268,7 +268,7 @@ public class PersonnelService {
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
-            throws ApiException {
+        throws ApiException {
         Gender gender = EnumUtil.getEnum(Gender.class, findAllPersonnelRequest.getGender());
 
         String createdBy = findAllPersonnelRequest.getCreatedBy();
@@ -288,14 +288,14 @@ public class PersonnelService {
 
         SpecificationBuilder<Personnel> builder = new SpecificationBuilder<>();
         builder
-                .query("position", CONTAINS, position)
-                .query("email", CONTAINS, email)
-                .query("fullName", CONTAINS, fullName)
-                .query("gender", EQUALITY, gender)
-                .query("id", IN, userIds)
-                .query("department.id", EQUALITY, departmentId)
-                .query("createdBy.username", CONTAINS, createdBy)
-                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+            .query("position", CONTAINS, position)
+            .query("email", CONTAINS, email)
+            .query("fullName", CONTAINS, fullName)
+            .query("gender", EQUALITY, gender)
+            .query("id", IN, userIds)
+            .query("department.id", EQUALITY, departmentId)
+            .query("createdBy.username", CONTAINS, createdBy)
+            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
         if (isStopWork != null && isStopWork) {
             builder.query("workingTime.isStopWork", EQUALITY, true);
@@ -311,7 +311,7 @@ public class PersonnelService {
 
     /*====================================WORK HISTORY START==========================================================*/
     public Personnel createWorkHistory(AddWorkHistoryRequest historyRequests, Integer personnelId)
-            throws ApiException {
+        throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         WorkHistory workHistory = modelMapper.map(historyRequests, WorkHistory.class);
@@ -324,7 +324,7 @@ public class PersonnelService {
 
     public Boolean updateWorkHistory(UpdateWorkHistoryRequest historyRequests,
                                      Integer personnelId, Integer workHistoryId)
-            throws ApiException {
+        throws ApiException {
         Personnel personnel = findOne(personnelId);
         Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(workHistoryId);
 
@@ -369,7 +369,7 @@ public class PersonnelService {
 
     /*====================================CERTIFICATION START=========================================================*/
     public Personnel createCertification(AddCertificationRequest certificationRequest, Integer personnelId)
-            throws ApiException {
+        throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         Certification certification = modelMapper.map(certificationRequest, Certification.class);
@@ -422,7 +422,7 @@ public class PersonnelService {
 
     /*====================================ADDITIONAL INFO START=======================================================*/
     public Boolean addAdditionalInfo(
-            @Valid AddAdditionalInfoRequest addAdditionalInfoRequest, int personnelId, Credentials credentials
+        @Valid AddAdditionalInfoRequest addAdditionalInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -439,7 +439,7 @@ public class PersonnelService {
     }
 
     public Boolean updateAdditionalInfo(
-            UpdateAdditionalInfoRequest updateAdditionalInfoRequest, int personnelId, Credentials credentials
+        UpdateAdditionalInfoRequest updateAdditionalInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -457,7 +457,7 @@ public class PersonnelService {
 
     /*====================================HEALTHY STATUS START========================================================*/
     public Boolean addHealthyStatus(
-            @Valid AddHealthyStatusRequest addHealthyStatusRequest, int personnelId, Credentials credentials
+        @Valid AddHealthyStatusRequest addHealthyStatusRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -474,7 +474,7 @@ public class PersonnelService {
     }
 
     public Boolean updateHealthyStatus(
-            UpdateHealthyStatusRequest updateHealthyStatusRequest, int personnelId, Credentials credentials
+        UpdateHealthyStatusRequest updateHealthyStatusRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -492,7 +492,7 @@ public class PersonnelService {
 
     /*====================================CONTACT INFO START==========================================================*/
     public Boolean addContactInfo(
-            @Valid AddContactInfoRequest addContactInfoRequest, int personnelId, Credentials credentials
+        @Valid AddContactInfoRequest addContactInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -509,7 +509,7 @@ public class PersonnelService {
     }
 
     public Boolean updateContactInfo(
-            UpdateContactInfoRequest updateContactInfoRequest, int personnelId, Credentials credentials
+        UpdateContactInfoRequest updateContactInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -527,7 +527,7 @@ public class PersonnelService {
 
     /*====================================BANK INFO END===============================================================*/
     public Boolean addBankInfo(
-            @Valid AddBankInfoRequest addBankInfoRequest, int personnelId, Credentials credentials
+        @Valid AddBankInfoRequest addBankInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -544,7 +544,7 @@ public class PersonnelService {
     }
 
     public Boolean updateBankInfo(
-            UpdateBankInfoRequest updateBankInfoRequest, int personnelId, Credentials credentials
+        UpdateBankInfoRequest updateBankInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -565,8 +565,8 @@ public class PersonnelService {
         String SHEET = "Danh sách nhân viên";
 
         try (
-                Workbook workbook = new XSSFWorkbook();
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
+            Workbook workbook = new XSSFWorkbook();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
         ) {
             Sheet sheet = workbook.createSheet(SHEET);
 
@@ -595,7 +595,7 @@ public class PersonnelService {
     }
 
     public String updateAvatar(
-            Integer personnelId, UpdateAvatarRequest updateAvatarRequest, Credentials credentials
+        Integer personnelId, UpdateAvatarRequest updateAvatarRequest, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -618,7 +618,7 @@ public class PersonnelService {
 
     /*====================================BANK INFO END===============================================================*/
     public Boolean addSalary(
-            @Valid AddSalaryRequest addSalaryRequest, int personnelId, Credentials credentials
+        @Valid AddSalaryRequest addSalaryRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -635,7 +635,7 @@ public class PersonnelService {
     }
 
     public Boolean updateSalary(
-            UpdateSalaryRequest updateSalaryRequest, int personnelId, Credentials credentials
+        UpdateSalaryRequest updateSalaryRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -652,7 +652,7 @@ public class PersonnelService {
     /*====================================BANK INFO END===============================================================*/
 
     public ByteArrayInputStream exportPersonnelToExcel(
-            Credentials credentials, FindAllPersonnelExcelRequest request
+        Credentials credentials, FindAllPersonnelExcelRequest request
     ) throws ApiException {
         final String COLUMN_ORDINAL_NUMBER = "STT";
         final String COLUMN_ID = "Mã nhân viên";
@@ -667,8 +667,8 @@ public class PersonnelService {
         final String COLUMN_DEPARTMENT = "Phòng ban";
 
         String[] headers = {
-                COLUMN_ID, COLUMN_FULL_NAME, COLUMN_IDENTIFICATION, COLUMN_WORKING_TIME, COLUMN_PHONE_NUMBER,
-                COLUMN_WORKING_BANK, COLUMN_GENDER, COLUMN_EMAIL, COLUMN_POSITION, COLUMN_DEPARTMENT, COLUMN_ORDINAL_NUMBER
+            COLUMN_ID, COLUMN_FULL_NAME, COLUMN_IDENTIFICATION, COLUMN_WORKING_TIME, COLUMN_PHONE_NUMBER,
+            COLUMN_WORKING_BANK, COLUMN_GENDER, COLUMN_EMAIL, COLUMN_POSITION, COLUMN_DEPARTMENT, COLUMN_ORDINAL_NUMBER
         };
         List<String> columns = request.getColumns();
         if (!columns.contains(COLUMN_ORDINAL_NUMBER)) {
