@@ -6,14 +6,23 @@ import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.RequestsRepository;
 import com.son.request.AddRequests;
+import com.son.request.FindAllRequests;
 import com.son.request.UpdateConfirmRequests;
 import com.son.request.UpdateRequests;
 import com.son.security.Credentials;
+import com.son.util.page.PageUtil;
+import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.son.util.spec.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -90,6 +99,39 @@ public class RequestsService {
         } else {
             throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
         }
+    }
+
+    public Page<Requests> findMany(Credentials credentials, FindAllRequests findAllRequests) throws ApiException {
+        Integer currentPage = findAllRequests.getCurrentPage();
+        Integer limit = findAllRequests.getLimit();
+        Integer receiverId = findAllRequests.getReceiverId();
+        Integer confirmBy = findAllRequests.getConfirmBy();
+
+        String sortDirection = findAllRequests.getSortDirection();
+        String sortBy = findAllRequests.getSortBy();
+        String createdBy = findAllRequests.getCreatedBy();
+        String lastModifiedBy = findAllRequests.getLastModifiedBy();
+        String type = findAllRequests.getType();
+        String reason = findAllRequests.getReason();
+        String status = findAllRequests.getStatus();
+
+        List<Integer> ids = findAllRequests.getIds();
+
+        SpecificationBuilder<Requests> builder = new SpecificationBuilder<>();
+        builder.query("id", IN, ids)
+            .query("reason", CONTAINS, reason)
+            .query("status", CONTAINS, status)
+            .query("type", CONTAINS, type)
+            .query("createdBy.username", CONTAINS, createdBy)
+            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy)
+            .query("receiver.id", EQUALITY, receiverId)
+            .query("confirmBy.id", EQUALITY, confirmBy);
+
+        Specification<Requests> spec = builder.build();
+
+        Pageable pageable = PageUtil.getPageable(currentPage, limit, sortDirection, sortBy);
+
+        return requestsRepository.findAll(spec, pageable);
     }
     /*====================================REQUESTS END================================================================*/
 }
