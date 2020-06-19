@@ -26,11 +26,11 @@ public class AddContractRequest {
     private String validDate;
 
     @ApiModelProperty
-    @NotNull
+    // @NotNull
     private Integer signerId;
 
     @ApiModelProperty
-    @NotNull
+    // @NotNull
     private String workType;
 
     @ApiModelProperty
