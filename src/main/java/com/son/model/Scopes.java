@@ -38,4 +38,10 @@ public final class Scopes {
     public static final String ALL_DEPARTMENT_UPDATE            = "ALL_DEPARTMENT_UPDATE";
     public static final String ALL_DEPARTMENT_CREATE            = "ALL_DEPARTMENT_CREATE";
     public static final String ALL_DEPARTMENT_DELETE            = "ALL_DEPARTMENT_DELETE";
+
+    //CONTRACT
+    public static final String ALL_CONTRACT_READ               = "ALL_CONTRACT_READ";
+    public static final String ALL_CONTRACT_UPDATE             = "ALL_CONTRACT_UPDATE";
+    public static final String ALL_CONTRACT_CREATE             = "ALL_CONTRACT_CREATE";
+    public static final String ALL_CONTRACT_DELETE             = "ALL_CONTRACT_DELETE";
 }

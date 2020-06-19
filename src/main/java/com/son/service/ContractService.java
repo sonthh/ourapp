@@ -7,13 +7,22 @@ import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.ContractRepository;
 import com.son.request.AddContractRequest;
+import com.son.request.FindAllContractRequest;
 import com.son.request.UpdateContractRequest;
 import com.son.security.Credentials;
+import com.son.util.page.PageUtil;
+import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.son.util.spec.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +53,7 @@ public class ContractService {
 
     public Contract createOne(AddContractRequest addContractRequest, Credentials credentials) throws ApiException {
         Personnel personnel = personnelService.findOne(addContractRequest.getPersonnelId());
-        User signer = userService.findOne(addContractRequest.getSignerId());
+        // User signer = userService.findOne(addContractRequest.getSignerId());
         String contractNumber = addContractRequest.getContractNumber();
 
         Contract contract = modelMapper.map(addContractRequest, Contract.class);
@@ -57,7 +66,7 @@ public class ContractService {
             }
         }
         contract.setPersonnel(personnel);
-        contract.setSigner(signer);
+        // contract.setSigner(signer);
 
         return contractRepository.save(contract);
     }
@@ -66,7 +75,7 @@ public class ContractService {
         Contract contract = findOne(contractId);
 
         if (credentials.getUserEntity().getUsername().equals("admin") ||
-            credentials.getUserEntity().getId().equals(contract.getSigner().getId())) {
+                credentials.getUserEntity().getId().equals(contract.getSigner().getId())) {
             contractRepository.delete(contract);
             return true;
         }
@@ -74,7 +83,7 @@ public class ContractService {
     }
 
     public Contract updateOne(Integer contractId, Credentials credentials, UpdateContractRequest updateContractRequest)
-        throws ApiException {
+            throws ApiException {
         Contract contract = findOne(contractId);
 
         String contractNumber = updateContractRequest.getContractNumber();
@@ -100,6 +109,35 @@ public class ContractService {
 
         modelMapper.map(updateContractRequest, contract);
         return contractRepository.save(contract);
+    }
+
+    public Page<Contract> findMany(Credentials credentials, FindAllContractRequest findAll)
+            throws ApiException {
+        String createdBy = findAll.getCreatedBy();
+        String lastModifiedBy = findAll.getLastModifiedBy();
+        String fullName = findAll.getFullName();
+        Integer personnelId = findAll.getPersonnelId();
+        List<Integer> ids = findAll.getIds();
+
+        Integer currentPage = findAll.getCurrentPage();
+        Integer limit = findAll.getLimit();
+        String sortDirection = findAll.getSortDirection();
+        String sortBy = findAll.getSortBy();
+
+
+        SpecificationBuilder<Contract> builder = new SpecificationBuilder<>();
+        builder
+                .query("personnel.fullName", CONTAINS, fullName)
+                .query("id", IN, ids)
+                .query("personnel.id", EQUALITY, personnelId)
+                .query("createdBy.username", CONTAINS, createdBy)
+                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+
+        Specification<Contract> spec = builder.build();
+
+        Pageable pageable = PageUtil.getPageable(currentPage, limit, sortDirection, sortBy);
+
+        return contractRepository.findAll(spec, pageable);
     }
     /*====================================CONTRACT END================================================================*/
 }
