@@ -44,4 +44,10 @@ public final class Scopes {
     public static final String ALL_CONTRACT_UPDATE             = "ALL_CONTRACT_UPDATE";
     public static final String ALL_CONTRACT_CREATE             = "ALL_CONTRACT_CREATE";
     public static final String ALL_CONTRACT_DELETE             = "ALL_CONTRACT_DELETE";
+
+    //CONTRACT
+    public static final String ALL_TIME_KEEPING_READ               = "ALL_TIME_KEEPING_READ";
+    public static final String ALL_TIME_KEEPING_UPDATE             = "ALL_TIME_KEEPING_UPDATE";
+    public static final String ALL_TIME_KEEPING_CREATE             = "ALL_TIME_KEEPING_CREATE";
+    public static final String ALL_TIME_KEEPING_DELETE             = "ALL_TIME_KEEPING_DELETE";
 }

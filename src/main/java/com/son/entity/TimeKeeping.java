@@ -1,6 +1,5 @@
 package com.son.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,14 +13,14 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "attendances")
-public class Attendances {
+@Table(name = "time_keeping")
+public class TimeKeeping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column
-    private Boolean attend;
+    private String status;
 
     @Column
     private Date date;
@@ -29,4 +28,8 @@ public class Attendances {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "personnelId")
     private Personnel personnel;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "requestId")
+    private Requests request;
 }

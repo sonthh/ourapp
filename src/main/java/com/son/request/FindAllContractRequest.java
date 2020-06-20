@@ -44,6 +44,10 @@ public class FindAllContractRequest {
 
     @ApiModelProperty()
     @Size(min = 1)
+    private String contractType;
+
+    @ApiModelProperty()
+    @Size(min = 1)
     private String createdBy;
 
     @ApiModelProperty()

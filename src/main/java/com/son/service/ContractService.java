@@ -116,6 +116,7 @@ public class ContractService {
         String createdBy = findAll.getCreatedBy();
         String lastModifiedBy = findAll.getLastModifiedBy();
         String fullName = findAll.getFullName();
+        String contractType = findAll.getContractType();
         Integer personnelId = findAll.getPersonnelId();
         List<Integer> ids = findAll.getIds();
 
@@ -130,6 +131,7 @@ public class ContractService {
                 .query("personnel.fullName", CONTAINS, fullName)
                 .query("id", IN, ids)
                 .query("personnel.id", EQUALITY, personnelId)
+                .query("contractType", CONTAINS, contractType)
                 .query("createdBy.username", CONTAINS, createdBy)
                 .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
