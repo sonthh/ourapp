@@ -72,5 +72,15 @@ public interface Roles {
             ALL_DEPARTMENT_UPDATE,
             ALL_DEPARTMENT_CREATE,
             ALL_DEPARTMENT_DELETE,
+
+            ALL_CONTRACT_READ,
+            ALL_CONTRACT_UPDATE,
+            ALL_CONTRACT_CREATE,
+            ALL_CONTRACT_DELETE,
+
+            ALL_TIME_KEEPING_READ,
+            ALL_TIME_KEEPING_UPDATE,
+            ALL_TIME_KEEPING_CREATE,
+            ALL_TIME_KEEPING_DELETE,
     };
 }

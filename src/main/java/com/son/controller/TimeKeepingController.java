@@ -44,9 +44,9 @@ public class TimeKeepingController {
         );
     }
 
-    @ApiOperation("do time keeping")
+    @ApiOperation("find time keeping")
     @GetMapping
-//    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_CREATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_READ)")
     public Object createRequests(
             @Valid FindAllTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore BindingResult errors,

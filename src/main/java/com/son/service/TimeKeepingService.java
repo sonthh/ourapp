@@ -54,16 +54,12 @@ public class TimeKeepingService {
     public Object findTimeKeeping(
             Credentials credentials, FindAllTimeKeepingRequest request
     ) throws ApiException {
-        FindAllPersonnelRequest findAll = modelMapper.map(request, FindAllPersonnelRequest.class);
-        findAll.setLimit(Integer.MAX_VALUE);
-        Page<Personnel> page = personnelService.findMany(credentials, findAll);
-        List<Personnel> personnelList = page.getContent();
-        List<Integer> ids = personnelList.stream().map(Personnel::getId).collect(Collectors.toList());
-        List<String> dates = request.getDates();
+        // validate input
+        List<String> dateStringList = request.getDates();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         List<Date> dateList = new ArrayList<>();
-        for (String dateString : dates) {
+        for (String dateString : dateStringList) {
             try {
                 dateList.add(sdf.parse(dateString));
             } catch (ParseException e) {
@@ -71,45 +67,61 @@ public class TimeKeepingService {
             }
         }
 
+        // find personnel
+        FindAllPersonnelRequest findAll = modelMapper.map(request, FindAllPersonnelRequest.class);
+        findAll.setLimit(Integer.MAX_VALUE);
+        Page<Personnel> page = personnelService.findMany(credentials, findAll);
+        List<Personnel> personnelList = page.getContent();
+
+        // list of personnel id
+        List<Integer> personnelIds = personnelList.stream().map(Personnel::getId).collect(Collectors.toList());
+
+        // find list of timekeeping
         String hql = "SELECT tk FROM TimeKeeping tk " +
                 "WHERE tk.personnel.id IN :personnelIds AND tk.date IN :dates " +
                 "ORDER BY tk.personnel.id DESC, tk.date ASC";
-        List<TimeKeeping> x = entityManager.createQuery(hql, TimeKeeping.class)
-                .setParameter("personnelIds", ids)
+
+        List<TimeKeeping> keepingList = entityManager.createQuery(hql, TimeKeeping.class)
+                .setParameter("personnelIds", personnelIds)
                 .setParameter("dates", dateList)
                 .getResultList();
 
-        // create the thing to store the sub lists
+        // separate list of timekeeping to multiple list by personnelId
         Map<Integer, List<TimeKeeping>> subs = new HashMap<>();
 
-        // iterate through your objects
-        for (TimeKeeping o : x) {
-
-            // fetch the list for this object's id
-            List<TimeKeeping> temp = subs.get(o.getPersonnel().getId());
+        for (TimeKeeping each : keepingList) {
+            List<TimeKeeping> temp = subs.get(each.getPersonnel().getId());
 
             if (temp == null) {
-                // if the list is null we haven't seen an
-                // object with this id before, so create
-                // a new list
                 temp = new ArrayList<>();
-
-                // and add it to the map
-                subs.put(o.getPersonnel().getId(), temp);
+                subs.put(each.getPersonnel().getId(), temp);
             }
 
-            // whether we got the list from the map
-            // or made a new one we need to add our
-            // object.
-            temp.add(o);
+            temp.add(each);
         }
 
         List<TimeKeepingView> result = new ArrayList<>();
         for (Personnel personnel : personnelList) {
             List<TimeKeeping> timeKeepingList = subs.get(personnel.getId());
+
+            if (timeKeepingList == null) {
+                timeKeepingList = new ArrayList<>();
+            }
+
+            int n = dateList.size();
+            for (int i = 0; i < n; i++) {
+                Date date = dateList.get(i);
+
+                boolean needAddNull = i >= timeKeepingList.size()
+                        || !date.equals(timeKeepingList.get(i).getDate());
+
+                if (needAddNull) {
+                    timeKeepingList.add(i, null);
+                }
+            }
+
             result.add(new TimeKeepingView(personnel, timeKeepingList));
         }
-
         return result;
     }
 
