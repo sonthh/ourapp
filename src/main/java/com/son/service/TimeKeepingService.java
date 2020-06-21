@@ -1,5 +1,6 @@
 package com.son.service;
 
+import com.son.constant.Exceptions;
 import com.son.dto.TimeKeepingView;
 import com.son.entity.Personnel;
 import com.son.entity.Requests;
@@ -9,6 +10,7 @@ import com.son.repository.TimeKeepingRepository;
 import com.son.request.DoTimeKeepingRequest;
 import com.son.request.FindAllPersonnelRequest;
 import com.son.request.FindAllTimeKeepingRequest;
+import com.son.request.UpdateTimeKeepingRequest;
 import com.son.security.Credentials;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -51,7 +53,52 @@ public class TimeKeepingService {
         return timeKeepingRepository.save(timeKeeping);
     }
 
-    public Object findTimeKeeping(
+    public TimeKeeping findOneTimeKeeping(
+            Credentials credentials, Integer timeKeepingId
+    ) throws ApiException {
+        // get current timekeeping
+        Optional<TimeKeeping> opTimeKeeping = timeKeepingRepository.findById(timeKeepingId);
+        if (!opTimeKeeping.isPresent()) {
+            throw new ApiException(400, Exceptions.TIME_KEEPING_NOT_FOUND);
+        }
+
+        return opTimeKeeping.get();
+    }
+
+    public Boolean deleteTimeKeeping(
+            Credentials credentials, Integer personnelId, Integer timeKeepingId
+    ) throws ApiException {
+        // validate personnel, timekeeping
+        personnelService.findOne(personnelId);
+
+        TimeKeeping timeKeeping = findOneTimeKeeping(credentials, timeKeepingId);
+
+        timeKeepingRepository.delete(timeKeeping);
+
+        return true;
+    }
+
+    public TimeKeeping updateTimeKeeping(
+            Credentials credentials, Integer personnelId, Integer timeKeepingId,
+            UpdateTimeKeepingRequest timeKeepingRequest
+    ) throws ApiException {
+        // validate personnel, request
+        personnelService.findOne(personnelId);
+
+        Requests request = null;
+        if (timeKeepingRequest.getRequestId() != null) {
+            request = requestsService.findOne(timeKeepingRequest.getRequestId());
+        }
+
+        TimeKeeping timeKeeping = findOneTimeKeeping(credentials, timeKeepingId);
+        modelMapper.map(timeKeepingRequest, timeKeeping);
+
+        timeKeeping.setRequest(request);
+
+        return timeKeepingRepository.save(timeKeeping);
+    }
+
+    public List<TimeKeepingView> findTimeKeeping(
             Credentials credentials, FindAllTimeKeepingRequest request
     ) throws ApiException {
         // validate input
@@ -63,7 +110,7 @@ public class TimeKeepingService {
             try {
                 dateList.add(sdf.parse(dateString));
             } catch (ParseException e) {
-                return new ApiException(400, "Date format");
+                throw new ApiException(400, "Date format");
             }
         }
 

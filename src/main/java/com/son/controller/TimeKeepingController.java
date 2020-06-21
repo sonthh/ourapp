@@ -1,10 +1,11 @@
 package com.son.controller;
 
+import com.son.dto.TimeKeepingView;
 import com.son.entity.TimeKeeping;
 import com.son.handler.ApiException;
 import com.son.request.DoTimeKeepingRequest;
-import com.son.request.FindAllPersonnelRequest;
 import com.son.request.FindAllTimeKeepingRequest;
+import com.son.request.UpdateTimeKeepingRequest;
 import com.son.security.Credentials;
 import com.son.service.TimeKeepingService;
 import io.swagger.annotations.Api;
@@ -21,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 @Api(tags = "Time Keeping", value = "Time Keeping Controller")
 @RestController
@@ -33,7 +35,7 @@ public class TimeKeepingController {
     @ApiOperation("do time keeping")
     @PostMapping("{personnelId}/add")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_CREATE)")
-    public ResponseEntity<TimeKeeping> createRequests(
+    public ResponseEntity<TimeKeeping> doTimeKeeping(
             @Valid @RequestBody DoTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials,
             @Min(1) @PathVariable Integer personnelId
@@ -44,15 +46,47 @@ public class TimeKeepingController {
         );
     }
 
+    @ApiOperation("update time keeping")
+    @PutMapping("{personnelId}/update/{timeKeepingId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_UPDATE)")
+    public ResponseEntity<TimeKeeping> updateTimeKeeping(
+            @Valid @RequestBody UpdateTimeKeepingRequest timeKeepingRequest,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials,
+            @Min(1) @PathVariable Integer personnelId,
+            @Min(1) @PathVariable Integer timeKeepingId
+    ) throws ApiException {
+        return new ResponseEntity<>(
+                timeKeepingService.updateTimeKeeping(credentials, personnelId, timeKeepingId, timeKeepingRequest),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("delete time keeping")
+    @DeleteMapping("{personnelId}/delete/{timeKeepingId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_DELETE)")
+    public ResponseEntity<Boolean> deleteTimeKeeping(
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials,
+            @Min(1) @PathVariable Integer personnelId,
+            @Min(1) @PathVariable Integer timeKeepingId
+    ) throws ApiException {
+        return new ResponseEntity<>(
+                timeKeepingService.deleteTimeKeeping(credentials, personnelId, timeKeepingId),
+                HttpStatus.OK
+        );
+    }
+
     @ApiOperation("find time keeping")
     @GetMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_READ)")
-    public Object createRequests(
+    public ResponseEntity<List<TimeKeepingView>> createRequests(
             @Valid FindAllTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore BindingResult errors,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
 
-        return timeKeepingService.findTimeKeeping(credentials, timeKeepingRequest);
+        return new ResponseEntity<>(
+                timeKeepingService.findTimeKeeping(credentials, timeKeepingRequest),
+                HttpStatus.OK
+        );
     }
 }

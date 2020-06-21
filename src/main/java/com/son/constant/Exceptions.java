@@ -62,8 +62,13 @@ public class Exceptions {
     public static final String REQUESTS_NOT_FOUND = "Thông tin yêu cầu không được tìm thấy";
     public static final String REQUESTS_NOT_INVALID = "Yêu cầu không hợp lệ";
 
+    // CONTRACT
     public static final String CONTRACT_NOT_FOUND = "Thông tin hợp đồng không tồn tại";
     public static final String CONTRACT_EXISTED = "Số hợp đồng đã tồn tại";
     public static final String CONTRACT_NOT_INVALID = "Nội dung hợp đồng không hợp lệ";
     public static final String CONTRACT_NUMBER_EXISTED = "Số hợp đồng đã tồn tại";
+
+    // TIMEKEEPING
+    public static final String TIME_KEEPING_NOT_FOUND = "Không tìm thấy chấm công";
+
 }
