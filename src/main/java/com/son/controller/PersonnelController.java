@@ -482,6 +482,57 @@ public class PersonnelController {
     }
     /*====================================SALARY END==================================================================*/
 
+    /*====================================ALLOWANCES END==============================================================*/
+    @ApiOperation("Add allowances")
+    @PostMapping("/{personnelId}/allowances")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> addAllowances(
+            @Valid @RequestBody AddAllowancesRequest addAllowancesRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.addAllowances(addAllowancesRequest, personnelId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Update allowances")
+    @PutMapping("/{personnelId}/allowances/{allowanceId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> updateAllowances(
+            @Valid @RequestBody UpdateAllowancesRequest updateAllowancesRequest,
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @Min(1) @PathVariable(value = "allowanceId", required = false) Integer allowanceId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.updateAllowances(
+                        updateAllowancesRequest, personnelId, allowanceId, credentials
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @ApiOperation("Delete allowances")
+    @DeleteMapping("/{personnelId}/allowances/{allowancesId}")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    public ResponseEntity<Boolean> deleteAllowances(
+            @Min(1) @PathVariable(value = "personnelId", required = false) Integer personnelId,
+            @Min(1) @PathVariable(value = "allowancesId", required = false) Integer allowancesId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.deleteAllowances(personnelId, allowancesId, credentials),
+                HttpStatus.OK
+        );
+    }
+
+    /*====================================ALLOWANCES END==============================================================*/
+
     @ApiOperation("export personnel to excel file")
     @GetMapping("export/excel")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
