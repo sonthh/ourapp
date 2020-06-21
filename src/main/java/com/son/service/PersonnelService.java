@@ -51,6 +51,7 @@ public class PersonnelService {
     private final BankInfoRepository bankInfoRepository;
     private final CloudinaryService cloudinaryService;
     private final SalaryRepository salaryRepository;
+    private final AllowancesRepository allowancesRepository;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -650,6 +651,68 @@ public class PersonnelService {
         return true;
     }
     /*====================================BANK INFO END===============================================================*/
+
+    /*====================================ALLOWANCES END==============================================================*/
+    public Boolean addAllowances(
+            AddAllowancesRequest addAllowancesRequest, int personnelId, Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        if (personnel.getAllowances() != null) {
+            throw new ApiException(400, Exceptions.ALLOWANCES_EXISTED);
+        }
+
+        Allowance allowance = modelMapper.map(addAllowancesRequest, Allowance.class);
+        allowance = allowancesRepository.save(allowance);
+
+        personnel.getAllowances().add(allowance);
+        personnelRepository.save(personnel);
+        return true;
+    }
+
+    public Boolean updateAllowances(
+            UpdateAllowancesRequest updateAllowancesRequest, int personnelId, int allowanceId,
+            Credentials credentials
+    ) throws ApiException {
+        Personnel personnel = findOne(personnelId);
+
+        Optional<Allowance> opAllowances = allowancesRepository.findById(allowanceId);
+        if (!opAllowances.isPresent()) {
+            throw new ApiException(400, Exceptions.ALLOWANCES_NOT_FOUND);
+        }
+        Allowance allowance = opAllowances.get();
+
+        List<Allowance> allowances = personnel.getAllowances();
+        if (!allowances.contains(allowance)) {
+            throw new ApiException(400, Exceptions.ALLOWANCES_NOT_FOUND);
+        }
+
+        modelMapper.map(updateAllowancesRequest, allowance);
+        allowancesRepository.save(allowance);
+        return true;
+    }
+
+    public Boolean deleteAllowances(
+            int personnelId, int allowancesId, Credentials credentials
+    ) throws ApiException {
+
+        Personnel personnel = findOne(personnelId);
+
+        Optional<Allowance> opAllowances = allowancesRepository.findById(allowancesId);
+        if (!opAllowances.isPresent()) {
+            throw new ApiException(400, Exceptions.ALLOWANCES_NOT_FOUND);
+        }
+        Allowance allowance = opAllowances.get();
+
+        List<Allowance> allowances = personnel.getAllowances();
+        if (!allowances.contains(allowance)) {
+            throw new ApiException(400, Exceptions.ALLOWANCES_NOT_FOUND);
+        }
+
+        allowancesRepository.delete(allowance);
+        return true;
+    }
+    /*====================================ALLOWANCES END==============================================================*/
 }
 
 
