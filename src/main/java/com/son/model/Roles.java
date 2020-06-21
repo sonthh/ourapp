@@ -14,6 +14,8 @@ public interface Roles {
             ALL_ROLE_READ,
             ALL_ROLE_UPDATE,
 
+            ALL_PERMISSION_READ,
+
             ALL_PERSONNEL_READ,
             ALL_PERSONNEL_UPDATE,
             ALL_PERSONNEL_CREATE,
@@ -28,6 +30,16 @@ public interface Roles {
             ALL_DEPARTMENT_UPDATE,
             ALL_DEPARTMENT_CREATE,
             ALL_DEPARTMENT_DELETE,
+
+            ALL_CONTRACT_READ,
+            ALL_CONTRACT_UPDATE,
+            ALL_CONTRACT_CREATE,
+            ALL_CONTRACT_DELETE,
+
+            ALL_TIME_KEEPING_READ,
+            ALL_TIME_KEEPING_UPDATE,
+            ALL_TIME_KEEPING_CREATE,
+            ALL_TIME_KEEPING_DELETE,
     };
 
     String[] BASIC = {
@@ -60,5 +72,15 @@ public interface Roles {
             ALL_DEPARTMENT_UPDATE,
             ALL_DEPARTMENT_CREATE,
             ALL_DEPARTMENT_DELETE,
+
+            ALL_CONTRACT_READ,
+            ALL_CONTRACT_UPDATE,
+            ALL_CONTRACT_CREATE,
+            ALL_CONTRACT_DELETE,
+
+            ALL_TIME_KEEPING_READ,
+            ALL_TIME_KEEPING_UPDATE,
+            ALL_TIME_KEEPING_CREATE,
+            ALL_TIME_KEEPING_DELETE,
     };
 }

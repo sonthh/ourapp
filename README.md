@@ -12,6 +12,7 @@ Spring framework and other libraries:
 
 - Java 8
 - Maven 3
+- Docker
 - Springboot 2.2.4.RELEASE (Data JPA, Security)
 - Netty-SocketIO
 - Firebase FCM
@@ -39,6 +40,10 @@ Alternatively you can use the [Spring Boot Maven plugin](https://docs.spring.io/
 
 ```shell
 mvn spring-boot:run
+```
+Or
+```shell
+./mvnw package && java -jar target/ourapp-0.0.1-SNAPSHOT.jar
 ```
 
 ## Changing development environment
