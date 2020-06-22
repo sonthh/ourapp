@@ -4,6 +4,7 @@ import com.son.dto.TimeKeepingView;
 import com.son.entity.TimeKeeping;
 import com.son.handler.ApiException;
 import com.son.request.DoTimeKeepingRequest;
+import com.son.request.FindAllTimeKeepingExcelRequest;
 import com.son.request.FindAllTimeKeepingRequest;
 import com.son.request.UpdateTimeKeepingRequest;
 import com.son.security.Credentials;
@@ -11,7 +12,11 @@ import com.son.service.TimeKeepingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 @Api(tags = "Time Keeping", value = "Time Keeping Controller")
@@ -78,7 +84,7 @@ public class TimeKeepingController {
     @ApiOperation("find time keeping")
     @GetMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_READ)")
-    public ResponseEntity<List<TimeKeepingView>> createRequests(
+    public ResponseEntity<List<TimeKeepingView>> findTimeKeeping(
             @Valid FindAllTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore BindingResult errors,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -88,5 +94,23 @@ public class TimeKeepingController {
                 timeKeepingService.findTimeKeeping(credentials, timeKeepingRequest),
                 HttpStatus.OK
         );
+    }
+
+    @ApiOperation("export time keeping (excel)")
+    @GetMapping("export/excel")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_READ)")
+    public ResponseEntity<Resource> exportTimeKeeping(
+            @Valid FindAllTimeKeepingExcelRequest timeKeepingRequest,
+            @ApiIgnore BindingResult errors,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        String fileName = "Bảngchấmcông.xlsx";
+        ByteArrayInputStream is = timeKeepingService.exportTimeKeeping(credentials, timeKeepingRequest);
+        InputStreamResource file = new InputStreamResource(is);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
     }
 }
