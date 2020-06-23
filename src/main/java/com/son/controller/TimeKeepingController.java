@@ -40,7 +40,7 @@ public class TimeKeepingController {
 
     @ApiOperation("do time keeping")
     @PostMapping("{personnelId}/add")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_CREATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIMEKEEPING_CREATE)")
     public ResponseEntity<TimeKeeping> doTimeKeeping(
             @Valid @RequestBody DoTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials,
@@ -54,7 +54,7 @@ public class TimeKeepingController {
 
     @ApiOperation("update time keeping")
     @PutMapping("{personnelId}/update/{timeKeepingId}")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_UPDATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIMEKEEPING_UPDATE)")
     public ResponseEntity<TimeKeeping> updateTimeKeeping(
             @Valid @RequestBody UpdateTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials,
@@ -69,7 +69,7 @@ public class TimeKeepingController {
 
     @ApiOperation("delete time keeping")
     @DeleteMapping("{personnelId}/delete/{timeKeepingId}")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_DELETE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIMEKEEPING_DELETE)")
     public ResponseEntity<Boolean> deleteTimeKeeping(
             @ApiIgnore @AuthenticationPrincipal Credentials credentials,
             @Min(1) @PathVariable Integer personnelId,
@@ -83,7 +83,7 @@ public class TimeKeepingController {
 
     @ApiOperation("find time keeping")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_READ)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIMEKEEPING_READ)")
     public ResponseEntity<List<TimeKeepingView>> findTimeKeeping(
             @Valid FindAllTimeKeepingRequest timeKeepingRequest,
             @ApiIgnore BindingResult errors,
@@ -98,7 +98,7 @@ public class TimeKeepingController {
 
     @ApiOperation("export time keeping (excel)")
     @GetMapping("export/excel")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIME_KEEPING_READ)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_TIMEKEEPING_READ)")
     public ResponseEntity<Resource> exportTimeKeeping(
             @Valid FindAllTimeKeepingExcelRequest timeKeepingRequest,
             @ApiIgnore BindingResult errors,

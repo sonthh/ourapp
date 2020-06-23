@@ -767,8 +767,6 @@ public class PersonnelService {
                 style.setFont(font);
 
                 cell.setCellStyle(style);
-
-                sheet.autoSizeColumn(i);
             }
 
             // ROWS
@@ -782,7 +780,7 @@ public class PersonnelService {
 
                     switch (column) {
                         case COLUMN_ID: {
-                            value = personnel.getId() + "";
+                            value = String.format("%04d", personnel.getId());
                             break;
                         }
                         case COLUMN_FULL_NAME: {
@@ -829,7 +827,7 @@ public class PersonnelService {
                             break;
                         }
                         case COLUMN_ORDINAL_NUMBER: {
-                            value = (rowIdx - 1) + "";
+                            value = String.format("%04d", rowIdx - 1);
                             break;
                         }
                     }
@@ -841,6 +839,10 @@ public class PersonnelService {
                     style.setWrapText(true);
 
                     cell.setCellStyle(style);
+                }
+
+                for (int j = 0; j < columns.size(); j++) {
+                    sheet.autoSizeColumn(j);
                 }
             }
 

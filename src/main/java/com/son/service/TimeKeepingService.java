@@ -202,13 +202,16 @@ public class TimeKeepingService {
             }
 
             final String COLUMN_ORDINAL_NUMBER = "STT";
+            final String COLUMN_ID= "Mã nv";
             final String COLUMN_FULL_NAME = "Họ tên";
             final String COLUMN_DEPARTMENT = "Phòng ban";
             final String COLUMN_POSITION = "Vị trí";
 
             List<String> personnelColumns = Arrays.asList(
-                    COLUMN_ORDINAL_NUMBER, COLUMN_FULL_NAME, COLUMN_DEPARTMENT, COLUMN_POSITION
+                    COLUMN_ORDINAL_NUMBER, COLUMN_ID, COLUMN_FULL_NAME, COLUMN_DEPARTMENT, COLUMN_POSITION
             );
+
+            String type = dateList.size() == 7 ? "week" : "month";
 
             // TITLE
             int rowIdx = 0;
@@ -216,12 +219,13 @@ public class TimeKeepingService {
             Row titleRow = sheet.createRow(rowIdx++);
             titleRow.setHeight((short) -1);
             Cell titleCell = titleRow.createCell(0);
-            titleCell.setCellValue("  Bảng chấm công");
+            titleCell.setCellValue("  Bảng chấm công " +
+                    DateUtil.getFormatForExcelTitle(dateList.get(0), type));
             CellStyle css = workbook.createCellStyle();
             setTitleCellStyle(workbook, css);
             setCommonCellStyle(css);
             titleCell.setCellStyle(css);
-            sheet.addMergedRegion(new CellRangeAddress(0,0,0,
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,
                     personnelColumns.size() + dateList.size() - 1));
 
             // HEADER PERSONNEL
@@ -235,8 +239,6 @@ public class TimeKeepingService {
 
                 setCommonCellStyle(cs);
                 setTitleColumnCellStyle(workbook, cs);
-
-                sheet.autoSizeColumn(i);
             }
             // HEADER TIMEKEEPING
             for (int i = 0; i < dateList.size(); i++) {
@@ -254,8 +256,6 @@ public class TimeKeepingService {
                 if (DateUtil.getDayOfWeek(date) == Calendar.SUNDAY) {
                     setBackGroundCellStyle(cs);
                 }
-
-                sheet.autoSizeColumn(i);
             }
 
             // ROWS
@@ -275,7 +275,10 @@ public class TimeKeepingService {
 
                     switch (personnelColumns.get(j)) {
                         case COLUMN_ORDINAL_NUMBER:
-                            value = (rowIdx - 2) + "";
+                            value = String.format("%04d", rowIdx - 2);
+                            break;
+                        case COLUMN_ID:
+                            value = String.format("%04d", personnel.getId());
                             break;
                         case COLUMN_FULL_NAME:
                             value = personnel.getFullName();
@@ -319,6 +322,10 @@ public class TimeKeepingService {
                         setBackGroundCellStyle(cs);
                     }
                 }
+
+                for (int j = 0; j < personnelColumns.size() + dateList.size(); j++) {
+                    sheet.autoSizeColumn(j);
+                }
             }
 
             workbook.write(out);
@@ -348,8 +355,11 @@ public class TimeKeepingService {
     public void setTitleCellStyle(Workbook workbook, CellStyle cs) {
         Font titleFont = workbook.createFont();
         titleFont.setBold(true);
-        titleFont.setFontHeightInPoints((short) 20);
+        titleFont.setFontHeightInPoints((short) 11);
         cs.setFont(titleFont);
+
+        cs.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cs.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
     }
 
     public void setTitleColumnCellStyle(Workbook workbook, CellStyle cs) {

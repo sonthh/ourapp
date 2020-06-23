@@ -19,4 +19,20 @@ public class DateUtil {
         return c.get(Calendar.DAY_OF_WEEK);
     }
 
+    public static String getFormatForExcelTitle(Date date, String type) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int year = c.get(Calendar.YEAR);
+        if (type.equals("week")) {
+            int weekOfMonth = c.get(Calendar.WEEK_OF_YEAR);
+            return "Tuần " + weekOfMonth + "-" + year;
+        }
+
+        if (type.equals("month")) {
+            int month = c.get(Calendar.MONTH) + 1;
+            return "Tháng " + month + "-" + year;
+        }
+        return null;
+    }
+
 }

@@ -36,10 +36,10 @@ public interface Roles {
             ALL_CONTRACT_CREATE,
             ALL_CONTRACT_DELETE,
 
-            ALL_TIME_KEEPING_READ,
-            ALL_TIME_KEEPING_UPDATE,
-            ALL_TIME_KEEPING_CREATE,
-            ALL_TIME_KEEPING_DELETE,
+            ALL_TIMEKEEPING_READ,
+            ALL_TIMEKEEPING_UPDATE,
+            ALL_TIMEKEEPING_CREATE,
+            ALL_TIMEKEEPING_DELETE,
     };
 
     String[] BASIC = {
@@ -78,9 +78,9 @@ public interface Roles {
             ALL_CONTRACT_CREATE,
             ALL_CONTRACT_DELETE,
 
-            ALL_TIME_KEEPING_READ,
-            ALL_TIME_KEEPING_UPDATE,
-            ALL_TIME_KEEPING_CREATE,
-            ALL_TIME_KEEPING_DELETE,
+            ALL_TIMEKEEPING_READ,
+            ALL_TIMEKEEPING_UPDATE,
+            ALL_TIMEKEEPING_CREATE,
+            ALL_TIMEKEEPING_DELETE,
     };
 }
