@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -34,7 +35,19 @@ public class Requests extends BaseEntity {
     @JoinColumn(name = "receiverId")
     private User receiver;
 
+    @Column
+    private Double amount;
+
+    @Column
+    private Date startDate;
+
+    @Column
+    private Date decidedDate;
+
+    @Column
+    private Date Date;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "confirmBy")
-    private User confirmBy;
+    @JoinColumn(name = "personnelId")
+    private Personnel personnel;
 }

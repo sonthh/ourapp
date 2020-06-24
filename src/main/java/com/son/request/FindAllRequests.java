@@ -55,8 +55,5 @@ public class FindAllRequests {
     private String status;
 
     @ApiModelProperty()
-    private Integer receiverId;
-
-    @ApiModelProperty()
-    private Integer confirmBy;
+    private String receiver;
 }

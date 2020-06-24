@@ -1,14 +1,14 @@
 package com.son.service;
 
 import com.son.constant.Exceptions;
+import com.son.entity.Personnel;
 import com.son.entity.Requests;
 import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.RequestsRepository;
-import com.son.request.AddRequests;
+import com.son.request.AddRequest;
 import com.son.request.FindAllRequests;
-import com.son.request.UpdateConfirmRequests;
-import com.son.request.UpdateRequests;
+import com.son.request.UpdateRequest;
 import com.son.security.Credentials;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
@@ -28,13 +28,10 @@ import static com.son.util.spec.SearchOperation.*;
 @RequiredArgsConstructor
 public class RequestsService {
     private final RequestsRepository requestsRepository;
-
     private final UserService userService;
-
     private final ModelMapper modelMapper;
+    private final PersonnelService personnelService;
 
-
-    /*====================================REQUESTS START==============================================================*/
     public Requests findOne(Integer requestsId) throws ApiException {
         Optional<Requests> requests = requestsRepository.findById(requestsId);
 
@@ -45,67 +42,55 @@ public class RequestsService {
         return requests.get();
     }
 
-    public Requests createRequests(AddRequests addRequests, Credentials credentials) throws ApiException {
-        User receiver = userService.findOne(addRequests.getReceiverId());
+    public Requests createOneRequest(
+            AddRequest addRequest, Credentials credentials
+    ) throws ApiException {
+        User receiver = userService.findOne(addRequest.getReceiverId());
+        Personnel personnel = null;
+
+        if (addRequest.getPersonnelId() != null) {
+            personnel = personnelService.findOne(addRequest.getPersonnelId());
+        }
 
         if (credentials.getId().equals(receiver.getId())) {
             throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
         }
 
-        Requests requests = modelMapper.map(addRequests, Requests.class);
+        Requests requests = modelMapper.map(addRequest, Requests.class);
+
         requests.setReceiver(receiver);
+        requests.setPersonnel(personnel);
 
         return requestsRepository.save(requests);
     }
 
-    public Boolean deleteRequests(Integer requestsId, Credentials credentials) throws ApiException {
+    public Boolean deleteOneRequest(Integer requestsId, Credentials credentials) throws ApiException {
         Requests requests = findOne(requestsId);
 
-        if (credentials.getUserEntity().getUsername().equals("admin")
-            || credentials.getId().equals(requests.getReceiver().getId())) {
-            requestsRepository.delete(requests);
-            return true;
-        } else {
-            throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
-        }
+        requestsRepository.delete(requests);
+        return true;
     }
 
-    public Requests updateRequests(Integer requestsId, UpdateRequests updateRequests, Credentials credentials)
-        throws ApiException {
-        Requests requests = findOne(requestsId);
-        User receiver = userService.findOne(updateRequests.getReceiverId());
+    public Requests updateOneRequest(
+            Integer requestId, UpdateRequest updateRequest, Credentials credentials
+    ) throws ApiException {
+        Requests request = findOne(requestId);
+        User receiver = null;
 
-        if (credentials.getId().equals(receiver.getId())) {
-            throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
+        if (updateRequest.getReceiverId() != null) {
+            receiver = userService.findOne(updateRequest.getReceiverId());
         }
 
-        if (!requests.getCreatedBy().getId().equals(credentials.getId())) {
-            throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
-        }
-        modelMapper.map(updateRequests, requests);
-        requests.setReceiver(receiver);
-        return requestsRepository.save(requests);
-    }
+        modelMapper.map(updateRequest, request);
+        request.setReceiver(receiver);
 
-    public Requests confirmRequests(UpdateConfirmRequests updateConfirmRequests, Credentials credentials)
-        throws ApiException {
-        Requests requests = findOne(updateConfirmRequests.getRequestsId());
-
-        if (credentials.getUserEntity().getUsername().equals("admin")
-            || credentials.getId().equals(requests.getReceiver().getId())) {
-            requests.setStatus(updateConfirmRequests.getStatus());
-            requests.setConfirmBy(credentials.getUserEntity());
-            return requestsRepository.save(requests);
-        } else {
-            throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
-        }
+        return requestsRepository.save(request);
     }
 
     public Page<Requests> findMany(Credentials credentials, FindAllRequests findAllRequests) throws ApiException {
         Integer currentPage = findAllRequests.getCurrentPage();
         Integer limit = findAllRequests.getLimit();
-        Integer receiverId = findAllRequests.getReceiverId();
-        Integer confirmBy = findAllRequests.getConfirmBy();
+        String receiver = findAllRequests.getReceiver();
 
         String sortDirection = findAllRequests.getSortDirection();
         String sortBy = findAllRequests.getSortBy();
@@ -119,13 +104,12 @@ public class RequestsService {
 
         SpecificationBuilder<Requests> builder = new SpecificationBuilder<>();
         builder.query("id", IN, ids)
-            .query("reason", CONTAINS, reason)
-            .query("status", CONTAINS, status)
-            .query("type", CONTAINS, type)
-            .query("createdBy.username", CONTAINS, createdBy)
-            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy)
-            .query("receiver.id", EQUALITY, receiverId)
-            .query("confirmBy.id", EQUALITY, confirmBy);
+                .query("reason", CONTAINS, reason)
+                .query("status", CONTAINS, status)
+                .query("type", CONTAINS, type)
+                .query("createdBy.username", CONTAINS, createdBy)
+                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy)
+                .query("receiver.name", EQUALITY, receiver);
 
         Specification<Requests> spec = builder.build();
 
@@ -133,5 +117,4 @@ public class RequestsService {
 
         return requestsRepository.findAll(spec, pageable);
     }
-    /*====================================REQUESTS END================================================================*/
 }

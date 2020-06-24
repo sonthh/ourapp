@@ -40,6 +40,11 @@ public interface Roles {
             ALL_TIMEKEEPING_UPDATE,
             ALL_TIMEKEEPING_CREATE,
             ALL_TIMEKEEPING_DELETE,
+
+            ALL_REQUEST_READ,
+            ALL_REQUEST_UPDATE,
+            ALL_REQUEST_CREATE,
+            ALL_REQUEST_DELETE,
     };
 
     String[] BASIC = {
@@ -82,5 +87,10 @@ public interface Roles {
             ALL_TIMEKEEPING_UPDATE,
             ALL_TIMEKEEPING_CREATE,
             ALL_TIMEKEEPING_DELETE,
+
+            ALL_REQUEST_READ,
+            ALL_REQUEST_UPDATE,
+            ALL_REQUEST_CREATE,
+            ALL_REQUEST_DELETE,
     };
 }

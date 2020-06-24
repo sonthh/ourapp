@@ -1,9 +1,10 @@
 package com.son.controller;
 
-import com.son.entity.Personnel;
 import com.son.entity.Requests;
 import com.son.handler.ApiException;
-import com.son.request.*;
+import com.son.request.AddRequest;
+import com.son.request.FindAllRequests;
+import com.son.request.UpdateRequest;
 import com.son.security.Credentials;
 import com.son.service.RequestsService;
 import io.swagger.annotations.Api;
@@ -22,7 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
-@Api(tags = "Requests", value = "Requests Controller")
+@Api(tags = "Requests", value = "Request Controller")
 @RestController
 @RequestMapping("requests")
 @Validated
@@ -30,56 +31,63 @@ import javax.validation.constraints.Min;
 public class RequestsController {
     private final RequestsService requestsService;
 
-    /*====================================REQUESTS START==============================================================*/
-    @ApiOperation("create requests")
+    @ApiOperation("create one request")
     @PostMapping()
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
-    public ResponseEntity<Requests> createRequests(@Valid @RequestBody AddRequests addRequests,
-                                                   @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    public ResponseEntity<Requests> createOneRequest(
+            @Valid @RequestBody AddRequest addRequest,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        return new ResponseEntity<>(requestsService.createRequests(addRequests, credentials), HttpStatus.OK);
+        return new ResponseEntity<>(requestsService.createOneRequest(addRequest, credentials), HttpStatus.OK);
     }
 
-    @ApiOperation("delete requests")
-    @DeleteMapping("/{requestsId}")
+    @ApiOperation("delete one request")
+    @DeleteMapping("/{requestId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_DELETE)")
-    public ResponseEntity<Boolean> deleteRequests(
-        @Min(1) @PathVariable(value = "requestsId", required = false) Integer requestsId,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials) throws ApiException {
-        return new ResponseEntity<>(requestsService.deleteRequests(requestsId, credentials), HttpStatus.OK);
+    public ResponseEntity<Boolean> deleteOneRequest(
+            @Min(1) @PathVariable(value = "requestId", required = false) Integer requestsId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        return new ResponseEntity<>(requestsService.deleteOneRequest(requestsId, credentials), HttpStatus.OK);
     }
 
-    @ApiOperation("update requests")
-    @PutMapping("/{requestsId}")
+    @ApiOperation("update one request")
+    @PutMapping("/{requestId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
-    public ResponseEntity<Requests> updateRequests(
-        @Min(1) @PathVariable(value = "requestsId", required = false) Integer requestsId,
-        @Valid @RequestBody UpdateRequests updateRequests,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    public ResponseEntity<Requests> updateOneRequest(
+            @Min(1) @PathVariable(value = "requestId", required = false) Integer requestId,
+            @Valid @RequestBody UpdateRequest updateRequest,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        return new ResponseEntity<>(requestsService.updateRequests(requestsId, updateRequests, credentials), HttpStatus.OK);
+        return new ResponseEntity<>(
+                requestsService.updateOneRequest(requestId, updateRequest, credentials),
+                HttpStatus.OK
+        );
     }
 
-    @ApiOperation("confirm requests")
-    @PutMapping("/confirm")
+    @ApiOperation("find one request")
+    @GetMapping("/{requestId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
-    public ResponseEntity<Requests> confirmRequests(@Valid @RequestBody UpdateConfirmRequests updateConfirmRequests,
-                                                    @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    public ResponseEntity<Requests> findOneRequest(
+            @Min(1) @PathVariable(value = "requestId", required = false) Integer requestId,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        return new ResponseEntity<>(requestsService.confirmRequests(updateConfirmRequests, credentials), HttpStatus.OK);
+        return new ResponseEntity<>(
+                requestsService.findOne(requestId),
+                HttpStatus.OK
+        );
     }
 
     @ApiOperation("find many requests")
     @GetMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
     public ResponseEntity<Page<Requests>> findMany(
-        @Valid FindAllRequests findAllRequests,
-        @ApiIgnore BindingResult errors,
-        @ApiIgnore @AuthenticationPrincipal Credentials credentials
+            @Valid FindAllRequests findAllRequests,
+            @ApiIgnore BindingResult errors,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
         Page<Requests> page = requestsService.findMany(credentials, findAllRequests);
 
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
-    /*====================================REQUESTS END================================================================*/
 }
