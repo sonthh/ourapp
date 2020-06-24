@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "requests")
-public class Requests extends BaseEntity {
+public class Request extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -45,7 +45,7 @@ public class Requests extends BaseEntity {
     private Date decidedDate;
 
     @Column
-    private Date Date;
+    private Date endDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "personnelId")

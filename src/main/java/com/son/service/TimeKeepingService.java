@@ -3,7 +3,7 @@ package com.son.service;
 import com.son.constant.Exceptions;
 import com.son.dto.TimeKeepingView;
 import com.son.entity.Personnel;
-import com.son.entity.Requests;
+import com.son.entity.Request;
 import com.son.entity.TimeKeeping;
 import com.son.handler.ApiException;
 import com.son.repository.TimeKeepingRepository;
@@ -45,7 +45,7 @@ public class TimeKeepingService {
             DoTimeKeepingRequest timeKeepingRequest
     ) throws ApiException {
         Personnel personnel = personnelService.findOne(personnelId);
-        Requests request = null;
+        Request request = null;
         if (timeKeepingRequest.getRequestId() != null) {
             request = requestsService.findOne(timeKeepingRequest.getRequestId());
         }
@@ -89,7 +89,7 @@ public class TimeKeepingService {
         // validate personnel, request
         personnelService.findOne(personnelId);
 
-        Requests request = null;
+        Request request = null;
         if (timeKeepingRequest.getRequestId() != null) {
             request = requestsService.findOne(timeKeepingRequest.getRequestId());
         }

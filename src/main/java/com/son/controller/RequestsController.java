@@ -1,6 +1,6 @@
 package com.son.controller;
 
-import com.son.entity.Requests;
+import com.son.entity.Request;
 import com.son.handler.ApiException;
 import com.son.request.AddRequest;
 import com.son.request.FindAllRequests;
@@ -34,7 +34,7 @@ public class RequestsController {
     @ApiOperation("create one request")
     @PostMapping()
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
-    public ResponseEntity<Requests> createOneRequest(
+    public ResponseEntity<Request> createOneRequest(
             @Valid @RequestBody AddRequest addRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
@@ -54,7 +54,7 @@ public class RequestsController {
     @ApiOperation("update one request")
     @PutMapping("/{requestId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
-    public ResponseEntity<Requests> updateOneRequest(
+    public ResponseEntity<Request> updateOneRequest(
             @Min(1) @PathVariable(value = "requestId", required = false) Integer requestId,
             @Valid @RequestBody UpdateRequest updateRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -68,7 +68,7 @@ public class RequestsController {
     @ApiOperation("find one request")
     @GetMapping("/{requestId}")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
-    public ResponseEntity<Requests> findOneRequest(
+    public ResponseEntity<Request> findOneRequest(
             @Min(1) @PathVariable(value = "requestId", required = false) Integer requestId,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
@@ -81,12 +81,12 @@ public class RequestsController {
     @ApiOperation("find many requests")
     @GetMapping
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
-    public ResponseEntity<Page<Requests>> findMany(
+    public ResponseEntity<Page<Request>> findMany(
             @Valid FindAllRequests findAllRequests,
             @ApiIgnore BindingResult errors,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        Page<Requests> page = requestsService.findMany(credentials, findAllRequests);
+        Page<Request> page = requestsService.findMany(credentials, findAllRequests);
 
         return new ResponseEntity<>(page, HttpStatus.OK);
     }

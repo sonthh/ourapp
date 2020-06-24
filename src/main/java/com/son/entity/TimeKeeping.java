@@ -31,5 +31,5 @@ public class TimeKeeping {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "requestId")
-    private Requests request;
+    private Request request;
 }

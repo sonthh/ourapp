@@ -2,7 +2,7 @@ package com.son.service;
 
 import com.son.constant.Exceptions;
 import com.son.entity.Personnel;
-import com.son.entity.Requests;
+import com.son.entity.Request;
 import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.RequestsRepository;
@@ -32,8 +32,8 @@ public class RequestsService {
     private final ModelMapper modelMapper;
     private final PersonnelService personnelService;
 
-    public Requests findOne(Integer requestsId) throws ApiException {
-        Optional<Requests> requests = requestsRepository.findById(requestsId);
+    public Request findOne(Integer requestsId) throws ApiException {
+        Optional<Request> requests = requestsRepository.findById(requestsId);
 
         if (!requests.isPresent()) {
             throw new ApiException(400, Exceptions.REQUESTS_NOT_FOUND);
@@ -42,7 +42,7 @@ public class RequestsService {
         return requests.get();
     }
 
-    public Requests createOneRequest(
+    public Request createOneRequest(
             AddRequest addRequest, Credentials credentials
     ) throws ApiException {
         User receiver = userService.findOne(addRequest.getReceiverId());
@@ -56,25 +56,25 @@ public class RequestsService {
             throw new ApiException(400, Exceptions.REQUESTS_NOT_INVALID);
         }
 
-        Requests requests = modelMapper.map(addRequest, Requests.class);
+        Request request = modelMapper.map(addRequest, Request.class);
 
-        requests.setReceiver(receiver);
-        requests.setPersonnel(personnel);
+        request.setReceiver(receiver);
+        request.setPersonnel(personnel);
 
-        return requestsRepository.save(requests);
+        return requestsRepository.save(request);
     }
 
     public Boolean deleteOneRequest(Integer requestsId, Credentials credentials) throws ApiException {
-        Requests requests = findOne(requestsId);
+        Request request = findOne(requestsId);
 
-        requestsRepository.delete(requests);
+        requestsRepository.delete(request);
         return true;
     }
 
-    public Requests updateOneRequest(
+    public Request updateOneRequest(
             Integer requestId, UpdateRequest updateRequest, Credentials credentials
     ) throws ApiException {
-        Requests request = findOne(requestId);
+        Request request = findOne(requestId);
         User receiver = null;
 
         if (updateRequest.getReceiverId() != null) {
@@ -87,7 +87,7 @@ public class RequestsService {
         return requestsRepository.save(request);
     }
 
-    public Page<Requests> findMany(Credentials credentials, FindAllRequests findAllRequests) throws ApiException {
+    public Page<Request> findMany(Credentials credentials, FindAllRequests findAllRequests) throws ApiException {
         Integer currentPage = findAllRequests.getCurrentPage();
         Integer limit = findAllRequests.getLimit();
         String receiver = findAllRequests.getReceiver();
@@ -102,7 +102,7 @@ public class RequestsService {
 
         List<Integer> ids = findAllRequests.getIds();
 
-        SpecificationBuilder<Requests> builder = new SpecificationBuilder<>();
+        SpecificationBuilder<Request> builder = new SpecificationBuilder<>();
         builder.query("id", IN, ids)
                 .query("reason", CONTAINS, reason)
                 .query("status", CONTAINS, status)
@@ -111,7 +111,7 @@ public class RequestsService {
                 .query("lastModifiedBy.username", CONTAINS, lastModifiedBy)
                 .query("receiver.name", EQUALITY, receiver);
 
-        Specification<Requests> spec = builder.build();
+        Specification<Request> spec = builder.build();
 
         Pageable pageable = PageUtil.getPageable(currentPage, limit, sortDirection, sortBy);
 
