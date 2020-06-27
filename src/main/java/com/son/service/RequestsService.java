@@ -8,20 +8,24 @@ import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.RequestsRepository;
 import com.son.request.AddRequest;
+import com.son.request.CountRequests;
 import com.son.request.FindAllRequests;
 import com.son.request.UpdateRequest;
 import com.son.security.Credentials;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.*;
 
 import static com.son.util.spec.SearchOperation.*;
 
@@ -32,6 +36,8 @@ public class RequestsService {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final PersonnelService personnelService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Request findOne(Integer requestsId) throws ApiException {
         Optional<Request> requests = requestsRepository.findById(requestsId);
@@ -119,11 +125,41 @@ public class RequestsService {
         return requestsRepository.findAll(spec, pageable);
     }
 
-    public CountRequest countByStatus(Credentials credentials) throws ApiException {
+    public Integer countRequest(String type, String status) {
+        Map<String, Object> paramaterMap = new HashMap<>();
+        List<String> whereCause = new ArrayList<>();
+
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT count(*) as count FROM Request req ");
+
+        if (type != null) {
+            whereCause.add("req.type = :type ");
+            paramaterMap.put("type", type);
+        }
+
+        if (status != null) {
+            whereCause.add("req.status = :status ");
+            paramaterMap.put("status", status);
+        }
+
+        queryBuilder.append(" where " + StringUtils.join(whereCause, " and "));
+        Query jpaQuery = entityManager.createQuery(queryBuilder.toString());
+
+        for (String key : paramaterMap.keySet()) {
+            jpaQuery.setParameter(key, paramaterMap.get(key));
+        }
+
+        return Integer.parseInt(jpaQuery.getSingleResult().toString());
+    }
+
+    public CountRequest countByStatus(Credentials credentials, CountRequests countRequest) throws ApiException {
+
+        String type = countRequest.getType();
+
         return new CountRequest(
-                requestsRepository.countByStatus("Chờ phê duyệt"),
-                requestsRepository.countByStatus("Châp thuận"),
-                requestsRepository.countByStatus("Từ chối")
+                countRequest(type, "Chờ phê duyệt"),
+                countRequest(type, "Châp thuận"),
+                countRequest(type, "Từ chối")
         );
     }
 }

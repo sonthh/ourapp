@@ -4,6 +4,7 @@ import com.son.dto.CountRequest;
 import com.son.entity.Request;
 import com.son.handler.ApiException;
 import com.son.request.AddRequest;
+import com.son.request.CountRequests;
 import com.son.request.FindAllRequests;
 import com.son.request.UpdateRequest;
 import com.son.security.Credentials;
@@ -96,9 +97,10 @@ public class RequestsController {
     @GetMapping("count")
     @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_READ)")
     public ResponseEntity<CountRequest> getCount(
+            @Valid CountRequests countRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
-        CountRequest result = requestsService.countByStatus(credentials);
+        CountRequest result = requestsService.countByStatus(credentials, countRequest);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
