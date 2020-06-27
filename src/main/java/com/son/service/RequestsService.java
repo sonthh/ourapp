@@ -120,6 +120,10 @@ public class RequestsService {
     }
 
     public CountRequest countByStatus(Credentials credentials) throws ApiException {
-        return null;
+        return new CountRequest(
+                requestsRepository.countByStatus("Chờ phê duyệt"),
+                requestsRepository.countByStatus("Châp thuận"),
+                requestsRepository.countByStatus("Từ chối")
+        );
     }
 }

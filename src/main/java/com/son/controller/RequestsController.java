@@ -34,7 +34,7 @@ public class RequestsController {
 
     @ApiOperation("create one request")
     @PostMapping()
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_CREATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_CREATE)")
     public ResponseEntity<Request> createOneRequest(
             @Valid @RequestBody AddRequest addRequest,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -44,7 +44,7 @@ public class RequestsController {
 
     @ApiOperation("delete one request")
     @DeleteMapping("/{requestId}")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_DELETE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_DELETE)")
     public ResponseEntity<Boolean> deleteOneRequest(
             @Min(1) @PathVariable(value = "requestId", required = false) Integer requestsId,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -54,7 +54,7 @@ public class RequestsController {
 
     @ApiOperation("update one request")
     @PutMapping("/{requestId}")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_UPDATE)")
     public ResponseEntity<Request> updateOneRequest(
             @Min(1) @PathVariable(value = "requestId", required = false) Integer requestId,
             @Valid @RequestBody UpdateRequest updateRequest,
@@ -68,7 +68,7 @@ public class RequestsController {
 
     @ApiOperation("find one request")
     @GetMapping("/{requestId}")
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_UPDATE)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_UPDATE)")
     public ResponseEntity<Request> findOneRequest(
             @Min(1) @PathVariable(value = "requestId", required = false) Integer requestId,
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
@@ -81,7 +81,7 @@ public class RequestsController {
 
     @ApiOperation("find many requests")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_READ)")
     public ResponseEntity<Page<Request>> findMany(
             @Valid FindAllRequests findAllRequests,
             @ApiIgnore BindingResult errors,
@@ -93,8 +93,8 @@ public class RequestsController {
     }
 
     @ApiOperation("get count by type")
-    @GetMapping
-    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    @GetMapping("count")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_REQUEST_READ)")
     public ResponseEntity<CountRequest> getCount(
             @ApiIgnore @AuthenticationPrincipal Credentials credentials
     ) throws ApiException {
