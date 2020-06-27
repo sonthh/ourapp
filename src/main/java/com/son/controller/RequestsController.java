@@ -1,5 +1,6 @@
 package com.son.controller;
 
+import com.son.dto.CountRequest;
 import com.son.entity.Request;
 import com.son.handler.ApiException;
 import com.son.request.AddRequest;
@@ -89,5 +90,16 @@ public class RequestsController {
         Page<Request> page = requestsService.findMany(credentials, findAllRequests);
 
         return new ResponseEntity<>(page, HttpStatus.OK);
+    }
+
+    @ApiOperation("get count by type")
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    public ResponseEntity<CountRequest> getCount(
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+        CountRequest result = requestsService.countByStatus(credentials);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

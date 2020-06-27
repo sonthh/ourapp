@@ -6,6 +6,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface RequestsRepository extends CrudRepository<Request, Integer>,
-    PagingAndSortingRepository<Request, Integer>,
-    JpaSpecificationExecutor<Request> {
+        PagingAndSortingRepository<Request, Integer>,
+        JpaSpecificationExecutor<Request> {
+
+    Integer countByStatus(String status);
 }

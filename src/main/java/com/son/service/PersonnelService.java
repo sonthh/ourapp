@@ -658,15 +658,12 @@ public class PersonnelService {
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
-        if (personnel.getAllowances() != null) {
-            throw new ApiException(400, Exceptions.ALLOWANCES_EXISTED);
-        }
-
         Allowance allowance = modelMapper.map(addAllowancesRequest, Allowance.class);
         allowance = allowancesRepository.save(allowance);
 
         personnel.getAllowances().add(allowance);
         personnelRepository.save(personnel);
+
         return true;
     }
 

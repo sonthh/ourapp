@@ -1,6 +1,7 @@
 package com.son.service;
 
 import com.son.constant.Exceptions;
+import com.son.dto.CountRequest;
 import com.son.entity.Personnel;
 import com.son.entity.Request;
 import com.son.entity.User;
@@ -116,5 +117,9 @@ public class RequestsService {
         Pageable pageable = PageUtil.getPageable(currentPage, limit, sortDirection, sortBy);
 
         return requestsRepository.findAll(spec, pageable);
+    }
+
+    public CountRequest countByStatus(Credentials credentials) throws ApiException {
+        return null;
     }
 }
