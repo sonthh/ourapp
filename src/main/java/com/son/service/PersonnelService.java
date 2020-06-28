@@ -12,6 +12,7 @@ import com.son.util.common.EnumUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -36,6 +37,7 @@ import static com.son.util.spec.SearchOperation.*;
 
 @Service
 @RequiredArgsConstructor
+@Setter
 public class PersonnelService {
     private final PersonnelRepository personnelRepository;
     private final DepartmentRepository departmentRepository;
@@ -53,6 +55,7 @@ public class PersonnelService {
     private final CertificationRepository certificationRepository;
     private final BankInfoRepository bankInfoRepository;
     private final CloudinaryService cloudinaryService;
+    private final RequestsService requestsService;
     private final SalaryRepository salaryRepository;
     private final AllowancesRepository allowancesRepository;
     @PersistenceContext
@@ -857,10 +860,10 @@ public class PersonnelService {
     }
 
     public List<SalaryView> calculateSalary(
-            Credentials credentials, FindSalaryRequest request
+            Credentials credentials, FindSalaryRequest findRequest
     ) throws ApiException {
         // validate input
-        List<String> dateStringList = request.getDates();
+        List<String> dateStringList = findRequest.getDates();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         List<Date> dateList = new ArrayList<>();
@@ -873,7 +876,7 @@ public class PersonnelService {
         }
 
         // find personnel
-        FindAllPersonnelRequest findAll = modelMapper.map(request, FindAllPersonnelRequest.class);
+        FindAllPersonnelRequest findAll = modelMapper.map(findRequest, FindAllPersonnelRequest.class);
         findAll.setLimit(Integer.MAX_VALUE);
         Page<Personnel> page = findMany(credentials, findAll);
         List<Personnel> personnelList = page.getContent();
@@ -906,52 +909,78 @@ public class PersonnelService {
 
         List<SalaryView> result = new ArrayList<>();
         for (Personnel personnel : personnelList) {
-//            List<TimeKeeping> timeKeepingList = subs.get(personnel.getId());
+            List<TimeKeeping> timeKeepingList = subs.get(personnel.getId());
+            Integer timeOff = 0, timeOn = 0, late = 0, allowance = 0;
+            Double advance = 0.0;
+            List<Allowance> allowances = personnel.getAllowances();
 
+            for (Allowance each : allowances) {
+                allowance += each.getAmount().intValue();
+            }
+
+            for (TimeKeeping each : timeKeepingList) {
+                Request request = each.getRequest();
+                if (each.getStatus().equals("Vắng mặt")
+                        && (request == null || !request.getStatus().equals("Chấp thuận"))) {
+                    timeOff++;
+                }
+                if (each.getStatus().equals("Đúng giờ")) {
+                    timeOn++;
+                }
+                if (each.getStatus().equals("Vào trễ")) {
+                    late++;
+                }
+            }
+
+            FindAllRequests findAllRequests = new FindAllRequests();
+            findAllRequests.setDecidedDates(dateList);
+            findAllRequests.setPersonnelId(personnel.getId());
+            findAllRequests.setStatus("Chấp thuận");
+            findAllRequests.setLimit(Integer.MAX_VALUE);
+            List<Request> advanceRequest = requestsService.findMany(credentials, findAllRequests).getContent();
+            for (Request each : advanceRequest) {
+                advance += each.getAmount();
+            }
+
+            Salary salary = personnel.getSalary();
+            Double coefficient = 2.0;
+            Double baseSalary = 4000000.0;
+            final Integer LATE_FARE = 30000;
+
+            if (salary != null) {
+                baseSalary = salary.getBaseSalary();
+                coefficient = salary.getCoefficient();
+            }
+
+            Double monthSalary = coefficient * baseSalary;
+            Double daySalary = monthSalary / 22;
+
+            Double salaryTax = monthSalary - (late * LATE_FARE + timeOff * daySalary);
+            Double taxRate = 0.5;
+            if (salaryTax <= 5000000) {
+                taxRate = 0.05;
+            } else if (salaryTax <= 10000000) {
+                taxRate = 0.1;
+            } else if (salaryTax <= 18000000) {
+                taxRate = 0.15;
+            } else if (salaryTax <= 32000000) {
+                taxRate = 0.2;
+            } else if (salaryTax <= 52000000) {
+                taxRate = 0.25;
+            } else if (salaryTax <= 80000000) {
+                taxRate = 0.3;
+            } else {
+                taxRate = 0.35;
+            }
+            Double tax = salaryTax * taxRate;
+            Double totalSalary = salaryTax + allowance - tax;
 
             result.add(new SalaryView(
-                    personnel,
-                    100, 100, 100, 100, 100, 100));
+                    personnel, timeOn, timeOff, late, allowance, late * LATE_FARE, advance.intValue(),
+                    totalSalary.intValue()));
         }
         return result;
     }
-
-//    public List<TimeKeeping> findTimeKeeping(
-//            List<Integer> personnelIds, String status,
-//            Date startDate, Date endDate
-//    ) {
-//        Map<String, Object> paramaterMap = new HashMap<>();
-//        List<String> whereCause = new ArrayList<>();
-//
-//        StringBuilder queryBuilder = new StringBuilder();
-//        queryBuilder.append("SELECT tk FROM TimeKeeping tk  ");
-//
-//        if (status != null) {
-//            whereCause.add("tk.status = :status ");
-//            paramaterMap.put("status", status);
-//        }
-//
-//        if (endDate != null && startDate != null) {
-//            whereCause.add("tk.date BETWEEN :startDate AND :endDate ");
-//            paramaterMap.put("startDate", startDate);
-//            paramaterMap.put("endDate", endDate);
-//        }
-//
-//        if (personnelIds != null && personnelIds.size() > 0) {
-//            whereCause.add("tk.personnel.id IN :personnelIds ");
-//            paramaterMap.put("personnelIds", personnelIds);
-//        }
-//
-//        queryBuilder.append(" where " + StringUtils.join(whereCause, " and "));
-//        queryBuilder.append(" ORDER BY tk.personnel.id DESC, tk.date ASC");
-//        Query jpaQuery = entityManager.createQuery(queryBuilder.toString(), TimeKeeping.class);
-//
-//        for (String key : paramaterMap.keySet()) {
-//            jpaQuery.setParameter(key, paramaterMap.get(key));
-//        }
-//
-//        return jpaQuery.getResultList();
-//    }
 }
 
 

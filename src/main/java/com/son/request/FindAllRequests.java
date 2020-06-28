@@ -4,9 +4,11 @@ import com.son.model.SortDirection;
 import com.son.validator.IsEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -41,6 +43,12 @@ public class FindAllRequests {
 
     @ApiModelProperty()
     private List<Integer> ids;
+
+    @ApiModelProperty(hidden = true)
+    private List<Date> decidedDates;
+
+    @ApiModelProperty
+    private Integer personnelId;
 
     @ApiModelProperty()
     @Size(min = 1)

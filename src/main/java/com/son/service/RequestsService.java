@@ -17,9 +17,9 @@ import com.son.security.Credentials;
 import com.son.util.common.DateUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,7 +33,7 @@ import java.util.*;
 import static com.son.util.spec.SearchOperation.*;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class RequestsService {
     private final RequestsRepository requestsRepository;
     private final UserService userService;
@@ -42,6 +42,16 @@ public class RequestsService {
     private final TimeKeepingRepository timeKeepingRepository;
     @PersistenceContext
     private EntityManager entityManager;
+
+    public RequestsService(RequestsRepository requestsRepository, UserService userService, ModelMapper modelMapper,
+                           @Lazy PersonnelService personnelService, TimeKeepingRepository timeKeepingRepository) {
+        this.requestsRepository = requestsRepository;
+        this.userService = userService;
+        this.modelMapper = modelMapper;
+        this.personnelService = personnelService;
+        this.timeKeepingRepository = timeKeepingRepository;
+    }
+
 
     public Request findOne(Integer requestsId) throws ApiException {
         Optional<Request> requests = requestsRepository.findById(requestsId);
@@ -85,7 +95,7 @@ public class RequestsService {
                 }
 
                 if (timeKeeping == null) {
-                    TimeKeeping newKeeping = new TimeKeeping(null, "Nghỉ phép",date,
+                    TimeKeeping newKeeping = new TimeKeeping(null, "Nghỉ phép", date,
                             newRequest.getPersonnel(), newRequest);
 
                     timeKeepingRepository.save(newKeeping);
@@ -132,15 +142,19 @@ public class RequestsService {
         String type = findAllRequests.getType();
         String reason = findAllRequests.getReason();
         String status = findAllRequests.getStatus();
+        List<Date> decidedDates = findAllRequests.getDecidedDates();
+        Integer personnelId = findAllRequests.getPersonnelId();
 
         List<Integer> ids = findAllRequests.getIds();
 
         SpecificationBuilder<Request> builder = new SpecificationBuilder<>();
         builder.query("id", IN, ids)
+                .query("decidedDate", IN, decidedDates)
                 .query("reason", CONTAINS, reason)
                 .query("status", CONTAINS, status)
                 .query("type", CONTAINS, type)
                 .query("createdBy.username", CONTAINS, createdBy)
+                .query("personnel.id", EQUALITY, personnelId)
                 .query("lastModifiedBy.username", CONTAINS, lastModifiedBy)
                 .query("receiver.name", EQUALITY, receiver);
 
