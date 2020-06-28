@@ -918,17 +918,19 @@ public class PersonnelService {
                 allowance += each.getAmount().intValue();
             }
 
-            for (TimeKeeping each : timeKeepingList) {
-                Request request = each.getRequest();
-                if (each.getStatus().equals("Vắng mặt")
-                        && (request == null || !request.getStatus().equals("Chấp thuận"))) {
-                    timeOff++;
-                }
-                if (each.getStatus().equals("Đúng giờ")) {
-                    timeOn++;
-                }
-                if (each.getStatus().equals("Vào trễ")) {
-                    late++;
+            if (timeKeepingList != null && timeKeepingList.size() > 0) {
+                for (TimeKeeping each : timeKeepingList) {
+                    Request request = each.getRequest();
+                    if (each.getStatus().equals("Vắng mặt")
+                            && (request == null || !request.getStatus().equals("Chấp thuận"))) {
+                        timeOff++;
+                    }
+                    if (each.getStatus().equals("Đúng giờ")) {
+                        timeOn++;
+                    }
+                    if (each.getStatus().equals("Vào trễ")) {
+                        late++;
+                    }
                 }
             }
 
@@ -955,7 +957,7 @@ public class PersonnelService {
             Double monthSalary = coefficient * baseSalary;
             Double daySalary = monthSalary / 22;
 
-            Double salaryTax = monthSalary - (late * LATE_FARE + timeOff * daySalary);
+            Double salaryTax = timeOn * daySalary - (late * LATE_FARE + timeOff * daySalary);
             Double taxRate = 0.5;
             if (salaryTax <= 5000000) {
                 taxRate = 0.05;
