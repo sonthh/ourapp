@@ -1,8 +1,10 @@
 package com.son.util.common;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DateUtil {
 
@@ -35,4 +37,16 @@ public class DateUtil {
         return null;
     }
 
+    public static List<Date> getDateList(Date startDate, Date endDate) {
+        List<Date> dates = new ArrayList<Date>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        while (!calendar.getTime().after(endDate)) {
+            Date result = calendar.getTime();
+            dates.add(result);
+            calendar.add(Calendar.DATE, 1);
+        }
+        return dates;
+    }
 }

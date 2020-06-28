@@ -4,14 +4,17 @@ import com.son.constant.Exceptions;
 import com.son.dto.CountRequest;
 import com.son.entity.Personnel;
 import com.son.entity.Request;
+import com.son.entity.TimeKeeping;
 import com.son.entity.User;
 import com.son.handler.ApiException;
 import com.son.repository.RequestsRepository;
+import com.son.repository.TimeKeepingRepository;
 import com.son.request.AddRequest;
 import com.son.request.CountRequests;
 import com.son.request.FindAllRequests;
 import com.son.request.UpdateRequest;
 import com.son.security.Credentials;
+import com.son.util.common.DateUtil;
 import com.son.util.page.PageUtil;
 import com.son.util.spec.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,7 @@ public class RequestsService {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final PersonnelService personnelService;
+    private final TimeKeepingRepository timeKeepingRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -68,7 +72,29 @@ public class RequestsService {
         request.setReceiver(receiver);
         request.setPersonnel(personnel);
 
-        return requestsRepository.save(request);
+        Request newRequest = requestsRepository.save(request);
+        if (newRequest.getStartDate() != null && newRequest.getEndDate() != null) {
+            List<Date> dateList = DateUtil.getDateList(newRequest.getStartDate(), newRequest.getEndDate());
+            for (Date date : dateList) {
+                TimeKeeping timeKeeping = timeKeepingRepository.findByDateAndPersonnel(date, newRequest.getPersonnel());
+                if (timeKeeping != null) {
+                    timeKeeping.setRequest(newRequest);
+                    timeKeeping.setStatus("Nghỉ phép");
+
+                    timeKeepingRepository.save(timeKeeping);
+                }
+
+                if (timeKeeping == null) {
+                    TimeKeeping newKeeping = new TimeKeeping(null, "Nghỉ phép",date,
+                            newRequest.getPersonnel(), newRequest);
+
+                    timeKeepingRepository.save(newKeeping);
+                }
+                System.out.println();
+            }
+        }
+
+        return newRequest;
     }
 
     public Boolean deleteOneRequest(Integer requestsId, Credentials credentials) throws ApiException {
