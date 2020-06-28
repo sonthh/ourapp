@@ -1,6 +1,7 @@
 package com.son.service;
 
 import com.son.constant.Exceptions;
+import com.son.dto.SalaryView;
 import com.son.entity.*;
 import com.son.handler.ApiException;
 import com.son.model.Gender;
@@ -20,13 +21,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.son.util.spec.SearchOperation.*;
 
@@ -51,6 +55,8 @@ public class PersonnelService {
     private final CloudinaryService cloudinaryService;
     private final SalaryRepository salaryRepository;
     private final AllowancesRepository allowancesRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Personnel findOne(Integer personnelId) throws ApiException {
         Optional<Personnel> optional = personnelRepository.findById(personnelId);
@@ -99,7 +105,7 @@ public class PersonnelService {
     }
 
     public Personnel updateBasicInfo(
-        UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
+            UpdatePersonnelBasicInfo personnelRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -115,7 +121,7 @@ public class PersonnelService {
     }
 
     public Boolean addIdentification(
-        AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
+            AddIdentificationRequest addIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -132,7 +138,7 @@ public class PersonnelService {
     }
 
     public Boolean updateIdentification(
-        UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
+            UpdateIdentificationRequest updateIdentification, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -148,7 +154,7 @@ public class PersonnelService {
     }
 
     public Boolean addPassport(
-        AddPassportRequest passportRequest, int personnelId, Credentials credentials
+            AddPassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -165,7 +171,7 @@ public class PersonnelService {
     }
 
     public Boolean updatePassport(
-        UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
+            UpdatePassportRequest passportRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -181,7 +187,7 @@ public class PersonnelService {
     }
 
     public Boolean addWorkingTime(
-        AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+            AddWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -198,7 +204,7 @@ public class PersonnelService {
     }
 
     public Boolean updateWorkingTime(
-        UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
+            UpdateWorkingTimeRequest workingTimeRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -214,7 +220,7 @@ public class PersonnelService {
     }
 
     public Boolean addQualification(
-        AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
+            AddQualificationRequest qualificationRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -227,8 +233,8 @@ public class PersonnelService {
     }
 
     public Boolean updateQualification(
-        UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
-        Credentials credentials
+            UpdateQualificationRequest qualificationRequest, int personnelId, int qualificationId,
+            Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -249,7 +255,7 @@ public class PersonnelService {
     }
 
     public Boolean deleteQualification(
-        int personnelId, int qualificationId, Credentials credentials
+            int personnelId, int qualificationId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -269,7 +275,7 @@ public class PersonnelService {
     }
 
     public Page<Personnel> findMany(Credentials credentials, FindAllPersonnelRequest findAllPersonnelRequest)
-        throws ApiException {
+            throws ApiException {
         Gender gender = EnumUtil.getEnum(Gender.class, findAllPersonnelRequest.getGender());
 
         String createdBy = findAllPersonnelRequest.getCreatedBy();
@@ -289,14 +295,14 @@ public class PersonnelService {
 
         SpecificationBuilder<Personnel> builder = new SpecificationBuilder<>();
         builder
-            .query("position", CONTAINS, position)
-            .query("email", CONTAINS, email)
-            .query("fullName", CONTAINS, fullName)
-            .query("gender", EQUALITY, gender)
-            .query("id", IN, userIds)
-            .query("department.id", EQUALITY, departmentId)
-            .query("createdBy.username", CONTAINS, createdBy)
-            .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
+                .query("position", CONTAINS, position)
+                .query("email", CONTAINS, email)
+                .query("fullName", CONTAINS, fullName)
+                .query("gender", EQUALITY, gender)
+                .query("id", IN, userIds)
+                .query("department.id", EQUALITY, departmentId)
+                .query("createdBy.username", CONTAINS, createdBy)
+                .query("lastModifiedBy.username", CONTAINS, lastModifiedBy);
 
         if (isStopWork != null && isStopWork) {
             builder.query("workingTime.isStopWork", EQUALITY, true);
@@ -312,7 +318,7 @@ public class PersonnelService {
 
     /*====================================WORK HISTORY START==========================================================*/
     public Personnel createWorkHistory(AddWorkHistoryRequest historyRequests, Integer personnelId)
-        throws ApiException {
+            throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         WorkHistory workHistory = modelMapper.map(historyRequests, WorkHistory.class);
@@ -325,7 +331,7 @@ public class PersonnelService {
 
     public Boolean updateWorkHistory(UpdateWorkHistoryRequest historyRequests,
                                      Integer personnelId, Integer workHistoryId)
-        throws ApiException {
+            throws ApiException {
         Personnel personnel = findOne(personnelId);
         Optional<WorkHistory> findWorkHistory = workHistoryRepository.findById(workHistoryId);
 
@@ -370,7 +376,7 @@ public class PersonnelService {
 
     /*====================================CERTIFICATION START=========================================================*/
     public Personnel createCertification(AddCertificationRequest certificationRequest, Integer personnelId)
-        throws ApiException {
+            throws ApiException {
         Personnel personnel = findOne(personnelId);
 
         Certification certification = modelMapper.map(certificationRequest, Certification.class);
@@ -423,7 +429,7 @@ public class PersonnelService {
 
     /*====================================ADDITIONAL INFO START=======================================================*/
     public Boolean addAdditionalInfo(
-        @Valid AddAdditionalInfoRequest addAdditionalInfoRequest, int personnelId, Credentials credentials
+            @Valid AddAdditionalInfoRequest addAdditionalInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -440,7 +446,7 @@ public class PersonnelService {
     }
 
     public Boolean updateAdditionalInfo(
-        UpdateAdditionalInfoRequest updateAdditionalInfoRequest, int personnelId, Credentials credentials
+            UpdateAdditionalInfoRequest updateAdditionalInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -458,7 +464,7 @@ public class PersonnelService {
 
     /*====================================HEALTHY STATUS START========================================================*/
     public Boolean addHealthyStatus(
-        @Valid AddHealthyStatusRequest addHealthyStatusRequest, int personnelId, Credentials credentials
+            @Valid AddHealthyStatusRequest addHealthyStatusRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -475,7 +481,7 @@ public class PersonnelService {
     }
 
     public Boolean updateHealthyStatus(
-        UpdateHealthyStatusRequest updateHealthyStatusRequest, int personnelId, Credentials credentials
+            UpdateHealthyStatusRequest updateHealthyStatusRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -493,7 +499,7 @@ public class PersonnelService {
 
     /*====================================CONTACT INFO START==========================================================*/
     public Boolean addContactInfo(
-        @Valid AddContactInfoRequest addContactInfoRequest, int personnelId, Credentials credentials
+            @Valid AddContactInfoRequest addContactInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -510,7 +516,7 @@ public class PersonnelService {
     }
 
     public Boolean updateContactInfo(
-        UpdateContactInfoRequest updateContactInfoRequest, int personnelId, Credentials credentials
+            UpdateContactInfoRequest updateContactInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -528,7 +534,7 @@ public class PersonnelService {
 
     /*====================================BANK INFO END===============================================================*/
     public Boolean addBankInfo(
-        @Valid AddBankInfoRequest addBankInfoRequest, int personnelId, Credentials credentials
+            @Valid AddBankInfoRequest addBankInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -545,7 +551,7 @@ public class PersonnelService {
     }
 
     public Boolean updateBankInfo(
-        UpdateBankInfoRequest updateBankInfoRequest, int personnelId, Credentials credentials
+            UpdateBankInfoRequest updateBankInfoRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -566,8 +572,8 @@ public class PersonnelService {
         String SHEET = "Danh sách nhân viên";
 
         try (
-            Workbook workbook = new XSSFWorkbook();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Workbook workbook = new XSSFWorkbook();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
         ) {
             Sheet sheet = workbook.createSheet(SHEET);
 
@@ -596,7 +602,7 @@ public class PersonnelService {
     }
 
     public String updateAvatar(
-        Integer personnelId, UpdateAvatarRequest updateAvatarRequest, Credentials credentials
+            Integer personnelId, UpdateAvatarRequest updateAvatarRequest, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -619,7 +625,7 @@ public class PersonnelService {
 
     /*====================================BANK INFO END===============================================================*/
     public Boolean addSalary(
-        @Valid AddSalaryRequest addSalaryRequest, int personnelId, Credentials credentials
+            @Valid AddSalaryRequest addSalaryRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -636,7 +642,7 @@ public class PersonnelService {
     }
 
     public Boolean updateSalary(
-        UpdateSalaryRequest updateSalaryRequest, int personnelId, Credentials credentials
+            UpdateSalaryRequest updateSalaryRequest, int personnelId, Credentials credentials
     ) throws ApiException {
         Personnel personnel = findOne(personnelId);
 
@@ -712,7 +718,7 @@ public class PersonnelService {
     /*====================================ALLOWANCES END==============================================================*/
 
     public ByteArrayInputStream exportPersonnelToExcel(
-        Credentials credentials, FindAllPersonnelExcelRequest request
+            Credentials credentials, FindAllPersonnelExcelRequest request
     ) throws ApiException {
         final String COLUMN_ORDINAL_NUMBER = "STT";
         final String COLUMN_ID = "Mã nhân viên";
@@ -727,8 +733,8 @@ public class PersonnelService {
         final String COLUMN_DEPARTMENT = "Phòng ban";
 
         String[] headers = {
-            COLUMN_ID, COLUMN_FULL_NAME, COLUMN_IDENTIFICATION, COLUMN_WORKING_TIME, COLUMN_PHONE_NUMBER,
-            COLUMN_WORKING_BANK, COLUMN_GENDER, COLUMN_EMAIL, COLUMN_POSITION, COLUMN_DEPARTMENT, COLUMN_ORDINAL_NUMBER
+                COLUMN_ID, COLUMN_FULL_NAME, COLUMN_IDENTIFICATION, COLUMN_WORKING_TIME, COLUMN_PHONE_NUMBER,
+                COLUMN_WORKING_BANK, COLUMN_GENDER, COLUMN_EMAIL, COLUMN_POSITION, COLUMN_DEPARTMENT, COLUMN_ORDINAL_NUMBER
         };
         List<String> columns = request.getColumns();
         if (!columns.contains(COLUMN_ORDINAL_NUMBER)) {
@@ -849,6 +855,103 @@ public class PersonnelService {
             throw new ApiException(500, "Fail to export data");
         }
     }
+
+    public List<SalaryView> calculateSalary(
+            Credentials credentials, FindSalaryRequest request
+    ) throws ApiException {
+        // validate input
+        List<String> dateStringList = request.getDates();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        List<Date> dateList = new ArrayList<>();
+        for (String dateString : dateStringList) {
+            try {
+                dateList.add(sdf.parse(dateString));
+            } catch (ParseException e) {
+                throw new ApiException(400, "Error date format");
+            }
+        }
+
+        // find personnel
+        FindAllPersonnelRequest findAll = modelMapper.map(request, FindAllPersonnelRequest.class);
+        findAll.setLimit(Integer.MAX_VALUE);
+        Page<Personnel> page = findMany(credentials, findAll);
+        List<Personnel> personnelList = page.getContent();
+
+        // list of personnel id
+        List<Integer> personnelIds = personnelList.stream().map(Personnel::getId).collect(Collectors.toList());
+        // find list of timekeeping
+        String hql = "SELECT tk FROM TimeKeeping tk " +
+                "WHERE tk.personnel.id IN :personnelIds AND tk.date IN :dates " +
+                "ORDER BY tk.personnel.id DESC, tk.date ASC";
+
+        List<TimeKeeping> keepingList = entityManager.createQuery(hql, TimeKeeping.class)
+                .setParameter("personnelIds", personnelIds)
+                .setParameter("dates", dateList)
+                .getResultList();
+
+        // separate list of timekeeping to multiple list by personnelId
+        Map<Integer, List<TimeKeeping>> subs = new HashMap<>();
+
+        for (TimeKeeping each : keepingList) {
+            List<TimeKeeping> temp = subs.get(each.getPersonnel().getId());
+
+            if (temp == null) {
+                temp = new ArrayList<>();
+                subs.put(each.getPersonnel().getId(), temp);
+            }
+
+            temp.add(each);
+        }
+
+        List<SalaryView> result = new ArrayList<>();
+        for (Personnel personnel : personnelList) {
+//            List<TimeKeeping> timeKeepingList = subs.get(personnel.getId());
+
+
+            result.add(new SalaryView(
+                    personnel,
+                    100, 100, 100, 100, 100, 100));
+        }
+        return result;
+    }
+
+//    public List<TimeKeeping> findTimeKeeping(
+//            List<Integer> personnelIds, String status,
+//            Date startDate, Date endDate
+//    ) {
+//        Map<String, Object> paramaterMap = new HashMap<>();
+//        List<String> whereCause = new ArrayList<>();
+//
+//        StringBuilder queryBuilder = new StringBuilder();
+//        queryBuilder.append("SELECT tk FROM TimeKeeping tk  ");
+//
+//        if (status != null) {
+//            whereCause.add("tk.status = :status ");
+//            paramaterMap.put("status", status);
+//        }
+//
+//        if (endDate != null && startDate != null) {
+//            whereCause.add("tk.date BETWEEN :startDate AND :endDate ");
+//            paramaterMap.put("startDate", startDate);
+//            paramaterMap.put("endDate", endDate);
+//        }
+//
+//        if (personnelIds != null && personnelIds.size() > 0) {
+//            whereCause.add("tk.personnel.id IN :personnelIds ");
+//            paramaterMap.put("personnelIds", personnelIds);
+//        }
+//
+//        queryBuilder.append(" where " + StringUtils.join(whereCause, " and "));
+//        queryBuilder.append(" ORDER BY tk.personnel.id DESC, tk.date ASC");
+//        Query jpaQuery = entityManager.createQuery(queryBuilder.toString(), TimeKeeping.class);
+//
+//        for (String key : paramaterMap.keySet()) {
+//            jpaQuery.setParameter(key, paramaterMap.get(key));
+//        }
+//
+//        return jpaQuery.getResultList();
+//    }
 }
 
 

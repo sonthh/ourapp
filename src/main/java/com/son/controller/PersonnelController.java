@@ -1,5 +1,7 @@
 package com.son.controller;
 
+import com.son.dto.SalaryView;
+import com.son.dto.TimeKeepingView;
 import com.son.entity.Personnel;
 import com.son.handler.ApiException;
 import com.son.request.*;
@@ -25,6 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 @Api(tags = "Personnel", value = "Personnel Controller")
 @RestController
@@ -551,5 +554,21 @@ public class PersonnelController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(file);
     }
+
+    @ApiOperation("calculate salary")
+    @GetMapping("salary")
+    @PreAuthorize("hasAnyAuthority(@scopes.ALL_PERSONNEL_READ)")
+    public ResponseEntity<List<SalaryView>> findTimeKeeping(
+            @Valid FindSalaryRequest findSalaryRequest,
+            @ApiIgnore BindingResult errors,
+            @ApiIgnore @AuthenticationPrincipal Credentials credentials
+    ) throws ApiException {
+
+        return new ResponseEntity<>(
+                personnelService.calculateSalary(credentials, findSalaryRequest),
+                HttpStatus.OK
+        );
+    }
+
 }
 
